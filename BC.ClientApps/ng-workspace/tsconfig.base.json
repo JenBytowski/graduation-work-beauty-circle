@@ -19,6 +19,18 @@
       "bc-common": [
         "dist/bc-common/bc-common",
         "dist/bc-common"
+      ],
+      "@bc-common/*": [
+        "./projects/bc-common/src/lib/*"
+      ],
+      "@client-app/*": [
+        "./projects/client-app/src/app/*"
+      ],
+      "@master-app/*": [
+        "./projects/master-app/src/app/*"
+      ],
+      "@saloon-app/*": [
+        "./projects/saloon-app/src/app/*"
       ]
     }
   }
