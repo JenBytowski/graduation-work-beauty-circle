@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import {BcCommonModule} from "../../../bc-common/src/lib/bc-common.module";
+import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import {BcCommonModule} from "../../../bc-common/src/lib/bc-common.module";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BcCommonModule
+    BcCommonModule,
+    IonicModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]
