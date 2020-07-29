@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using JWTokenOptions = BC.API.Services.TokenOptions;
 
 namespace BC.API
@@ -27,6 +28,9 @@ namespace BC.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Swagger
+            services.AddSwaggerGen(opt => opt.SwaggerDoc("v1", new OpenApiInfo {Title = "BC-API", Version = "v1"}));
+
             services.AddDbContext<AuthentificationContext>( opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
@@ -63,6 +67,10 @@ namespace BC.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            //Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(opt => opt.SwaggerEndpoint("/swagger/v1/swagger.json", "BC-API"));
 
             app.UseHttpsRedirection();
 
