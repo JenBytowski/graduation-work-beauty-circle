@@ -3,4 +3,6 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-/.vs
+/.vs/BC/v16/Server/sqlite3
+/.vs/BC
+/BC.API/BC.API.csproj.user
