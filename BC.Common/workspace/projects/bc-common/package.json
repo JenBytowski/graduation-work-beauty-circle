@@ -2,10 +2,10 @@
   "name": "bc-common",
   "version": "0.0.1",
   "peerDependencies": {
-    "@angular/common": "^9.1.12",
-    "@angular/core": "^9.1.12"
+    "@angular/common": "^10.0.5",
+    "@angular/core": "^10.0.5"
   },
   "dependencies": {
-    "tslib": "^1.10.0"
+    "tslib": "^2.0.0"
   }
 }
