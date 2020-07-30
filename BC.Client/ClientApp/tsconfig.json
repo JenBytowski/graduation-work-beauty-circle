@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "esnext",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "../../BC.Common/workspace/projects/bc-common/tsconfig.lib.json"
+    },
+    {
+      "path": "../../BC.Common/workspace/projects/bc-common/tsconfig.spec.json"
+    }
+  ]
+}
