@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BC.API.Data.AuthentificationContext
 {
-    public class AuthentificationContext : IdentityDbContext
+    public class AuthenticationContext : IdentityDbContext
     {
-        public AuthentificationContext(DbContextOptions options) : base(options)
+        public AuthenticationContext(DbContextOptions options) : base(options)
         {
             Database.EnsureCreated();
         }

@@ -2,7 +2,7 @@
 
 namespace BC.API.Services.AuthentificationService
 {
-    public class VKAuthentificationResponse
+    public class VKAuthenticationResponse
     {
         [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
@@ -14,7 +14,7 @@ namespace BC.API.Services.AuthentificationService
         public string Email { get; set; }
 	}
 
-    public class GoogleAuthentificationResponse
+    public class GoogleAuthenticationResponse
     {
         [JsonPropertyName("id_token")]
         public string Token { get; set; }
@@ -26,7 +26,7 @@ namespace BC.API.Services.AuthentificationService
         public string Scope { get; set; }
     }
 
-    public class InstagramAuthentificationResponse
+    public class InstagramAuthenticationResponse
     {
         [JsonPropertyName("access_token")]
         public string AccessToken { get; set; }
@@ -35,7 +35,7 @@ namespace BC.API.Services.AuthentificationService
         public double UserId { get; set; }
     }
 
-    public class SMSCodeAuthentificationResponse
+    public class SMSCodeAuthenticationResponse
     {
         public string Phone { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace BC.API.Services.AuthentificationService
 {
-    public class AuthentificationResponse
+    public class AuthenticationResponse
     {
         public string Token { get; set; }
 

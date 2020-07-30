@@ -8,10 +8,10 @@ namespace BC.API.Controllers
     [Route("authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
-    {
-        readonly AuthentificationService _authenticationService;
+    { 
+        readonly AuthenticationService _authenticationService;
 
-        public AuthenticationController(AuthentificationService authenticationService)
+        public AuthenticationController(AuthenticationService authenticationService)
         {
             _authenticationService = authenticationService;
         }
@@ -19,25 +19,25 @@ namespace BC.API.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-vk")]
-        public async Task<AuthentificationResponse> AuthentificatebyVK(string code)
+        public async Task<AuthenticationResponse> AuthentificatebyVK(string code)
         {
-            return await _authenticationService.AuthentificatebyVK(code);
+            return await _authenticationService.AuthenticatebyVK(code);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-instagram")]
-        public async Task<AuthentificationResponse> AuthentificatebyInstagram(string code)
+        public async Task<AuthenticationResponse> AuthentificatebyInstagram(string code)
         {
-            return await _authenticationService.AuthentificatebyInstagram(code);
+            return await _authenticationService.AuthenticatebyInstagram(code);
         }
 
         [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-google")]
-        public async Task<AuthentificationResponse> AuthentificatebyGoogle(string code)
+        public async Task<AuthenticationResponse> AuthentificatebyGoogle(string code)
         {
-            return await _authenticationService.AuthentificatebyGoogle(code);
+            return await _authenticationService.AuthenticatebyGoogle(code);
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace BC.API.Controllers
         [Route("get-sms-authentication-code")]
         public async Task GetSMSAuthentificationCode(string phone)
         {
-            var result = await _authenticationService.GetSMSAuthentificationCode(phone);
+            var result = await _authenticationService.GetSMSAuthenticationCode(phone);
 
             if (!result)
             {
@@ -56,9 +56,9 @@ namespace BC.API.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-phone")]
-        public async Task<AuthentificationResponse> AuthentificatebyPhone(SMSCodeAuthentificationResponse model)
+        public async Task<AuthenticationResponse> AuthentificatebyPhone(SMSCodeAuthenticationResponse model)
         {
-            return await _authenticationService.AuthentificatebyPhone(model);
+            return await _authenticationService.AuthenticatebyPhone(model);
         }
     }
 }

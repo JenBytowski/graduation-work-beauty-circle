@@ -31,15 +31,15 @@ namespace BC.API
             //Swagger
             services.AddSwaggerGen(opt => opt.SwaggerDoc("v1", new OpenApiInfo {Title = "BC-API", Version = "v1"}));
 
-            services.AddDbContext<AuthentificationContext>( opt =>
+            services.AddDbContext<AuthenticationContext>( opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
             }, ServiceLifetime.Transient);
 
             services.AddControllers();
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthentificationContext>()
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
                 .AddDefaultTokenProviders();
-            services.AddTransient<AuthentificationService>();
+            services.AddTransient<AuthenticationService>();
             services.AddSingleton<RocketSMSClient>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
