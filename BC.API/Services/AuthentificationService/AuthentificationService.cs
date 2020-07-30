@@ -98,7 +98,7 @@ namespace BC.API.Services.AuthentificationService
             return new AuthentificationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
         }
 
-        public async Task GetSMSAuthentificationCode(string phone)
+        public async Task<bool> GetSMSAuthentificationCode(string phone)
         {
             var user = _userManager.Users.FirstOrDefault(usr => usr.PhoneNumber == phone) ?? await CreateUserbyPhone(phone);
             var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
@@ -112,10 +112,9 @@ namespace BC.API.Services.AuthentificationService
 
             var result = await _smsClient.SendSMS(sms);
 
-            if (!result)
-            {
-                throw  new Exception();
-            }
+            return !result 
+                ? throw new Exception() 
+                : true;
         }
 
         public async Task<AuthentificationResponse> AuthentificatebyPhone(SMSCodeAuthentificationResponse model)
