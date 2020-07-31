@@ -12,15 +12,15 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace BC.API.Services.AuthentificationService
+namespace BC.API.Services.AuthenticationService
 {
     public class AuthenticationService
     {
         readonly UserManager<IdentityUser> _userManager;
         readonly IConfiguration _configuration;
-        readonly RocketSMSClient _smsClient;
+        readonly ISMSClient _smsClient;
 
-        public AuthenticationService(UserManager<IdentityUser> userManager, RocketSMSClient smsClient, IConfiguration configuration)
+        public AuthenticationService(UserManager<IdentityUser> userManager, ISMSClient smsClient, IConfiguration configuration)
         {
             _userManager = userManager;
             _smsClient = smsClient;
@@ -39,7 +39,7 @@ namespace BC.API.Services.AuthentificationService
                                                   $"&code={authCode}",
                 null);
 
-            var parsedResponse = JsonSerializer.Deserialize<VKAuthenticationResponse>(await response.Content.ReadAsStringAsync());
+            var parsedResponse = JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
 
             var user = await _userManager.FindByEmailAsync(parsedResponse.Email) ?? await CreateUserbyVK(parsedResponse);
             var jwToken = await GenerateJWToken(user);
@@ -61,7 +61,7 @@ namespace BC.API.Services.AuthentificationService
                 grant_type = "authorization_code"
             });
             var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
-            var jsonResponse = JsonSerializer.Deserialize<GoogleAuthenticationResponse>(await response.Content.ReadAsStringAsync());
+            var jsonResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(await response.Content.ReadAsStringAsync());
             var encodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jsonResponse.Token);
            
             var userEmail = encodedToken.Claims.First(clm => clm.Type == "email").Value;
@@ -90,7 +90,7 @@ namespace BC.API.Services.AuthentificationService
             content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             var response = await httpClient.PostAsync("https://api.instagram.com/oauth/access_token", content);
-            var parsedResponse = JsonSerializer.Deserialize<InstagramAuthenticationResponse>(await response.Content.ReadAsStringAsync());
+            var parsedResponse = JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
 
             var user = await _userManager.FindByIdAsync(parsedResponse.UserId.ToString()) ??
                        await CreateUserbyInstagram(parsedResponse);
@@ -130,7 +130,7 @@ namespace BC.API.Services.AuthentificationService
             return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
         }
 
-        private async Task<IdentityUser> CreateUserbyVK(VKAuthenticationResponse response)
+        private async Task<IdentityUser> CreateUserbyVK(VKTokenResponse response)
         {
             var result = await _userManager.CreateAsync(new IdentityUser
             {
@@ -158,7 +158,7 @@ namespace BC.API.Services.AuthentificationService
                 : throw new Exception(result.Errors.First().Description);
         }
 
-        private async Task<IdentityUser> CreateUserbyInstagram(InstagramAuthenticationResponse response)
+        private async Task<IdentityUser> CreateUserbyInstagram(InstagramTokenResponse response)
         {
             var result = await _userManager.CreateAsync(new IdentityUser
             {

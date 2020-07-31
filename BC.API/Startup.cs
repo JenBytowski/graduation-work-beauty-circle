@@ -1,6 +1,6 @@
-using System.Text;
-using BC.API.Data.AuthentificationContext;
-using BC.API.Services.AuthentificationService;
+using BC.API.Infrastructure;
+using BC.API.Services.AuthenticationService;
+using BC.API.Services.AuthenticationService.AuthentificationContext;
 using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using JWTokenOptions = BC.API.Services.TokenOptions;
 
 namespace BC.API
@@ -40,7 +41,7 @@ namespace BC.API
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
                 .AddDefaultTokenProviders();
             services.AddTransient<AuthenticationService>();
-            services.AddSingleton<RocketSMSClient>();
+            services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
             {

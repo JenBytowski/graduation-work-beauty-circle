@@ -1,4 +1,4 @@
-﻿using BC.API.Services.AuthentificationService;
+﻿using BC.API.Services.AuthenticationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;

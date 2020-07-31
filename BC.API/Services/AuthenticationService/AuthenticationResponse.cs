@@ -1,4 +1,4 @@
-﻿namespace BC.API.Services.AuthentificationService
+﻿namespace BC.API.Services.AuthenticationService
 {
     public class AuthenticationResponse
     {

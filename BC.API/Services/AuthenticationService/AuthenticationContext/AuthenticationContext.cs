@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace BC.API.Data.AuthentificationContext
+namespace BC.API.Services.AuthenticationService.AuthentificationContext
 {
     public class AuthenticationContext : IdentityDbContext
     {
