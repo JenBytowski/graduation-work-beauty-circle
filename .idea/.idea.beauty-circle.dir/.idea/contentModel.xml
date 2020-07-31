@@ -21,6 +21,22 @@
       <e p="BC.Client\ClientApp\node_modules\@angular-devkit\build-webpack" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@angular-devkit\core" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@angular-devkit\schematics" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@capacitor\android" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@capacitor\cli" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@capacitor\core" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\angular" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\cli" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\cli-framework" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\cli-framework-prompts" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\core" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-array" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-fs" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-network" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-object" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-process" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-stream" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-subprocess" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic\utils-terminal" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@jsdevtools\coverage-istanbul-loader" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@ngtools\webpack" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@nguniversal\module-map-ngfactory-loader" t="IncludeRecursive" />
@@ -47,6 +63,7 @@
       <e p="BC.Client\ClientApp\node_modules\fast-deep-equal" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\fast-json-stable-stringify" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\hash.js" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\ionicons" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\jasmine-core" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\jasmine-spec-reporter" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\jest-worker" t="IncludeRecursive" />
@@ -158,6 +175,7 @@
       <e p="BC.Common\workspace\node_modules\webdriver-js-extender" t="IncludeRecursive" />
       <e p="BC.Common\workspace\node_modules\worker-farm" t="IncludeRecursive" />
       <e p="BC.Common\workspace\node_modules\zone.js" t="IncludeRecursive" />
+      <e p="BC.Common\workspace\projects\bc-common\node_modules\tslib" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\animations" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\cli" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\common" t="IncludeRecursive" />
