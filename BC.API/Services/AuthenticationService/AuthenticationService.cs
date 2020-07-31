@@ -40,8 +40,7 @@ namespace BC.API.Services.AuthenticationService
                 null);
 
             var parsedResponse = JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
-
-            var user = await _userManager.FindByEmailAsync(parsedResponse.Email) ?? await CreateUserbyVK(parsedResponse);
+            var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ?? await CreateUserbyVK(parsedResponse);
             var jwToken = await GenerateJWToken(user);
 
             return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
@@ -63,9 +62,9 @@ namespace BC.API.Services.AuthenticationService
             var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
             var jsonResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(await response.Content.ReadAsStringAsync());
             var encodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jsonResponse.Token);
-           
-            var userEmail = encodedToken.Claims.First(clm => clm.Type == "email").Value;
-            var user = await _userManager.FindByEmailAsync(userEmail) ?? await CreateUserbyGoogle(encodedToken);
+
+            var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
+            var user = await _userManager.FindByLoginAsync("google", userid) ?? await CreateUserbyGoogle(encodedToken);
             var jwToken = await GenerateJWToken(user);
 
             return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
@@ -92,7 +91,7 @@ namespace BC.API.Services.AuthenticationService
             var response = await httpClient.PostAsync("https://api.instagram.com/oauth/access_token", content);
             var parsedResponse = JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
 
-            var user = await _userManager.FindByIdAsync(parsedResponse.UserId.ToString()) ??
+            var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
                        await CreateUserbyInstagram(parsedResponse);
 
             return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
@@ -100,7 +99,7 @@ namespace BC.API.Services.AuthenticationService
 
         public async Task<bool> GetSMSAuthenticationCode(string phone)
         {
-            var user = _userManager.Users.FirstOrDefault(usr => usr.PhoneNumber == phone) ?? await CreateUserbyPhone(phone);
+            var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone);
             var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
             var sms = new SMS
@@ -119,7 +118,7 @@ namespace BC.API.Services.AuthenticationService
 
         public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
         {
-            var user = _userManager.Users.First(usr => usr.PhoneNumber == model.Phone);
+            var user = await _userManager.FindByLoginAsync("phone", model.Phone);
             var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", model.Code);
 
             if (!checkCodeResult)
@@ -132,51 +131,70 @@ namespace BC.API.Services.AuthenticationService
 
         private async Task<IdentityUser> CreateUserbyVK(VKTokenResponse response)
         {
-            var result = await _userManager.CreateAsync(new IdentityUser
+            var createUserResult = await _userManager.CreateAsync(new IdentityUser
             {
-                UserName = response.Email,
+                UserName = response.UserId.ToString(),
                 Email = response.Email,
                 EmailConfirmed = true
             });
 
-            return result.Succeeded 
-                ? await _userManager.FindByEmailAsync(response.Email) 
-                : throw new Exception(result.Errors.First().Description);
+            var user = createUserResult.Succeeded
+                ? await _userManager.FindByNameAsync(response.UserId.ToString())
+                : throw new Exception(createUserResult.Errors.First().Description);
+            var addLoginResult = await _userManager.AddLoginAsync(user,
+                new UserLoginInfo("vk", user.UserName, "vk"));
+
+            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
         }
 
         private async Task<IdentityUser> CreateUserbyGoogle(JwtSecurityToken userInfo)
         {
-            var result = await _userManager.CreateAsync(new IdentityUser
+            var userId = userInfo.Claims.First(clm => clm.Type == "sub").Value;
+            var userEmail = userInfo.Claims.First(clm => clm.Type == "email").Value;
+
+            var createUserResult = await _userManager.CreateAsync(new IdentityUser
             {
-                UserName = userInfo.Claims.First(clm => clm.Type == "sub").Value,
-                Email = userInfo.Claims.First(clm => clm.Type == "email").Value,
+                UserName = userId,
+                Email = userEmail,
                 EmailConfirmed = true
             });
 
-            return result.Succeeded
-                ? await _userManager.FindByEmailAsync(userInfo.Claims.First(clm => clm.Type == "email").Value)
-                : throw new Exception(result.Errors.First().Description);
+            var user = createUserResult.Succeeded
+                ? await _userManager.FindByNameAsync(userId)
+                : throw new Exception(createUserResult.Errors.First().Description);
+            var addLoginResult = await _userManager.AddLoginAsync(user,
+                new UserLoginInfo("google", user.UserName, "google"));
+
+            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
         }
 
         private async Task<IdentityUser> CreateUserbyInstagram(InstagramTokenResponse response)
         {
-            var result = await _userManager.CreateAsync(new IdentityUser
+            var createUserResult = await _userManager.CreateAsync(new IdentityUser
             {
                 UserName = response.UserId.ToString(),
             });
 
-            return result.Succeeded
-                ? await _userManager.FindByIdAsync(response.UserId.ToString())
-                : throw new Exception(result.Errors.First().Description);
+            var user = createUserResult.Succeeded
+                ? await _userManager.FindByNameAsync(response.UserId.ToString())
+                : throw new Exception(createUserResult.Errors.First().Description);
+            var addLoginResult = await _userManager.AddLoginAsync(user,
+                new UserLoginInfo("instagram", user.UserName, "instagram"));
+
+            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
         }
 
         private async Task<IdentityUser> CreateUserbyPhone(string phone)
         {
-            var result = await _userManager.CreateAsync(new IdentityUser { UserName = phone, PhoneNumber = phone });
+            var createUserResult = await _userManager.CreateAsync(new IdentityUser { UserName = phone, PhoneNumber = phone, PhoneNumberConfirmed = true });
 
-            return result.Succeeded 
-                ? _userManager.Users.First(usr => usr.PhoneNumber == phone) 
-                : throw new Exception(result.Errors.First().Description);
+            var user = createUserResult.Succeeded
+                ? await _userManager.FindByNameAsync(phone)
+                : throw new Exception(createUserResult.Errors.First().Description);
+            var addLoginResult = await _userManager.AddLoginAsync(user,
+                new UserLoginInfo("phone", user.UserName, "phone"));
+
+            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
         }
 
         private async Task<string> GenerateJWToken(IdentityUser user)
