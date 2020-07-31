@@ -16,6 +16,11 @@
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@bc-common/*": [
+        "../../BC.Common/workspace/projects/bc-common/src/lib/*"
+      ]
+    }
   }
 }
