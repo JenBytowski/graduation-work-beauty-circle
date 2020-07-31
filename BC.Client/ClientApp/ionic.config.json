@@ -1,5 +1,7 @@
 {
   "name": "bc.client",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

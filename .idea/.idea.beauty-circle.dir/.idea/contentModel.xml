@@ -37,6 +37,9 @@
       <e p="BC.Client\ClientApp\node_modules\@ionic\utils-stream" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@ionic\utils-subprocess" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@ionic\utils-terminal" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic-native\core" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic-native\splash-screen" t="IncludeRecursive" />
+      <e p="BC.Client\ClientApp\node_modules\@ionic-native\status-bar" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@jsdevtools\coverage-istanbul-loader" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@ngtools\webpack" t="IncludeRecursive" />
       <e p="BC.Client\ClientApp\node_modules\@nguniversal\module-map-ngfactory-loader" t="IncludeRecursive" />
