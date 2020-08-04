@@ -178,7 +178,6 @@
       <e p="BC.Common\workspace\node_modules\webdriver-js-extender" t="IncludeRecursive" />
       <e p="BC.Common\workspace\node_modules\worker-farm" t="IncludeRecursive" />
       <e p="BC.Common\workspace\node_modules\zone.js" t="IncludeRecursive" />
-      <e p="BC.Common\workspace\projects\bc-common\node_modules\tslib" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\animations" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\cli" t="IncludeRecursive" />
       <e p="BC.Master\ClientApp\node_modules\@angular\common" t="IncludeRecursive" />
@@ -296,6 +295,7 @@
       <e p="BC.Saloon\ClientApp\node_modules\core-js" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\dependency-graph" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\domino" t="IncludeRecursive" />
+      <e p="BC.Saloon\ClientApp\node_modules\estree-walker" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\fast-deep-equal" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\fast-json-stable-stringify" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\hash.js" t="IncludeRecursive" />
@@ -318,6 +318,7 @@
       <e p="BC.Saloon\ClientApp\node_modules\protractor" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\reflect-metadata" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\rollup" t="IncludeRecursive" />
+      <e p="BC.Saloon\ClientApp\node_modules\rollup-pluginutils" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\rxjs" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\schema-utils" t="IncludeRecursive" />
       <e p="BC.Saloon\ClientApp\node_modules\source-map" t="IncludeRecursive" />

@@ -14,6 +14,7 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
+// @ts-ignore
 import { BcCommonModule } from '@bc-common/bc-common.module';
 
 @NgModule({
