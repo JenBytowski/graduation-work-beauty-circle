@@ -6,7 +6,7 @@ namespace BC.API.Infrastructure
 {
     public class ConsoleSMSClient : ISMSClient
     {
-        public async Task<bool> SendSMS(SMS message)
+        public async Task SendSMS(SMS message)
         {
             throw new NotImplementedException();
         }

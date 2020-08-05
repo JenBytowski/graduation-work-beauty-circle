@@ -1,4 +1,6 @@
-﻿using BC.API.Services.SMSService;
+﻿using BC.API.Infrastructure;
+using BC.API.Services.AuthenticationService.Exceptions;
+using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -31,19 +33,41 @@ namespace BC.API.Services.AuthenticationService
         {
             var client = new HttpClient();
             var authCredentials = _configuration.GetSection("VKCredentials").Get<SocialMediaAuthCredentials>();
+            var requestURI = "https://oauth.vk.com/access_token" +
+                             $"?client_id={authCredentials.ClientId}" +
+                             $"&client_secret={authCredentials.ClientSecret}" +
+                             $"&redirect_uri={authCredentials.RedirectUrl}" +
+                             $"&code={authCode}";
 
-            var response = await client.PostAsync("https://oauth.vk.com/access_token" +
-                                                  $"?client_id={authCredentials.ClientId}" +
-                                                  $"&client_secret={authCredentials.ClientSecret}" +
-                                                  $"&redirect_uri={authCredentials.RedirectUrl}" +
-                                                  $"&code={authCode}",
-                null);
+            var response = await client.PostAsync(requestURI, null);
 
-            var parsedResponse = JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
-            var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ?? await CreateUserbyVK(parsedResponse);
-            var jwToken = await GenerateJWToken(user);
+            if (!response.IsSuccessStatusCode)
+            {
+                var exception = new AuthenticationException("Cant authenticate by vk. Cant get auth token.");
+                exception.Data.Add("request uri", requestURI);
+                exception.Data.Add("response string", await response.Content.ReadAsStringAsync());
 
-            return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
+                throw exception;
+            }
+
+            try
+            {
+                var parsedResponse =
+                    JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
+                var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
+                           await CreateUserbyVK(parsedResponse);
+                var jwToken = await GenerateJWToken(user);
+
+                return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
+            }
+            catch (CantCreateUserException ex)
+            {
+                throw new AuthenticationException("Cant authenticate by vk. Cant create user.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new AuthenticationException("Cant authenticate by vk.", ex);
+            }
         }
 
         public async Task<AuthenticationResponse> AuthenticatebyGoogle(string authCode)
@@ -60,14 +84,37 @@ namespace BC.API.Services.AuthenticationService
                 grant_type = "authorization_code"
             });
             var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
-            var jsonResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(await response.Content.ReadAsStringAsync());
-            var encodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jsonResponse.Token);
 
-            var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
-            var user = await _userManager.FindByLoginAsync("google", userid) ?? await CreateUserbyGoogle(encodedToken);
-            var jwToken = await GenerateJWToken(user);
+            if (!response.IsSuccessStatusCode)
+            {
+                var exception = new AuthenticationException("Cant authenticate by google. Cant get auth token.");
+                exception.Data.Add("request body", jsonRequest);
+                exception.Data.Add("response string", await response.Content.ReadAsStringAsync());
 
-            return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
+                throw exception;
+            }
+
+            try
+            {
+                var jsonResponse =
+                    JsonSerializer.Deserialize<GoogleTokenResponse>(await response.Content.ReadAsStringAsync());
+                var encodedToken = new JwtSecurityTokenHandler().ReadJwtToken(jsonResponse.Token);
+
+                var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
+                var user = await _userManager.FindByLoginAsync("google", userid) ??
+                           await CreateUserbyGoogle(encodedToken);
+                var jwToken = await GenerateJWToken(user);
+
+                return new AuthenticationResponse { Token = jwToken, Username = user.UserName };
+            }
+            catch (CantCreateUserException ex)
+            {
+                throw new AuthenticationException("Cant authenticate by google. Cant create user.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new AuthenticationException("Cant authenticate by google", ex);
+            }
         }
 
         public async Task<AuthenticationResponse> AuthenticatebyInstagram(string authCode)
@@ -89,44 +136,86 @@ namespace BC.API.Services.AuthenticationService
             content.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
             var response = await httpClient.PostAsync("https://api.instagram.com/oauth/access_token", content);
-            var parsedResponse = JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
 
-            var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
-                       await CreateUserbyInstagram(parsedResponse);
+            if (!response.IsSuccessStatusCode)
+            {
+                var exception = new AuthenticationException("Cant authenticate by instagram. Cant get auth token.");
+                exception.Data.Add("request body", requestBody);
+                exception.Data.Add("response string", await response.Content.ReadAsStringAsync());
 
-            return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
+                throw exception;
+            }
+
+            try
+            {
+                var parsedResponse =
+                    JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
+
+                var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
+                           await CreateUserbyInstagram(parsedResponse);
+
+                return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
+            }
+            catch (CantCreateUserException ex)
+            {
+                throw new AuthenticationException("Cant authenticate by instagram. Cant create user.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new AuthenticationException("Cant authenticate by instagram", ex);
+            }
         }
 
-        public async Task<bool> GetSMSAuthenticationCode(string phone)
+        public async Task SendSMSAuthenticationCode(string phone)
         {
             var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone);
+
             var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
-            var sms = new SMS
-            {
-                Sender = "Beauty-Test",
-                Phone = user.PhoneNumber,
-                Text = $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу"
-            };
-
-            var result = await _smsClient.SendSMS(sms);
-
-            return !result
-                ? throw new Exception()
-                : true;
+            await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
         }
 
         public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
         {
-            var user = await _userManager.FindByLoginAsync("phone", model.Phone);
-            var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", model.Code);
-
-            if (!checkCodeResult)
+            try
             {
-                return null;
-            }
+                var user = await _userManager.FindByLoginAsync("phone", model.Phone);
+                var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", model.Code);
 
-            return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
+                if (!checkCodeResult)
+                {
+                    throw new InvalidAuthenticationCodeException("Invalid authentication code");
+                }
+
+                return new AuthenticationResponse { Token = await GenerateJWToken(user), Username = user.UserName };
+            }
+            catch (InvalidAuthenticationCodeException ex)
+            {
+                throw new AuthenticationException("Cant authenticate by phone. Invalid authentication code.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new AuthenticationException("Cant authenticate by phone", ex);
+            }
+        }
+
+        private async Task SendSMS(string phone, string text)
+        {
+            try
+            {
+                var sms = new SMS
+                {
+                    Sender = "Beauty-Test",
+                    Phone = phone,
+                    Text = text
+                };
+
+                await _smsClient.SendSMS(sms);
+            }
+            catch (CantSendSMSException ex)
+            {
+                throw new CantSendSMSException("Cant send sms with authentication code", ex);
+            }
         }
 
         private async Task<IdentityUser> CreateUserbyVK(VKTokenResponse response)
@@ -138,13 +227,22 @@ namespace BC.API.Services.AuthenticationService
                 EmailConfirmed = true
             });
 
-            var user = createUserResult.Succeeded
-                ? await _userManager.FindByNameAsync(response.UserId.ToString())
-                : throw new Exception(createUserResult.Errors.First().Description);
+            if (!createUserResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+
             var addLoginResult = await _userManager.AddLoginAsync(user,
                 new UserLoginInfo("vk", user.UserName, "vk"));
 
-            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
+            if (!addLoginResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            return user;
         }
 
         private async Task<IdentityUser> CreateUserbyGoogle(JwtSecurityToken userInfo)
@@ -159,13 +257,22 @@ namespace BC.API.Services.AuthenticationService
                 EmailConfirmed = true
             });
 
-            var user = createUserResult.Succeeded
-                ? await _userManager.FindByNameAsync(userId)
-                : throw new Exception(createUserResult.Errors.First().Description);
+            if (!createUserResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            var user = await _userManager.FindByNameAsync(userId);
+
             var addLoginResult = await _userManager.AddLoginAsync(user,
                 new UserLoginInfo("google", user.UserName, "google"));
 
-            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
+            if (!addLoginResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            return user;
         }
 
         private async Task<IdentityUser> CreateUserbyInstagram(InstagramTokenResponse response)
@@ -175,34 +282,59 @@ namespace BC.API.Services.AuthenticationService
                 UserName = response.UserId.ToString(),
             });
 
-            var user = createUserResult.Succeeded
-                ? await _userManager.FindByNameAsync(response.UserId.ToString())
-                : throw new Exception(createUserResult.Errors.First().Description);
+            if (!createUserResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+
             var addLoginResult = await _userManager.AddLoginAsync(user,
                 new UserLoginInfo("instagram", user.UserName, "instagram"));
 
-            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
+            if (!addLoginResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            return user;
         }
 
         private async Task<IdentityUser> CreateUserbyPhone(string phone)
         {
             var createUserResult = await _userManager.CreateAsync(new IdentityUser { UserName = phone, PhoneNumber = phone, PhoneNumberConfirmed = true });
 
-            var user = createUserResult.Succeeded
-                ? await _userManager.FindByNameAsync(phone)
-                : throw new Exception(createUserResult.Errors.First().Description);
+            if (!createUserResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            var user = await _userManager.FindByNameAsync(phone);
+
             var addLoginResult = await _userManager.AddLoginAsync(user,
                 new UserLoginInfo("phone", user.UserName, "phone"));
 
-            return addLoginResult.Succeeded ? user : throw new Exception(createUserResult.Errors.First().Description);
+            if (!addLoginResult.Succeeded)
+            {
+                throw new CantCreateUserException(createUserResult.Errors.First().Description);
+            }
+
+            return user;
         }
 
         private async Task<string> GenerateJWToken(IdentityUser user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             var claimIdentity = (await _userManager.GetClaimsAsync(user)).Any() ?
                 new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id), new Claim("UserName", user.UserName) } :
                 await _userManager.GetClaimsAsync(user);
+
             var tokenOptions = _configuration.GetSection("JWTokenOptions").Get<TokenOptions>();
+
             var token = new JwtSecurityToken(
                 issuer: tokenOptions.Issuer,
                 audience: tokenOptions.Audience,

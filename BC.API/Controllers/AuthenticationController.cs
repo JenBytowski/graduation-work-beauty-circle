@@ -8,7 +8,7 @@ namespace BC.API.Controllers
     [Route("authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
-    { 
+    {
         readonly AuthenticationService _authenticationService;
 
         public AuthenticationController(AuthenticationService authenticationService)
@@ -45,12 +45,7 @@ namespace BC.API.Controllers
         [Route("get-sms-authentication-code")]
         public async Task GetSMSAuthentificationCode(string phone)
         {
-            var result = await _authenticationService.GetSMSAuthenticationCode(phone);
-
-            if (!result)
-            {
-                BadRequest();
-            }
+            await _authenticationService.SendSMSAuthenticationCode(phone);
         }
 
         [HttpGet]
