@@ -1,0 +1,13 @@
+﻿version: '3'
+services:
+  bc-api:
+    build:
+      context: .
+      dockerfile: "BC.API/Dockerfile"
+    ports:
+    - "5001:80"
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
