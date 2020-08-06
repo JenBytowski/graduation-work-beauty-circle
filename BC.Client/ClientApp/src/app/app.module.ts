@@ -14,8 +14,9 @@ import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 
-// @ts-ignore
 import { BcCommonModule } from '@bc-common/bc-common.module';
+import {MastersListComponent} from "./masters/masters-list/masters-list.component";
+import {MastersModule} from "./masters/masters.module";
 
 @NgModule({
   declarations: [
@@ -30,7 +31,7 @@ import { BcCommonModule } from '@bc-common/bc-common.module';
     HttpClientModule,
     FormsModule,
     MastersModule,
-    //BcCommonModule,
+    BcCommonModule,
     IonicModule.forRoot(),
     RouterModule.forRoot([
       {path: '', component: HomeComponent, pathMatch: 'full'},
@@ -46,5 +47,6 @@ import { BcCommonModule } from '@bc-common/bc-common.module';
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 }

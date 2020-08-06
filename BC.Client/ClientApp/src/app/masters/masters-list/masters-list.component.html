@@ -30,6 +30,11 @@
 
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
     <ion-item #topMenu>
+      <ion-item href="/home/card" class="ion-activated">
+        <ion-icon name="wine" slot="start"></ion-icon>
+        <ion-label>Card Link Item 2</ion-label>
+        <ion-button color="warning">Ass</ion-button>
+      </ion-item>
       <ion-icon name="wine" slot="start"></ion-icon>
       <ion-icon name="warning" slot="start"></ion-icon>
       <ion-icon name="home" slot="start"></ion-icon>
