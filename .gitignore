@@ -1,6 +1,7 @@
 bin/
 obj/
 /packages/
+/.idea/
 riderModule.iml
 /_ReSharper.Caches/
 /.vs/BC/v16/Server/sqlite3

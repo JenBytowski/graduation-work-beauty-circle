@@ -20,6 +20,12 @@
     "paths": {
       "@bc-common/*": [
         "../../BC.Common/workspace/projects/bc-common/src/lib/*"
+      ],
+      "@angular/*": [
+        "./node_modules/@angular/*"
+      ],
+      "bc-common": [
+        "../../BC.Common/workspace/projects/bc-common/src/public-api"
       ]
     }
   }
