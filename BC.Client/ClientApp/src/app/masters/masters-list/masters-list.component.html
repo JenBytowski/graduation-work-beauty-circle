@@ -18,119 +18,60 @@
   <ion-router-outlet id="main"></ion-router-outlet>
 
   <ion-header>
-    <ion-toolbar>
-      <ion-item>
-        <ion-icon class="menu_icon" slot="start" name="home" (click)="openFirst()"></ion-icon>
+    <ion-toolbar color="warning">
+      <ion-item color="primary">
+        <ion-button class="menu_icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>
         <ion-title>
-          Title
+          Masters
         </ion-title>
       </ion-item>
     </ion-toolbar>
   </ion-header>
 
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
-    <ion-item #topMenu>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="wine" slot="start"></ion-icon>
-        <ion-label>Card Link Item 2</ion-label>
-        <ion-button color="warning">Ass</ion-button>
-      </ion-item>
-      <ion-icon name="wine" slot="start"></ion-icon>
-      <ion-icon name="warning" slot="start"></ion-icon>
-      <ion-icon name="home" slot="start"></ion-icon>
-      <ion-icon name="settings" slot="start"></ion-icon>
-      <ion-icon name="alarm" slot="start"></ion-icon>
-      <ion-icon name="alert" slot="start"></ion-icon>
-      <ion-icon name="analytics" slot="start"></ion-icon>
-      <ion-icon name="logo-android" slot="start"></ion-icon>
-      <ion-icon name="Logo-angular" slot="start"></ion-icon>
+
+    <ion-item color="primary" #topMenu>
+      <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
+      <ion-button color="warning" slot="end">Yes!!</ion-button>
     </ion-item>
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        <ion-card-title>Card Title</ion-card-title>
-      </ion-card-header>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="wine" slot="start"></ion-icon>
-        <ion-label>Card Link Item 2</ion-label>
-        <ion-button fill="outline" slot="end">View</ion-button>
-      </ion-item>
-      <ion-card-content>
-        Keep close to Nature's heart... and break clear away, once in awhile,
-        and climb a mountain or spend a week in the woods. Wash your spirit clean.
-      </ion-card-content>
-    </ion-card>
 
     <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        <ion-card-title>Card Title</ion-card-title>
-      </ion-card-header>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="warning" slot="start"></ion-icon>
-        <ion-label>Card Button Item 1 activated</ion-label>
-        <ion-button fill="outline" slot="end">View</ion-button>
+      <ion-item color="primary">
+        <ion-img src="https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg"></ion-img>
+        <ion-content color="warning">
+          <ion-card-subtitle>
+            Sergey Nyashka Zverev
+          </ion-card-subtitle>
+          <ion-card-title>
+            Chisto Krasavchik
+          </ion-card-title>
+        </ion-content>
       </ion-item>
-      <ion-card-content>
-        Keep close to Nature's heart... and break clear away, once in awhile,
-        and climb a mountain or spend a week in the woods. Wash your spirit clean.
-      </ion-card-content>
+<!--      <ion-card-header>-->
+<!--        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>-->
+<!--        <ion-card-title>Card Title</ion-card-title>-->
+<!--      </ion-card-header>-->
+<!--      <ion-item href="/home/card" class="ion-activated">-->
+<!--        <ion-icon name="wine" slot="start"></ion-icon>-->
+<!--        <ion-label>Card Link Item 2</ion-label>-->
+<!--        <ion-button fill="outline" slot="end">View</ion-button>-->
+<!--      </ion-item>-->
+<!--      <ion-card-content>-->
+<!--        Keep close to Nature's heart... and break clear away, once in awhile,-->
+<!--        and climb a mountain or spend a week in the woods. Wash your spirit clean.-->
+<!--      </ion-card-content>-->
     </ion-card>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        <ion-card-title>Card Title</ion-card-title>
-      </ion-card-header>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="walk" slot="start"></ion-icon>
-        <ion-label>Card Button Item 2</ion-label>
-        <ion-button fill="outline" slot="end">View</ion-button>
-      </ion-item>
-      <ion-card-content>
-        Keep close to Nature's heart... and break clear away, once in awhile,
-        and climb a mountain or spend a week in the woods. Wash your spirit clean.
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        <ion-card-title>Card Title</ion-card-title>
-      </ion-card-header>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="wifi" slot="start"></ion-icon>
-        <ion-label>Card Link Item 1 activated</ion-label>
-        <ion-button fill="outline" slot="end">View</ion-button>
-      </ion-item>
-      <ion-card-content>
-        Keep close to Nature's heart... and break clear away, once in awhile,
-        and climb a mountain or spend a week in the woods. Wash your spirit clean.
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card>
-      <ion-card-header>
-        <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-        <ion-card-title>Card Title</ion-card-title>
-      </ion-card-header>
-      <ion-item href="/home/card" class="ion-activated">
-        <ion-icon name="pin" slot="start"></ion-icon>
-        <ion-label>Card Link Item 1 activated</ion-label>
-        <ion-button fill="outline" slot="end">View</ion-button>
-      </ion-item>
-      <ion-card-content>
-        Keep close to Nature's heart... and break clear away, once in awhile,
-        and climb a mountain or spend a week in the woods. Wash your spirit clean.
-      </ion-card-content>
-    </ion-card>
   </ion-content>
 
   <ion-footer>
-    <ion-toolbar>
-      <ion-title>
-        Footer
-      </ion-title>
+    <ion-toolbar color="warning">
+      <ion-item color="primary">
+        <ion-title>
+          Footer
+        </ion-title>
+      </ion-item>
     </ion-toolbar>
   </ion-footer>
+
 </ion-app>
