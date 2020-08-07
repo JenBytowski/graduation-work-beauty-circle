@@ -2,10 +2,10 @@
 
 namespace BC.API.Infrastructure
 {
-    public class RocketSMS : SMS
-    {
-        public int TimeStamp { get; set; }
+  public class RocketSMS : SMS
+  {
+    public int TimeStamp { get; set; }
 
-        public bool Priority { get; set; }
-    }
+    public bool Priority { get; set; }
+  }
 }

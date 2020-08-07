@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace BC.API.Infrastructure
 {
-    public class ConsoleSMSClient : ISMSClient
+  public class ConsoleSMSClient : ISMSClient
+  {
+    public async Task SendSMS(SMS message)
     {
-        public async Task SendSMS(SMS message)
-        {
-            throw new NotImplementedException();
-        }
+      throw new NotImplementedException();
     }
+  }
 }
