@@ -17,6 +17,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import { BcCommonModule } from '@bc-common/bc-common.module';
 import {MastersListComponent} from "./masters/masters-list/masters-list.component";
 import {MastersModule} from "./masters/masters.module";
+import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {MastersModule} from "./masters/masters.module";
       {path: 'counter', component: CounterComponent},
       {path: 'fetch-data', component: FetchDataComponent},
       {path: 'masters', component: MastersListComponent},
+      {path: 'master', component: MasterProfileComponent}
     ]),
   ],
   providers: [

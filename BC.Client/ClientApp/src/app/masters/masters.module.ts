@@ -8,10 +8,11 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {MastersRoutingModule} from './masters-routing.module';
 import {MastersListComponent} from './masters-list/masters-list.component';
 import {RouteReuseStrategy} from "@angular/router";
+import {MasterProfileComponent} from './master-profile/master-profile.component';
 
 
 @NgModule({
-  declarations: [MastersListComponent],
+  declarations: [MastersListComponent, MasterProfileComponent],
   exports: [
     MastersListComponent
   ],
