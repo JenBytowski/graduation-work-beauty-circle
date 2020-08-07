@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace BC.API.Services.AuthenticationService.AuthentificationContext
+namespace BC.API.Services.AuthenticationService.AuthenticationContext
 {
-    public class AuthenticationContext : IdentityDbContext
+  public class AuthenticationContext : IdentityDbContext
+  {
+    public AuthenticationContext(DbContextOptions<AuthenticationContext> options) : base(options)
     {
-        public AuthenticationContext(DbContextOptions options) : base(options)
-        {
-            Database.EnsureCreated();
-        }
+      Database.EnsureCreated();
     }
+  }
 }

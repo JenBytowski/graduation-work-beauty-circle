@@ -1,6 +1,8 @@
 using BC.API.Infrastructure;
 using BC.API.Services.AuthenticationService;
-using BC.API.Services.AuthenticationService.AuthentificationContext;
+using BC.API.Services.AuthenticationService.AuthenticationContext;
+using BC.API.Services.MasterListService;
+using BC.API.Services.MasterListService.MasterContext;
 using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -17,7 +19,7 @@ using JWTokenOptions = BC.API.Services.TokenOptions;
 
 namespace BC.API
 {
-    public class Startup
+  public class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -36,11 +38,16 @@ namespace BC.API
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
             }, ServiceLifetime.Transient);
+            services.AddDbContext<MasterContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
+            }, ServiceLifetime.Transient);
 
             services.AddControllers();
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
                 .AddDefaultTokenProviders();
             services.AddTransient<AuthenticationService>();
+            services.AddTransient<MasterListService>();
             services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
