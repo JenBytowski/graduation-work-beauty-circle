@@ -6,26 +6,22 @@ import {MenuController} from '@ionic/angular';
   templateUrl: './masters-list.component.html',
   styleUrls: ['./masters-list.component.css']
 })
-export class MastersListComponent implements OnInit {
 
+export class MastersListComponent implements OnInit {
   @ViewChild("topMenu", {static: false})
   topMenu: ElementRef;
-
+  public vm: Vm = this.initMasters();
   constructor(private menu: MenuController) { }
-
   ngOnInit(): void {
   }
-
   openFirst() {
     this.menu.enable(true, 'first');
     this.menu.open('first');
   }
-
-  logScrollStart() {
+  public logScrollStart() {
     //console.log('scroll started');
   }
-
-  logScrolling($event: any) {
+  public logScrolling($event: any) {
     //console.log($event.detail);
     if ($event.detail.deltaY > 10) {
       if ((this.topMenu as any).el.classList.contains('test_header_top')) {
@@ -40,4 +36,24 @@ export class MastersListComponent implements OnInit {
       //console.log('bot');
     }
   }
+  initMasters(): Vm{
+    let vm = new Vm();
+    for(let i = 0; i < 20; i++){
+      vm.Masters[i] = new Master();
+      vm.Masters[i].Name = i.toString();
+      vm.Masters[i].Service = i.toString();
+      vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+    }
+    return vm;
+  }
+}
+
+class Vm{
+  public Masters: Master[] = [];
+}
+
+class Master{
+  public Name: string;
+  public Service: string;
+  public Avatar: string;
 }
