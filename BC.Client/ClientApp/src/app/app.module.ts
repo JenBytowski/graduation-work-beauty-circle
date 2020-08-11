@@ -39,7 +39,7 @@ import {MasterProfileComponent} from "./masters/master-profile/master-profile.co
       {path: 'counter', component: CounterComponent},
       {path: 'fetch-data', component: FetchDataComponent},
       {path: 'masters', component: MastersListComponent},
-      {path: 'master', component: MasterProfileComponent}
+      {path: 'master/:id', component: MasterProfileComponent}
     ]),
   ],
   providers: [
