@@ -1,8 +1,0 @@
-{
-  "name": "bc.client",
-  "integrations": {
-    "capacitor": {},
-    "cordova": {}
-  },
-  "type": "angular"
-}

@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">bc.client</string>
-    <string name="title_activity_main">bc.client</string>
-    <string name="package_name">com.bc.client</string>
-    <string name="custom_url_scheme">com.bc.client</string>
-</resources>
