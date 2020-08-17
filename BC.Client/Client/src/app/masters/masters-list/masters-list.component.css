@@ -26,6 +26,12 @@
   text-decoration: none;
 }
 
+ion-app{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .my-custom-menu {
   --width: 80%;
 }
@@ -57,10 +63,56 @@ ion-img{
   animation: down 0.2s;
 }
 
+.filter{
+  width: 90%;
+  height: 80%;
+  position: fixed;
+  z-index: 3;
+  animation: showFilter 0.3s;
+}
+
+.hidden_filter_anim{
+  width: 90%;
+  height: 80%;
+  position: fixed;
+  z-index: 3;
+  animation: hideFilter 0.3s;
+}
+
+.hidden_filter{
+  display: none;
+}
+
 @keyframes down {
   0% {
     transform: translate(0,-200px);
   }
   100% {
+  }
+}
+
+@keyframes showFilter {
+  0% {
+    opacity: 0;
+    width: 10%;
+    height: 10%;
+  }
+  100% {
+    opacity: 1;
+    width: 90%;
+    height: 80%;
+  }
+}
+
+@keyframes hideFilter {
+  0% {
+    opacity: 1;
+    width: 90%;
+    height: 80%;
+  }
+  100% {
+    opacity: 0;
+    width: 10%;
+    height: 10%;
   }
 }

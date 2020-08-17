@@ -10,6 +10,8 @@ import {MenuController} from '@ionic/angular';
 export class MastersListComponent implements OnInit {
   @ViewChild("topMenu", {static: false})
   topMenu: ElementRef;
+  @ViewChild("filter", {static: false})
+  filter: ElementRef;
   public vm: Vm = this.initMasters();
   constructor(private menu: MenuController) { }
   ngOnInit(): void {
@@ -36,7 +38,7 @@ export class MastersListComponent implements OnInit {
       //console.log('bot');
     }
   }
-  initMasters(): Vm{
+  public initMasters(): Vm{
     let vm = new Vm();
     for(let i = 0; i < 20; i++){
       vm.Masters[i] = new Master();
@@ -46,6 +48,21 @@ export class MastersListComponent implements OnInit {
       vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
     }
     return vm;
+  }
+  
+  public showFilter(){
+    if((this.filter as any).el.classList.contains('filter')){
+      (this.filter as any).el.classList.remove('filter');
+      (this.filter as any).el.classList.add('hidden_filter_anim');
+      setTimeout(() => {
+        (this.filter as any).el.classList.add('hidden_filter');
+      },250);
+    }
+    else {
+      (this.filter as any).el.classList.remove('hidden_filter');
+      (this.filter as any).el.classList.remove('hidden_filter_anim');
+      (this.filter as any).el.classList.add('filter');
+    }
   }
 }
 

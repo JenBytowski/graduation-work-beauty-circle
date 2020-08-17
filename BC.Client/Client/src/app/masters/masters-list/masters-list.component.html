@@ -6,17 +6,19 @@
         <ion-button class="menu_icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>
         <ion-title>
           Masters
-          <lib-bc-common></lib-bc-common>
+          <!--<lib-bc-common></lib-bc-common>-->
         </ion-title>
       </ion-item>
     </ion-toolbar>
   </ion-header>
 
+  <ion-content #filter color="secondary" class="hidden_filter"></ion-content>
+  
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
 
     <ion-item color="primary" #topMenu>
       <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
-      <ion-button color="warning" slot="end">Yes!!</ion-button>
+      <ion-button (click)="showFilter()" color="warning" slot="end">Yes!!</ion-button>
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">
