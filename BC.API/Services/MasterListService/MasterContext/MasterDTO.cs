@@ -4,7 +4,7 @@
   {
     public string Name { get; set; }
 
-    public static MasterDTO ParseаfromMastertoMasterDTO(Master master)
+    public static MasterDTO ParseFromMastertoMasterDTO(Master master)
     {
       return new MasterDTO
       {

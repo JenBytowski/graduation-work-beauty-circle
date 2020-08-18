@@ -1,3 +1,4 @@
+﻿using System.Text;
 using BC.API.Infrastructure;
 using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.AuthenticationContext;
@@ -14,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using JWTokenOptions = BC.API.Services.TokenOptions;
 
 namespace BC.API
@@ -40,7 +40,7 @@ namespace BC.API
      }, ServiceLifetime.Transient);
       services.AddDbContext<MasterContext>(opt =>
       {
-        opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
+        opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
       }, ServiceLifetime.Transient);
 
       services.AddControllers();
