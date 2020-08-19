@@ -4,6 +4,6 @@ namespace BC.API.Services.SMSService
 {
   public interface ISMSClient
   {
-    Task SendSMS(SMS message);
+    Task SendSMS(SMS sms);
   }
 }

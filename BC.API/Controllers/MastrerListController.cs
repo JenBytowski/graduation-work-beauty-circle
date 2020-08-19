@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using BC.API.Services.MasterListService;
-using BC.API.Services.MasterListService.MasterContext;
+using BC.API.Services.MasterListService.MastersContext;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BC.API.Controllers
 {
-  [Route("master-list")]
+  [Route("masters-list")]
   [ApiController]
   public class MastrerListController : ControllerBase
   {
@@ -17,7 +17,6 @@ namespace BC.API.Controllers
     }
 
     [HttpGet]
-    [Route("get-masters")]
     public IEnumerable<MasterDTO> GetMasters()
     {
       return _masterListerService.GetMasters();

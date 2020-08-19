@@ -1,7 +1,7 @@
-﻿using BC.API.Services.AuthenticationService;
+﻿using System.Threading.Tasks;
+using BC.API.Services.AuthenticationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BC.API.Controllers
 {
@@ -16,7 +16,7 @@ namespace BC.API.Controllers
       _authenticationService = authenticationService;
     }
 
-    [HttpGet]
+    [HttpPost]
     [AllowAnonymous]
     [Route("authenticate-by-vk")]
     public async Task<AuthenticationResponse> AuthentificatebyVK(string code)
@@ -24,7 +24,7 @@ namespace BC.API.Controllers
       return await _authenticationService.AuthenticatebyVK(code);
     }
 
-    [HttpGet]
+    [HttpPost]
     [AllowAnonymous]
     [Route("authenticate-by-instagram")]
     public async Task<AuthenticationResponse> AuthentificatebyInstagram(string code)
@@ -32,7 +32,7 @@ namespace BC.API.Controllers
       return await _authenticationService.AuthenticatebyInstagram(code);
     }
 
-    [HttpGet]
+    [HttpPost]
     [AllowAnonymous]
     [Route("authenticate-by-google")]
     public async Task<AuthenticationResponse> AuthentificatebyGoogle(string code)
@@ -48,7 +48,7 @@ namespace BC.API.Controllers
       await _authenticationService.SendSMSAuthenticationCode(phone);
     }
 
-    [HttpGet]
+    [HttpPost]
     [AllowAnonymous]
     [Route("authenticate-by-phone")]
     public async Task<AuthenticationResponse> AuthentificatebyPhone(SMSCodeAuthenticationResponse model)

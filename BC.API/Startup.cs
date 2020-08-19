@@ -3,7 +3,7 @@ using BC.API.Infrastructure;
 using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.AuthenticationContext;
 using BC.API.Services.MasterListService;
-using BC.API.Services.MasterListService.MasterContext;
+using BC.API.Services.MasterListService.MastersContext;
 using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using JWTokenOptions = BC.API.Services.TokenOptions;
+using JWTokenOptions = BC.API.TokenOptions;
 
 namespace BC.API
 {
@@ -38,7 +38,7 @@ namespace BC.API
      {
        opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
      }, ServiceLifetime.Transient);
-      services.AddDbContext<MasterContext>(opt =>
+      services.AddDbContext<MastersContext>(opt =>
       {
         opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
       }, ServiceLifetime.Transient);

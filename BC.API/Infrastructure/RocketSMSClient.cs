@@ -1,9 +1,9 @@
-﻿using BC.API.Infrastructure;
-using BC.API.Services.SMSService;
-using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BC.API.Infrastructure;
+using BC.API.Services.SMSService;
+using Microsoft.Extensions.Configuration;
 
 namespace BC.API.Services.Infrastructure
 {
@@ -16,17 +16,16 @@ namespace BC.API.Services.Infrastructure
       _configuration = configuration;
     }
 
-    public async Task SendSMS(SMS message)
+    public async Task SendSMS(SMS sms)
     {
-      if (message == null)
+      if (sms == null)
       {
-        throw new ArgumentNullException(nameof(message));
+        throw new ArgumentNullException(nameof(sms));
       }
 
       var client = new HttpClient();
       var credentials = _configuration.GetSection("RocketSMSCredentials").Get<RocketSMSOptions>();
-      var sms = ParsefromSMS(message);
-      var response = await client.GetAsync($"https://api.rocketsms.by/simple/send?username={credentials.Username}&password={credentials.PasswordHash}&sender={sms.Sender}&phone={sms.Phone}&text={sms.Text}&priority={sms.Priority}");
+      var response = await client.GetAsync($"https://api.rocketsms.by/simple/send?username={credentials.Username}&password={credentials.PasswordHash}&sender={sms.Sender}&phone={sms.Phone}&text={sms.Text}&priority=true");
 
       if (!response.IsSuccessStatusCode)
       {
@@ -38,15 +37,11 @@ namespace BC.API.Services.Infrastructure
       }
     }
 
-    private RocketSMS ParsefromSMS(SMS sms)
+    public class RocketSMSOptions
     {
-      return new RocketSMS
-      {
-        Sender = sms.Sender,
-        Phone = sms.Phone,
-        Text = sms.Text,
-        Priority = true
-      };
+      public string Username { get; set; }
+
+      public string PasswordHash { get; set; }
     }
   }
 }

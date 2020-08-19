@@ -1,14 +1,14 @@
-﻿using BC.API.Services.MasterListService.MasterContext;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using BC.API.Services.MasterListService.MastersContext;
 
 namespace BC.API.Services.MasterListService
 {
   public class MasterListService
   {
-    readonly MasterContext.MasterContext _context;
+    readonly MastersContext.MastersContext _context;
 
-    public MasterListService(MasterContext.MasterContext context)
+    public MasterListService(MastersContext.MastersContext context)
     {
       _context = context;
     }

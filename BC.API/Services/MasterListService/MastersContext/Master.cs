@@ -1,4 +1,4 @@
-﻿namespace BC.API.Services.MasterListService.MasterContext
+﻿namespace BC.API.Services.MasterListService.MastersContext
 {
   public class Master
   {

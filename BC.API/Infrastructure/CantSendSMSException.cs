@@ -2,7 +2,7 @@
 
 namespace BC.API.Infrastructure
 {
-  public class CantSendSMSException : Exception
+  public class CantSendSMSException : ApplicationException
   {
     public CantSendSMSException(string message) : base(message)
     { }
