@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MenuController} from '@ionic/angular';
 
 @Component({
@@ -8,30 +8,32 @@ import {MenuController} from '@ionic/angular';
 })
 
 export class MastersListComponent implements OnInit {
-  
+
   @ViewChild("topMenu", {static: false})
   topMenu: ElementRef;
-  
+
   @ViewChild("filter", {static: false})
   filter: ElementRef;
-  
+
   public filterStatus: boolean = false;
   
   public vm: Vm = this.initMasters();
-  
-  constructor(private menu: MenuController) { }
-  
-  ngOnInit(): void {}
-  
+
+  constructor(private menu: MenuController) {
+  }
+
+  ngOnInit(): void {
+  }
+
   openFirst() {
     this.menu.enable(true, 'first');
     this.menu.open('first');
   }
-  
+
   public logScrollStart() {
     //console.log('scroll started');
   }
-  
+
   public logScrolling($event: any) {
     //console.log($event.detail);
     if ($event.detail.deltaY > 10) {
@@ -47,10 +49,10 @@ export class MastersListComponent implements OnInit {
       //console.log('bot');
     }
   }
-  
-  public initMasters(): Vm{
+
+  public initMasters(): Vm {
     let vm = new Vm();
-    for(let i = 0; i < 20; i++){
+    for (let i = 0; i < 20; i++) {
       vm.Masters[i] = new Master();
       vm.Masters[i].Id = i;
       vm.Masters[i].Name = i.toString();
@@ -61,11 +63,11 @@ export class MastersListComponent implements OnInit {
   }
 }
 
-class Vm{
+class Vm {
   public Masters: Master[] = [];
 }
 
-class Master{
+class Master {
   public Id: number;
   public Name: string;
   public Spec: string;
