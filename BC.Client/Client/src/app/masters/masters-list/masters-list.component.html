@@ -12,13 +12,13 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content #filter color="secondary" class="hidden_filter"></ion-content>
+  <ion-content #filter color="secondary" [ngClass]="filterStatus === false ? 'hidden_filter' : filterStatus === true ? 'visible_filter' : ''" ></ion-content>
   
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
 
     <ion-item color="primary" #topMenu>
       <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
-      <ion-button (click)="showFilter()" color="warning" slot="end">Yes!!</ion-button>
+      <ion-button (click)="filterStatus = !filterStatus" color="warning" slot="end">Yes!!</ion-button>
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">

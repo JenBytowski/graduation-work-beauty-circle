@@ -55,7 +55,7 @@ ion-img{
   margin: 2px;
 }
 
-.test_header_top {
+.header_top {
   position: sticky;
   top: 0;
   z-index: 2;
@@ -63,20 +63,11 @@ ion-img{
   animation: down 0.2s;
 }
 
-.filter{
+.visible_filter{
   width: 90%;
   height: 80%;
   position: fixed;
   z-index: 3;
-  animation: showFilter 0.3s;
-}
-
-.hidden_filter_anim{
-  width: 90%;
-  height: 80%;
-  position: fixed;
-  z-index: 3;
-  animation: hideFilter 0.3s;
 }
 
 .hidden_filter{
@@ -88,31 +79,5 @@ ion-img{
     transform: translate(0,-200px);
   }
   100% {
-  }
-}
-
-@keyframes showFilter {
-  0% {
-    opacity: 0;
-    width: 10%;
-    height: 10%;
-  }
-  100% {
-    opacity: 1;
-    width: 90%;
-    height: 80%;
-  }
-}
-
-@keyframes hideFilter {
-  0% {
-    opacity: 1;
-    width: 90%;
-    height: 80%;
-  }
-  100% {
-    opacity: 0;
-    width: 10%;
-    height: 10%;
   }
 }
