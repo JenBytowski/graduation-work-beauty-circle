@@ -1,9 +1,6 @@
-﻿using System.Text;
-using BC.API.Infrastructure;
+﻿using BC.API.Infrastructure;
 using BC.API.Services.AuthenticationService;
-using BC.API.Services.AuthenticationService.AuthenticationContext;
-using BC.API.Services.MasterListService;
-using BC.API.Services.MasterListService.MastersContext;
+using BC.API.Services.AuthenticationService.AuthentificationContext;
 using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -19,20 +16,25 @@ using JWTokenOptions = BC.API.TokenOptions;
 
 namespace BC.API
 {
-  public class Startup
-  {
-    public Startup(IConfiguration configuration)
+    public class Startup
     {
-      Configuration = configuration;
-    }
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
-    public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-      //Swagger
-      services.AddSwaggerGen(opt => opt.SwaggerDoc("v1", new OpenApiInfo { Title = "BC-API", Version = "v1" }));
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            //Swagger
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("weather-forecast", new OpenApiInfo { Title = "Weather Forecast" });
+                opt.SwaggerDoc("authentication", new OpenApiInfo { Title = "Authentication" });
+                opt.EnableAnnotations();
+            });
 
       services.AddDbContext<AuthenticationContext>(opt =>
      {
@@ -50,44 +52,47 @@ namespace BC.API
       services.AddTransient<MasterListService>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
-      {
-        var jwtOptions = Configuration.GetSection("JWTokenOptions").Get<JWTokenOptions>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+            {
+                var jwtOptions = Configuration.GetSection("JWTokenOptions").Get<JWTokenOptions>();
 
-        opt.RequireHttpsMetadata = false;
-        opt.TokenValidationParameters = new TokenValidationParameters
+                opt.RequireHttpsMetadata = false;
+                opt.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecurityKey)),
+                    ValidateIssuerSigningKey = true
+                };
+            });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-          ValidateIssuer = true,
-          ValidateAudience = true,
-          ValidateLifetime = true,
-          ValidIssuer = jwtOptions.Issuer,
-          ValidAudience = jwtOptions.Audience,
-          IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecurityKey)),
-          ValidateIssuerSigningKey = true
-        };
-      });
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            //Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(opt =>
+            {
+                opt.SwaggerEndpoint("/swagger/weather-forecast/swagger.json", "Weather Forecast");
+                opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
+            });
+
+            app.UseHttpsRedirection();
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
     }
-
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
-
-      //Swagger
-      app.UseSwagger();
-      app.UseSwaggerUI(opt => opt.SwaggerEndpoint("/swagger/v1/swagger.json", "BC-API"));
-
-      app.UseHttpsRedirection();
-
-      app.UseRouting();
-
-      app.UseAuthentication();
-      app.UseAuthorization();
-
-      app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-    }
-  }
 }
