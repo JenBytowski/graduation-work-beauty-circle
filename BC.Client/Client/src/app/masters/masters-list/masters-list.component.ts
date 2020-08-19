@@ -37,14 +37,14 @@ export class MastersListComponent implements OnInit {
   public logScrolling($event: any) {
     //console.log($event.detail);
     if ($event.detail.deltaY > 10) {
-      if ((this.topMenu as any).el.classList.contains('header_top')) {
-        (this.topMenu as any).el.classList.remove('header_top');
+      if ((this.topMenu as any).el.classList.contains('header-top')) {
+        (this.topMenu as any).el.classList.remove('header-top');
       }
       //console.log('top');
     } else if ($event.detail.deltaY < -10) {
-      (this.topMenu as any).el.classList.add('header_top');
+      (this.topMenu as any).el.classList.add('header-top');
       if ($event.detail.currentY === 0) {
-        (this.topMenu as any).el.classList.remove('header_top');
+        (this.topMenu as any).el.classList.remove('header-top');
       }
       //console.log('bot');
     }

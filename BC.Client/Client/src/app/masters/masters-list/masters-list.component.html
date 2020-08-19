@@ -3,7 +3,7 @@
   <ion-header>
     <ion-toolbar color="warning">
       <ion-item color="primary">
-        <ion-button class="menu_icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>
+        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>
         <ion-title>
           Masters
           <lib-bc-common></lib-bc-common>
@@ -13,8 +13,8 @@
   </ion-header>
 
   <ion-content #filter color="secondary" [ngClass]="{
-    'hidden_filter': filterStatus === false, 
-    'visible_filter': filterStatus === true
+    'hidden-filter': filterStatus === false, 
+    'visible-filter': filterStatus === true
   }"></ion-content>
 
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
