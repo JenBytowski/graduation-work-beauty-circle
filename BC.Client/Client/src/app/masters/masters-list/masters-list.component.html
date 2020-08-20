@@ -3,10 +3,10 @@
   <ion-header>
     <ion-toolbar color="warning">
       <ion-item color="primary">
-        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>
+        <!--        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>-->
         <ion-title>
           Masters
-          <lib-bc-common></lib-bc-common>
+          <!--          <lib-bc-common></lib-bc-common>-->
         </ion-title>
       </ion-item>
     </ion-toolbar>
@@ -15,13 +15,23 @@
   <ion-content #filter color="secondary" [ngClass]="{
     'hidden-filter': filterStatus === false, 
     'visible-filter': filterStatus === true
-  }"></ion-content>
+  }">
+    <ion-button color="warning" (click)="filterStatus = false">Exit</ion-button>
+    <ion-button color="warning">Exit2</ion-button>
+    <ion-button color="warning">Exit3</ion-button>
+  </ion-content>
+
+  <ion-content (click)="filterStatus = false" class="filter-background" [ngClass]="{
+    'hidden-filter': filterStatus === false, 
+    'visible-filter': filterStatus === true
+  }">
+  </ion-content>
 
   <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
 
     <ion-item color="primary" #topMenu>
       <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
-      <ion-button (click)="filterStatus = !filterStatus" color="warning" slot="end">Yes!!</ion-button>
+      <ion-button (click)="filterStatus = true" color="warning" slot="end">Yes!!</ion-button>
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">

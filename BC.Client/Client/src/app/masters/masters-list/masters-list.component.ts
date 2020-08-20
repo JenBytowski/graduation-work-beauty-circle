@@ -16,7 +16,7 @@ export class MastersListComponent implements OnInit {
   filter: ElementRef;
 
   public filterStatus: boolean = false;
-  
+
   public vm: Vm = this.initMasters();
 
   constructor(private menu: MenuController) {

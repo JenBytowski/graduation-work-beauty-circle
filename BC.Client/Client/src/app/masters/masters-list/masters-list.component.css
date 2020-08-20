@@ -64,14 +64,22 @@ ion-img{
 }
 
 .visible-filter{
-  width: 90%;
-  height: 80%;
+  width: 50%;
+  height: 50%;
   position: fixed;
-  z-index: 3;
+  z-index: 12;
 }
 
 .hidden-filter{
   display: none;
+}
+
+.filter-background{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  opacity: 30%;
+  z-index: 11;
 }
 
 @keyframes down {
