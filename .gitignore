@@ -4,6 +4,5 @@ obj/
 /.idea/
 riderModule.iml
 /_ReSharper.Caches/
-/.vs/BC/v16/Server/sqlite3
-/.vs/BC
+/.vs/
 /BC.API/BC.API.csproj.user
