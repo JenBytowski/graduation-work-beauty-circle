@@ -9,6 +9,7 @@ import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {MastersModule} from "./masters/masters.module";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
     declarations: [AppComponent],
@@ -17,7 +18,8 @@ import {MastersModule} from "./masters/masters.module";
         BrowserModule,
         IonicModule.forRoot(),
         AppRoutingModule,
-        MastersModule
+        MastersModule,
+        HttpClientModule,
     ],
     providers: [
         StatusBar,

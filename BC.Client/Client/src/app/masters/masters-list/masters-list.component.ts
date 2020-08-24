@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MenuController} from '@ionic/angular';
+import { MastrerListService} from "../../../../backend/services";
 
 @Component({
   selector: 'app-masters-list',
@@ -17,12 +18,13 @@ export class MastersListComponent implements OnInit {
 
   public filterStatus: boolean = false;
 
-  public vm: Vm = this.initMasters();
+  public vm: Vm = new Vm();
 
-  constructor(private menu: MenuController) {
+  constructor(private menu: MenuController, private service: MastrerListService) {
   }
 
   ngOnInit(): void {
+      this.service.getMastersList().subscribe(data => this.vm = this.initMasters(data));
   }
 
   openFirst() {
@@ -50,12 +52,12 @@ export class MastersListComponent implements OnInit {
     }
   }
 
-  public initMasters(): Vm {
+  public initMasters(masters: any): Vm {
     let vm = new Vm();
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < masters.length; i++) {
       vm.Masters[i] = new Master();
       vm.Masters[i].Id = i;
-      vm.Masters[i].Name = i.toString();
+      vm.Masters[i].Name = masters[i].name;
       vm.Masters[i].Spec = i.toString();
       vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
     }

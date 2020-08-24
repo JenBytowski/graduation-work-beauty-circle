@@ -50,6 +50,7 @@ namespace BC.API
       }, ServiceLifetime.Transient);
 
       services.AddControllers();
+      services.AddCors();
       services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
           .AddDefaultTokenProviders();
       services.AddTransient<AuthenticationService>();
@@ -81,6 +82,12 @@ namespace BC.API
       {
         app.UseDeveloperExceptionPage();
       }
+      
+      app.UseCors(builder =>
+        builder.AllowAnyOrigin()
+          .AllowAnyHeader()
+          .AllowAnyMethod()
+      );
 
       //Swagger
       app.UseSwagger();

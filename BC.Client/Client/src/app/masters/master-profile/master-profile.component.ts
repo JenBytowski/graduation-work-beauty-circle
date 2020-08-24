@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {MastrerListService} from "../../../../backend/services";
 
 @Component({
   selector: 'app-master-profile',
@@ -10,19 +11,20 @@ export class MasterProfileComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private route: ActivatedRoute,) { }
+  constructor(private route: ActivatedRoute, private service: MastrerListService) { }
 
   ngOnInit(): void {
+    this.vm.Master = new Master();
     const id = +this.route.snapshot.paramMap.get('id');
-    this.vm.Master = this.initMasters().Masters.find(item => item.Id == id);
+    this.service.getMastersList().subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.Id == id));
   }
 
-  initMasters(): Vm{
+  initMasters(masters: any): Vm{
     let vm = new Vm();
-    for(let i = 0; i < 20; i++){
+    for(let i = 0; i < masters.length; i++){
       vm.Masters[i] = new Master();
       vm.Masters[i].Id = i;
-      vm.Masters[i].Name = i.toString();
+      vm.Masters[i].Name = masters[i].name;
       vm.Masters[i].Spec = i.toString();
       vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
     }
