@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {MasterListClient} from "../../api-client/nswag/clients";
 
 @Component({
@@ -11,7 +11,8 @@ export class MasterProfileComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private route: ActivatedRoute, private masterList: MasterListClient) { }
+  constructor(private route: ActivatedRoute, private masterList: MasterListClient) {
+  }
 
   ngOnInit(): void {
     this.vm.Master = new Master();
@@ -19,25 +20,26 @@ export class MasterProfileComponent implements OnInit {
     this.masterList.mastersList().subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.Id == id));
   }
 
-  initMasters(masters: any): Vm{
+  initMasters(masters: any): Vm {
     let vm = new Vm();
-    for(let i = 0; i < masters.length; i++){
-      vm.Masters[i] = new Master();
-      vm.Masters[i].Id = i;
-      vm.Masters[i].Name = masters[i].name;
-      vm.Masters[i].Spec = i.toString();
-      vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
-    }
+    vm.Masters = masters.map(item => {
+      let master = new Master();
+      master.Id = item.index;
+      master.Name = item.name;
+      master.Spec = item.index;
+      master.Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      return master;
+    });
     return vm;
   }
 }
 
-class Vm{
+class Vm {
   public Masters: Master[] = [];
   public Master: Master;
 }
 
-class Master{
+class Master {
   public Id: number;
   public Name: string;
   public Spec: string;
