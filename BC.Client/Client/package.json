@@ -1,16 +1,20 @@
 {
-  "name": "Client",
+  "name": "client",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
+    "start-staging": "ng run app:serve:staging",
+    "start-prod": "ng run app:serve:production",
     "start": "ng serve",
+    "build-staging": "ng run app:build:staging",
+    "build-prod": "ng run app:build:production",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "nswag": "nswag run ./src/app/api-clients/nswag/nswag.json"
+    "nswag": "nswag run src/app/api-clients/nswag/nswag.json"
   },
   "private": true,
   "dependencies": {
