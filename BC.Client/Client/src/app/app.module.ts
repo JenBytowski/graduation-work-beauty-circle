@@ -10,6 +10,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
 import {MastersModule} from "./masters/masters.module";
 import {HttpClientModule} from "@angular/common/http";
+import {ApiClientModule} from "./api-client/api-client.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -20,6 +21,7 @@ import {HttpClientModule} from "@angular/common/http";
         AppRoutingModule,
         MastersModule,
         HttpClientModule,
+        ApiClientModule,
     ],
     providers: [
         StatusBar,

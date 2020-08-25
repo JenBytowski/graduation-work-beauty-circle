@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {MastrerListService} from "../../../../backend/services";
+import {MasterListClient} from "../../api-client/nswag/clients";
 
 @Component({
   selector: 'app-master-profile',
@@ -11,12 +11,12 @@ export class MasterProfileComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private route: ActivatedRoute, private service: MastrerListService) { }
+  constructor(private route: ActivatedRoute, private masterList: MasterListClient) { }
 
   ngOnInit(): void {
     this.vm.Master = new Master();
     const id = +this.route.snapshot.paramMap.get('id');
-    this.service.getMastersList().subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.Id == id));
+    this.masterList.mastersList().subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.Id == id));
   }
 
   initMasters(masters: any): Vm{

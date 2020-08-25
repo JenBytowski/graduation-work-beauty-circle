@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MenuController} from '@ionic/angular';
-import { MastrerListService} from "../../../../backend/services";
+import {MasterListClient} from "../../api-client/nswag/clients";
 
 @Component({
   selector: 'app-masters-list',
@@ -20,11 +20,11 @@ export class MastersListComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private menu: MenuController, private service: MastrerListService) {
+  constructor(private menu: MenuController, private masterList: MasterListClient) {
   }
 
   ngOnInit(): void {
-      this.service.getMastersList().subscribe(data => this.vm = this.initMasters(data));
+      this.masterList.mastersList().subscribe(data => this.vm = this.initMasters(data));
   }
 
   openFirst() {
