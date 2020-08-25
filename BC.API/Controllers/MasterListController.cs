@@ -7,16 +7,17 @@ namespace BC.API.Controllers
 {
   [Route("masters-list")]
   [ApiController]
-  public class MastrerListController : ControllerBase
+  public class MasterListController : ControllerBase
   {
     private readonly MasterListService _masterListerService;
 
-    public MastrerListController(MasterListService masterListerService)
+    public MasterListController(MasterListService masterListerService)
     {
       _masterListerService = masterListerService;
     }
 
     [HttpGet]
+    [ApiExplorerSettings(GroupName = "master-list")]
     public IEnumerable<MasterDTO> GetMasters()
     {
       return _masterListerService.GetMasters();
