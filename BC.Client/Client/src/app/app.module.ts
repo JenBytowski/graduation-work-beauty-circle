@@ -11,6 +11,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {MastersModule} from "./masters/masters.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ApiClientModule} from "./api-client/api-client.module";
+import {AuthenticationModule} from "./authentication/authentication.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -22,6 +23,7 @@ import {ApiClientModule} from "./api-client/api-client.module";
         MastersModule,
         HttpClientModule,
         ApiClientModule,
+        AuthenticationModule,
     ],
     providers: [
         StatusBar,

@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MenuController} from '@ionic/angular';
-import {MasterListClient} from "../../api-client/nswag/clients";
+import {MasterListClient} from "../../api-client/master-list/clients";
 
 @Component({
   selector: 'app-masters-list',
