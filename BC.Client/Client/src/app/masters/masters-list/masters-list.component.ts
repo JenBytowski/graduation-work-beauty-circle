@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {MenuController} from '@ionic/angular';
+import {MasterListClient} from "../../api-client/nswag/clients";
 
 @Component({
   selector: 'app-masters-list',
@@ -17,12 +18,13 @@ export class MastersListComponent implements OnInit {
 
   public filterStatus: boolean = false;
 
-  public vm: Vm = this.initMasters();
+  public vm: Vm = new Vm();
 
-  constructor(private menu: MenuController) {
+  constructor(private menu: MenuController, private masterList: MasterListClient) {
   }
 
   ngOnInit(): void {
+    this.masterList.mastersList().subscribe(data => this.vm = this.initMasters(data));
   }
 
   openFirst() {
@@ -50,15 +52,16 @@ export class MastersListComponent implements OnInit {
     }
   }
 
-  public initMasters(): Vm {
+  public initMasters(masters: any): Vm {
     let vm = new Vm();
-    for (let i = 0; i < 20; i++) {
-      vm.Masters[i] = new Master();
-      vm.Masters[i].Id = i;
-      vm.Masters[i].Name = i.toString();
-      vm.Masters[i].Spec = i.toString();
-      vm.Masters[i].Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
-    }
+    vm.Masters = masters.map(item => {
+      let master = new Master();
+      master.Id = item.index;
+      master.Name = item.name;
+      master.Spec = item.index;
+      master.Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      return master;
+    });
     return vm;
   }
 }

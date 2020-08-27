@@ -34,8 +34,9 @@ namespace BC.API
       //Swagger
       services.AddSwaggerGen(opt =>
       {
-        opt.SwaggerDoc("weather-forecast", new OpenApiInfo { Title = "Weather Forecast" });
-        opt.SwaggerDoc("authentication", new OpenApiInfo { Title = "Authentication" });
+        opt.SwaggerDoc("weather-forecast", new OpenApiInfo { Title = "Weather Forecast", Version = "1.0"});
+        opt.SwaggerDoc("authentication", new OpenApiInfo { Title = "Authentication", Version = "1.0" });
+        opt.SwaggerDoc("master-list", new OpenApiInfo { Title = "Master List", Version = "1.0" });
         opt.EnableAnnotations();
       });
 
@@ -49,6 +50,7 @@ namespace BC.API
       }, ServiceLifetime.Transient);
 
       services.AddControllers();
+      services.AddCors();
       services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
           .AddDefaultTokenProviders();
       services.AddTransient<AuthenticationService>();
@@ -80,6 +82,12 @@ namespace BC.API
       {
         app.UseDeveloperExceptionPage();
       }
+      
+      app.UseCors(builder =>
+        builder.AllowAnyOrigin()
+          .AllowAnyHeader()
+          .AllowAnyMethod()
+      );
 
       //Swagger
       app.UseSwagger();
@@ -87,6 +95,7 @@ namespace BC.API
       {
         opt.SwaggerEndpoint("/swagger/weather-forecast/swagger.json", "Weather Forecast");
         opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
+        opt.SwaggerEndpoint("/swagger/master-list/swagger.json", "Master List");
       });
 
       app.UseHttpsRedirection();

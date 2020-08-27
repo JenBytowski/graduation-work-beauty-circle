@@ -1,15 +1,20 @@
 {
-  "name": "Client",
+  "name": "client",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
+    "start-staging": "ng run app:serve:staging",
+    "start-prod": "ng run app:serve:production",
     "start": "ng serve",
+    "build-staging": "ng run app:build:staging",
+    "build-prod": "ng run app:build:production",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "nswag": "nswag run src/app/api-clients/nswag/nswag.json"
   },
   "private": true,
   "dependencies": {
@@ -48,6 +53,7 @@
     "karma-jasmine": "~3.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
     "protractor": "~5.4.3",
+    "nswag": "^13.7.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "~3.8.3"
