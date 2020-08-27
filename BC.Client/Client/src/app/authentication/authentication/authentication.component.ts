@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthenticationClient} from "../../api-client/authentication/clients";
+import {Subscription} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-authentication',
@@ -8,8 +10,23 @@ import {AuthenticationClient} from "../../api-client/authentication/clients";
 })
 export class AuthenticationComponent implements OnInit {
 
-  constructor(private authClient: AuthenticationClient) { }
+  private code: string;
 
-  ngOnInit() {}
+  private routeSubscription: Subscription;
+  private querySubscription: Subscription;
+  
+  constructor(private route: ActivatedRoute ,private authClient: AuthenticationClient) {
+  }
 
+  ngOnInit() {
+    try{
+      this.querySubscription = this.route.queryParams.subscribe(
+          (queryParam: any) => {this.code = queryParam['code'];});
+      console.log(this.code);
+    }
+    catch (ex)
+    {
+      throw ex;
+    }
+  }
 }
