@@ -10,23 +10,22 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class AuthenticationComponent implements OnInit {
 
-  private code: string;
-
-  private routeSubscription: Subscription;
   private querySubscription: Subscription;
-  
-  constructor(private route: ActivatedRoute ,private authClient: AuthenticationClient) {
+
+  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient) {
   }
 
   ngOnInit() {
-    try{
-      this.querySubscription = this.route.queryParams.subscribe(
-          (queryParam: any) => {this.code = queryParam['code'];});
-      console.log(this.code);
-    }
-    catch (ex)
-    {
-      throw ex;
-    }
+    this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
+      const code = queryParam['code'];
+      console.log(code);
+      if (code) {
+        this.authClient.authenticateByVk(code).subscribe(data => console.log(data));
+      }
+    });
+  }
+
+  public async authByPhone() {
+    await this.authClient.getSmsAuthenticationCode('375299854478').toPromise();
   }
 }

@@ -8,7 +8,7 @@ namespace BC.API.Infrastructure
   {
     public async Task SendSMS(SMS sms)
     {
-      throw new NotImplementedException();
+      Console.WriteLine(sms.Text);
     }
   }
 }
