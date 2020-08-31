@@ -17,7 +17,7 @@ namespace BC.API.Controllers
             _authenticationService = authenticationService;
         }
 
-    [HttpPost]
+    [HttpGet]
     [AllowAnonymous]
     [ApiExplorerSettings(GroupName = "authentication")]
     [Route("authenticate-by-vk")]
