@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using BC.API.Infrastructure;
 
 namespace BC.API.Controllers
 {
@@ -20,36 +21,36 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [ApiExplorerSettings(GroupName = "authentication")]
     [Route("authenticate-by-vk")]
-    public async Task<AuthenticationResponse> AuthentificatebyVK(string code)
+    public async Task<AuthenticationResponse> AuthentificatebyVK(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticatebyVK(code);
+      return await _authenticationService.AuthenticatebyVK(request.Code);
     }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("authenticate-by-instagram")]
         [ApiExplorerSettings(GroupName = "authentication")]
-        public async Task<AuthenticationResponse> AuthentificatebyInstagram(string code)
+        public async Task<AuthenticationResponse> AuthentificatebyInstagram(AuthenticationCodeRequest request)
         {
-            return await _authenticationService.AuthenticatebyInstagram(code);
+            return await _authenticationService.AuthenticatebyInstagram(request.Code);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("authenticate-by-google")]
         [ApiExplorerSettings(GroupName = "authentication")]
-        public async Task<AuthenticationResponse> AuthentificatebyGoogle(string code)
+        public async Task<AuthenticationResponse> AuthentificatebyGoogle(AuthenticationCodeRequest request)
         {
-            return await _authenticationService.AuthenticatebyGoogle(code);
+            return await _authenticationService.AuthenticatebyGoogle(request.Code);
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("get-sms-authentication-code")]
         [ApiExplorerSettings(GroupName = "authentication")]
-        public async Task GetSMSAuthentificationCode(string phone)
+        public async Task GetSMSAuthentificationCode(AuthenticationPhoneRequest request)
         {
-            await _authenticationService.SendSMSAuthenticationCode(phone);
+            await _authenticationService.SendSMSAuthenticationCode(request.Phone);
         }
 
         [HttpPost]
