@@ -26,24 +26,26 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param code (optional) 
+     * @param body (optional) 
      * @return Success
      */
-    authenticateByVk(code: string | null | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-vk?";
-        if (code !== undefined && code !== null)
-            url_ += "code=" + encodeURIComponent("" + code) + "&";
+    authenticateByVk(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
+        let url_ = this.baseUrl + "/authentication/authenticate-by-vk";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processAuthenticateByVk(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -80,24 +82,26 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param code (optional) 
+     * @param body (optional) 
      * @return Success
      */
-    authenticateByInstagram(code: string | null | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-instagram?";
-        if (code !== undefined && code !== null)
-            url_ += "code=" + encodeURIComponent("" + code) + "&";
+    authenticateByInstagram(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
+        let url_ = this.baseUrl + "/authentication/authenticate-by-instagram";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processAuthenticateByInstagram(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -134,24 +138,26 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param code (optional) 
+     * @param body (optional) 
      * @return Success
      */
-    authenticateByGoogle(code: string | null | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-google?";
-        if (code !== undefined && code !== null)
-            url_ += "code=" + encodeURIComponent("" + code) + "&";
+    authenticateByGoogle(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
+        let url_ = this.baseUrl + "/authentication/authenticate-by-google";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
             return this.processAuthenticateByGoogle(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
@@ -188,19 +194,21 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param phone (optional) 
+     * @param body (optional) 
      * @return Success
      */
-    getSmsAuthenticationCode(phone: string | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/authentication/get-sms-authentication-code?";
-        if (phone !== undefined && phone !== null)
-            url_ += "phone=" + encodeURIComponent("" + phone) + "&";
+    getSmsAuthenticationCode(body: AuthenticationPhoneRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/authentication/get-sms-authentication-code";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json",
             })
         };
 
@@ -294,6 +302,42 @@ export class AuthenticationClient {
     }
 }
 
+export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
+    code?: string | undefined;
+
+    constructor(data?: IAuthenticationCodeRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.code = _data["code"];
+        }
+    }
+
+    static fromJS(data: any): AuthenticationCodeRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthenticationCodeRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IAuthenticationCodeRequest {
+    code?: string | undefined;
+}
+
 export class AuthenticationResponse implements IAuthenticationResponse {
     /** Access API token */
     token?: string | undefined;
@@ -336,6 +380,42 @@ export interface IAuthenticationResponse {
     token?: string | undefined;
     /** Unique username */
     username?: string | undefined;
+}
+
+export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
+    phone?: string | undefined;
+
+    constructor(data?: IAuthenticationPhoneRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.phone = _data["phone"];
+        }
+    }
+
+    static fromJS(data: any): AuthenticationPhoneRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthenticationPhoneRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phone"] = this.phone;
+        return data; 
+    }
+}
+
+export interface IAuthenticationPhoneRequest {
+    phone?: string | undefined;
 }
 
 export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResponse {

@@ -1,5 +1,9 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {AuthenticationClient, SMSCodeAuthenticationResponse} from "../../api-client/authentication/clients";
+import {
+  AuthenticationClient, AuthenticationCodeRequest,
+  AuthenticationPhoneRequest,
+  SMSCodeAuthenticationResponse
+} from "../../api-client/authentication/clients";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 
@@ -24,17 +28,17 @@ export class AuthenticationComponent implements OnInit {
       const state = queryParam['state'];
       console.log(code);
       if (code && state == 'vk') {
-        this.authClient.authenticateByVk(code).subscribe(data => console.log(data));
+        this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => console.log(data));
       } else if(code && state == 'instagram'){
-        this.authClient.authenticateByInstagram(code).subscribe(data => console.log(data));
+        this.authClient.authenticateByInstagram(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => console.log(data));
       } else if(code && state == 'google'){
-        this.authClient.authenticateByGoogle(code).subscribe(data => console.log(data));
+        this.authClient.authenticateByGoogle(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => console.log(data));
       }
     });
   }
 
   public async authByPhone() {
-    await this.authClient.getSmsAuthenticationCode('375299854478').toPromise();
+    await this.authClient.getSmsAuthenticationCode(AuthenticationPhoneRequest.fromJS({phone: '375299854478'})).toPromise();
   }
   public async sendCode() {
     if((this.code as any).el.value){
