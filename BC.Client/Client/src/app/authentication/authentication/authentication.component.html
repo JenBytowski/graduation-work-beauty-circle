@@ -1,8 +1,21 @@
 <ion-app>
-  <ion-content>
-    <ion-item href="https://oauth.vk.com/authorize?client_id=7525094&redirect_uri=https://localhost:5011/authentication&display=page&response_type=code&scope=email">VKontacte</ion-item>
-    <ion-item href="https://api.instagram.com/oauth/authorize?client_id=1563532247147538&redirect_uri=https://localhost:5011/authentication&response_type=code&scope=user_profile,user_media">Instagram</ion-item>
-    <ion-item href="https://accounts.google.com/o/oauth2/v2/auth?client_id=4306410829-7gnaa751oumkn67o1jfbep4lpqlabnbe.apps.googleusercontent.com&response_type=code&redirect_uri=https://localhost:5011/authentication&scope=openid email ">Goolag</ion-item>
-    <ion-button (click)="authByPhone()">Phone</ion-button>
-  </ion-content>
+    <ion-content>
+        <ion-item
+                href="https://oauth.vk.com/authorize?client_id=7525094&redirect_uri=https://localhost:5011/authentication&display=page&response_type=code&scope=email&state=vk">
+            VKontacte
+        </ion-item>
+        <ion-item
+                href="https://api.instagram.com/oauth/authorize?client_id=1563532247147538&redirect_uri=https://localhost:5011/authentication&response_type=code&scope=user_profile,user_media&state=instagram">
+            Instagram
+        </ion-item>
+        <ion-item
+                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=4306410829-7gnaa751oumkn67o1jfbep4lpqlabnbe.apps.googleusercontent.com&response_type=code&redirect_uri=https://localhost:5011/authentication&state=google&scope=openid email ">
+            Goolag
+        </ion-item>
+        <ion-button (click)="authByPhone()">Phone</ion-button>
+        <ion-item>
+            <ion-input type="number" #code></ion-input>
+            <ion-button (click)="sendCode()">Phone</ion-button>
+        </ion-item>
+    </ion-content>
 </ion-app>

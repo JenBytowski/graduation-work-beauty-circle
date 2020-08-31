@@ -26,7 +26,7 @@ namespace BC.API.Controllers
       return await _authenticationService.AuthenticatebyVK(request.Code);
     }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-instagram")]
         [ApiExplorerSettings(GroupName = "authentication")]
@@ -35,7 +35,7 @@ namespace BC.API.Controllers
             return await _authenticationService.AuthenticatebyInstagram(request.Code);
         }
 
-        [HttpPost]
+        [HttpGet]
         [AllowAnonymous]
         [Route("authenticate-by-google")]
         [ApiExplorerSettings(GroupName = "authentication")]
