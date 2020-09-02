@@ -14,7 +14,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "nswag": "nswag run src/app/api-clients/nswag/nswag.json"
+    "nswag-master-list": "nswag run ./src/app/api-client/master-list/nswag.json",
+    "nswag-authentication": "nswag run ./src/app/api-client/authentication/nswag.json"
   },
   "private": true,
   "dependencies": {

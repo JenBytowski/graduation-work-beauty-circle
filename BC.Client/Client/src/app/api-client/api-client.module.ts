@@ -1,8 +1,9 @@
 ﻿import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {HttpClientModule} from "@angular/common/http";
-import {API_BASE_URL, MasterListClient} from "./nswag/clients";
+import {API_BASE_URL as API_BASE_URL_MASTER_LIST, MasterListClient} from "./master-list/clients";
 import {environment} from "../../environments/environment";
+import {API_BASE_URL as API_BASE_URL_AUTHENTICATION, AuthenticationClient} from "./authentication/clients";
 
 
 @NgModule({
@@ -13,7 +14,9 @@ import {environment} from "../../environments/environment";
   ],
   providers: [
     MasterListClient,
-    {provide: API_BASE_URL, useValue: environment.apiUrl}
+    AuthenticationClient,
+    {provide: API_BASE_URL_MASTER_LIST, useValue: environment.apiUrl},
+    {provide: API_BASE_URL_AUTHENTICATION, useValue: environment.apiUrl}
   ],
 })
 export class ApiClientModule {

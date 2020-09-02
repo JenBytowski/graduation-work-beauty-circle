@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {MasterListClient} from "../../api-client/nswag/clients";
+import {MasterListClient} from "../../api-client/master-list/clients";
 
 @Component({
   selector: 'app-master-profile',

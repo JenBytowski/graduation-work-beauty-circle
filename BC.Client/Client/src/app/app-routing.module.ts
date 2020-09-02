@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import { MastersListComponent } from './masters/masters-list/masters-list.component';
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
+import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
 
 const routes: Routes = [
     {
@@ -9,8 +10,13 @@ const routes: Routes = [
         loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
     },
     {
-        path: '',
-        redirectTo: 'home',
+      path: '',
+      redirectTo: 'authentication',
+      pathMatch: 'full'
+    },
+    {
+        path: 'authentication',
+        component: AuthenticationComponent,
         pathMatch: 'full'
     },
     {
