@@ -36,7 +36,7 @@ namespace BC.API.Services.AuthenticationService
       var requestURI = "https://oauth.vk.com/access_token" +
                        $"?client_id={authCredentials.ClientId}" +
                        $"&client_secret={authCredentials.ClientSecret}" +
-                       $"&redirect_uri={authCredentials.RedirectUrl}" +
+                       $"&redirect_uri={Environment.GetEnvironmentVariable("REDIRECT_URL")}" +
                        $"&code={authCode}";
 
       var response = await client.PostAsync(requestURI, null);
@@ -80,7 +80,7 @@ namespace BC.API.Services.AuthenticationService
         client_id = googleCredentials.ClientId,
         client_secret = googleCredentials.ClientSecret,
         code = authCode,
-        redirect_uri = "https://localhost:5201/authentication",
+        redirect_uri = Environment.GetEnvironmentVariable("REDIRECT_URL"),
         grant_type = "authorization_code"
       });
       var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
@@ -127,7 +127,7 @@ namespace BC.API.Services.AuthenticationService
                 new KeyValuePair<string, string>("client_id", credentials.ClientId),
                 new KeyValuePair<string, string>("client_secret", credentials.ClientSecret),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("redirect_uri", credentials.RedirectUrl),
+                new KeyValuePair<string, string>("redirect_uri", Environment.GetEnvironmentVariable("REDIRECT_URL")),
                 new KeyValuePair<string, string>("code", authCode)
             };
 
