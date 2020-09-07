@@ -20,7 +20,7 @@ export class AuthenticationComponent implements OnInit {
   @ViewChild("code", {static: false})
   code: ElementRef;
   private querySubscription: Subscription;
-  private redirectUrl: string = this.baseUrl + 'authentication';
+  public redirectUrl: string = this.baseUrl + 'authentication';
 
   constructor(private route: ActivatedRoute, private authClient: AuthenticationClient, private cookieService: CookieService, @Inject('BASE_URL') private baseUrl: string) {
   }

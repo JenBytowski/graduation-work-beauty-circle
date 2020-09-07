@@ -80,7 +80,7 @@ namespace BC.API.Services.AuthenticationService
         client_id = googleCredentials.ClientId,
         client_secret = googleCredentials.ClientSecret,
         code = authCode,
-        redirect_uri = "https://localhost:5011/authentication",
+        redirect_uri = "https://localhost:5201/authentication",
         grant_type = "authorization_code"
       });
       var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
