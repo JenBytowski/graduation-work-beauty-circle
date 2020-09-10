@@ -29,14 +29,14 @@ namespace BC.API.Services.AuthenticationService
       _configuration = configuration;
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyVK(string authCode)
+    public async Task<AuthenticationResponse> AuthenticatebyVK(string authCode, string redirectUrl)
     {
       var client = new HttpClient();
       var authCredentials = _configuration.GetSection("VKCredentials").Get<SocialMediaAuthCredentials>();
       var requestURI = "https://oauth.vk.com/access_token" +
                        $"?client_id={authCredentials.ClientId}" +
                        $"&client_secret={authCredentials.ClientSecret}" +
-                       $"&redirect_uri={Environment.GetEnvironmentVariable("REDIRECT_URL")}" +
+                       $"&redirect_uri={redirectUrl}" +
                        $"&code={authCode}";
 
       var response = await client.PostAsync(requestURI, null);
@@ -70,7 +70,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyGoogle(string authCode)
+    public async Task<AuthenticationResponse> AuthenticatebyGoogle(string authCode, string redirectUrl)
     {
       var client = new HttpClient();
       var googleCredentials = _configuration.GetSection("GoogleCredentials").Get<SocialMediaAuthCredentials>();
@@ -80,7 +80,7 @@ namespace BC.API.Services.AuthenticationService
         client_id = googleCredentials.ClientId,
         client_secret = googleCredentials.ClientSecret,
         code = authCode,
-        redirect_uri = Environment.GetEnvironmentVariable("REDIRECT_URL"),
+        redirect_uri = redirectUrl,
         grant_type = "authorization_code"
       });
       var response = await client.PostAsync("https://oauth2.googleapis.com/token", new StringContent(jsonRequest, Encoding.UTF8, "application/json"));
@@ -117,7 +117,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyInstagram(string authCode)
+    public async Task<AuthenticationResponse> AuthenticatebyInstagram(string authCode, string redirectUrl)
     {
       var httpClient = new HttpClient();
       var credentials = _configuration.GetSection("InstagramCredentials").Get<SocialMediaAuthCredentials>();
@@ -127,7 +127,7 @@ namespace BC.API.Services.AuthenticationService
                 new KeyValuePair<string, string>("client_id", credentials.ClientId),
                 new KeyValuePair<string, string>("client_secret", credentials.ClientSecret),
                 new KeyValuePair<string, string>("grant_type", "authorization_code"),
-                new KeyValuePair<string, string>("redirect_uri", Environment.GetEnvironmentVariable("REDIRECT_URL")),
+                new KeyValuePair<string, string>("redirect_uri", redirectUrl),
                 new KeyValuePair<string, string>("code", authCode)
             };
 

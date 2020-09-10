@@ -31,17 +31,17 @@ export class AuthenticationComponent implements OnInit {
       const code = queryParam['code'];
       const state = queryParam['state'];
       if (code && state == 'vk') {
-        this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('vk-auth-token', data.token);
           this.cookieService.set('vk-username', data.username);
         });
       } else if (code && state == 'instagram') {
-        this.authClient.authenticateByInstagram(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByInstagram(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('inst-auth-token', data.token);
           this.cookieService.set('inst-username', data.username);
         });
       } else if (code && state == 'google') {
-        this.authClient.authenticateByGoogle(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByGoogle(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('google-auth-token', data.token);
           this.cookieService.set('google-username', data.username);
         });

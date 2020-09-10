@@ -23,7 +23,7 @@ namespace BC.API.Controllers
     [Route("authenticate-by-vk")]
     public async Task<AuthenticationResponse> AuthentificatebyVK(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticatebyVK(request.Code);
+      return await _authenticationService.AuthenticatebyVK(request.Code, request.RedirectUrl);
     }
 
     [HttpPost]
@@ -32,7 +32,7 @@ namespace BC.API.Controllers
     [ApiExplorerSettings(GroupName = "authentication")]
     public async Task<AuthenticationResponse> AuthentificatebyInstagram(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticatebyInstagram(request.Code);
+      return await _authenticationService.AuthenticatebyInstagram(request.Code, request.RedirectUrl);
     }
 
     [HttpPost]
@@ -41,7 +41,7 @@ namespace BC.API.Controllers
     [ApiExplorerSettings(GroupName = "authentication")]
     public async Task<AuthenticationResponse> AuthentificatebyGoogle(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticatebyGoogle(request.Code);
+      return await _authenticationService.AuthenticatebyGoogle(request.Code, request.RedirectUrl);
     }
 
     [HttpPost]
