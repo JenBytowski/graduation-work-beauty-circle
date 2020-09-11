@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {
   AuthenticationClient,
   AuthenticationCodeRequest,
@@ -14,33 +14,34 @@ import {CookieService} from "ngx-cookie-service";
   templateUrl: './authentication.component.html',
   styleUrls: ['./authentication.component.scss'],
 })
+
 export class AuthenticationComponent implements OnInit {
 
   @ViewChild("code", {static: false})
   code: ElementRef;
-
   private querySubscription: Subscription;
+  public redirectUrl: string = this.baseUrl + 'authentication';
 
-  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient, private cookieService: CookieService) {
+  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient, private cookieService: CookieService, @Inject('BASE_URL') private baseUrl: string) {
   }
 
   ngOnInit() {
+    console.log(this.redirectUrl)
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
-      console.log(code);
       if (code && state == 'vk') {
-        this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('vk-auth-token', data.token);
           this.cookieService.set('vk-username', data.username);
         });
       } else if (code && state == 'instagram') {
-        this.authClient.authenticateByInstagram(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByInstagram(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('inst-auth-token', data.token);
           this.cookieService.set('inst-username', data.username);
         });
       } else if (code && state == 'google') {
-        this.authClient.authenticateByGoogle(AuthenticationCodeRequest.fromJS({code: code})).subscribe(data => {
+        this.authClient.authenticateByGoogle(AuthenticationCodeRequest.fromJS({code: code, redirectUrl: this.redirectUrl})).subscribe(data => {
           this.cookieService.set('google-auth-token', data.token);
           this.cookieService.set('google-username', data.username);
         });

@@ -304,6 +304,7 @@ export class AuthenticationClient {
 
 export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
     code?: string | undefined;
+    redirectUrl?: string | undefined;
 
     constructor(data?: IAuthenticationCodeRequest) {
         if (data) {
@@ -317,6 +318,7 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
     init(_data?: any) {
         if (_data) {
             this.code = _data["code"];
+            this.redirectUrl = _data["redirectUrl"];
         }
     }
 
@@ -330,12 +332,14 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
+        data["redirectUrl"] = this.redirectUrl;
         return data; 
     }
 }
 
 export interface IAuthenticationCodeRequest {
     code?: string | undefined;
+    redirectUrl?: string | undefined;
 }
 
 export class AuthenticationResponse implements IAuthenticationResponse {

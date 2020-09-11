@@ -22,6 +22,38 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "BC.Client.Timur": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5211;http://localhost:5210",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Timur"
+      }
+    },
+    "BC.Client.Roman": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5213;http://localhost:5212",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Roman"
+      }
+    },
+    "BC.Client.Wolk": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5215;http://localhost:5214",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Wolk"
+      }
+    },
+    "BC.Client.Sanya": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:5217;http://localhost:5216",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Sanya"
+      }
     }
   }
 }

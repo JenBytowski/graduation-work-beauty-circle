@@ -68,6 +68,18 @@ namespace BC.Client
                 if (env.IsDevelopment())
                 {
                     spa.UseAngularCliServer(npmScript: "start");
+                } else if (env.IsEnvironment("Timur"))
+                {
+                  spa.UseAngularCliServer(npmScript: "start-timur");
+                } else if (env.IsEnvironment("Roman"))
+                {
+                  spa.UseAngularCliServer(npmScript: "start-roman");
+                } else if (env.IsEnvironment("Wolk"))
+                {
+                  spa.UseAngularCliServer(npmScript: "start-wolk");
+                } else if (env.IsEnvironment("Sanya"))
+                {
+                  spa.UseAngularCliServer(npmScript: "start-sanya");
                 }
             });
         }
