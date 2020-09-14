@@ -54,12 +54,14 @@ export class MastersListComponent implements OnInit {
 
   public initMasters(masters: any): Vm {
     let vm = new Vm();
+    let index: number = 0;
     vm.Masters = masters.map(item => {
       let master = new Master();
-      master.Id = item.index;
+      master.Id = index;
       master.Name = item.name;
-      master.Spec = item.index;
+      master.Spec = index.toString();
       master.Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      index++;
       return master;
     });
     return vm;

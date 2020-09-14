@@ -26,6 +26,14 @@
   text-decoration: none;
 }
 
+ion-card{    
+    padding: 1em;
+}
+
+ion-card-title{
+    margin-bottom: 0.5em;
+}
+
 ion-app{
   display: flex;
   justify-content: center;
@@ -40,19 +48,12 @@ ion-app{
   cursor: pointer;
 }
 
-.card-text{
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  background-color: orange;
+.card_content{
+    display: flex;
 }
 
-ion-img{
-  width: 100px;
-  height: 100px;
-  border: deeppink 2px solid;
-  margin: 2px;
+.card_text{
+    width: 100%;
 }
 
 .header-top {
