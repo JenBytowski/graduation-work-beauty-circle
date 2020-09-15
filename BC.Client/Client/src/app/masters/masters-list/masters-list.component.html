@@ -18,19 +18,44 @@
       <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
       <ion-button fill="outline" color="medium" (click)="filterStatus = true" slot="end">Yes!!</ion-button>
     </ion-item>
-    
+
     <ion-card *ngFor="let master of vm.Masters">
       <ion-card-title>{{master.Name}}</ion-card-title>
-      <div class="card_content">
+      <div class="card_main_info">
         <ion-avatar>
           <ion-img [src]="master.Avatar"></ion-img>
         </ion-avatar>
-      <ion-item class="card_text">
-        <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
-        </ion-card-content>
-        <ion-button fill="outline" color="medium" slot="end" href="/master/{{master.Id}}">View</ion-button>
-      </ion-item>
+        <ion-item class="card_text">
+          <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
+          </ion-card-content>
+          <ion-button fill="outline" color="medium" slot="end" href="/master/{{master.Id}}">View</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star-half"></ion-icon>
+        </ion-item>
       </div>
+      <div class="card_description">
+        Метод map вызывает переданную функцию callback один раз для каждого элемента, в порядке их появления и
+        конструирует новый массив из результатов её вызова. Функция callback вызывается только для индексов массива,
+        имеющих присвоенные значения, включая undefined. Она не вызывается для пропущенных элементов массива (то есть
+        для индексов, которые никогда не были заданы, которые были удалены или которым никогда не было присвоено
+        значение.
+      </div>
+      <ion-item class="links_item">
+        Links: 
+        <ion-icon class="link" icon="logo-vk"></ion-icon>
+        <ion-icon class="link" icon="logo-skype"></ion-icon>
+        <ion-icon class="link" icon="logo-instagram"></ion-icon>
+        <ion-icon class="link" icon="logo-google"></ion-icon>
+      </ion-item>
+      <ion-item class="mark_item">
+        <ion-icon name="thumbs-down"></ion-icon>
+        <ion-icon slot="end" name="thumbs-up"></ion-icon>
+      </ion-item>
     </ion-card>
 
   </ion-content>
