@@ -1,13 +1,32 @@
 ﻿version: '3'
 services:
-#  bc-api:
-#    build:
-#      context: .
-#      dockerfile: "BC.API/Dockerfile"
-#    ports:
-#    - "5001:80"
+  bc-api:
+    build:
+      context: .
+      dockerfile: "BC.API/Dockerfile"
+    ports:
+    - "5001:80"
+  bc-client:
+    build:
+      context: .
+      dockerfile: "BC.Client/Dockerfile"
+    ports:
+    - "5002:80"
+  master:
+    build:
+      context: .
+      dockerfile: "BC.Master/Dockerfile"
+    ports:
+    - "5003:80"
+  saloon:
+    build:
+      context: .
+      dockerfile: "BC.Saloon/Dockerfile"
+    ports:
+    - "5004:80"
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
       - "5672:5672"
       - "15672:15672"
+
