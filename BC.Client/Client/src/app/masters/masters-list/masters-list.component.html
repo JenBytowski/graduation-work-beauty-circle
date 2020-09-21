@@ -20,10 +20,12 @@
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">
-      <ion-card-title>{{master.Name}}</ion-card-title>
+      <ion-card-title class="card_title">{{master.Name}}
+        <ion-icon class="favorite_icon" name="heart"></ion-icon>
+      </ion-card-title>
       <div class="card_main_info">
         <ion-avatar>
-          <ion-img [src]="master.Avatar"></ion-img>
+          <ion-img class="avatar_image" [src]="master.Avatar"></ion-img>
         </ion-avatar>
         <ion-item class="card_text">
           <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
@@ -52,10 +54,10 @@
         <ion-icon class="link" icon="logo-instagram"></ion-icon>
         <ion-icon class="link" icon="logo-google"></ion-icon>
       </ion-item>
-      <ion-item class="mark_item">
-        <ion-icon name="thumbs-down"></ion-icon>
-        <ion-icon slot="end" name="thumbs-up"></ion-icon>
-      </ion-item>
+<!--      <ion-item class="mark_item">-->
+<!--        <ion-icon name="thumbs-down"></ion-icon>-->
+<!--        <ion-icon slot="end" name="thumbs-up"></ion-icon>-->
+<!--      </ion-item>-->
     </ion-card>
 
   </ion-content>

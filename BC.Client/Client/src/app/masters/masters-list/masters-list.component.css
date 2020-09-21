@@ -49,7 +49,7 @@ ion-app {
 }
 
 .mark_item {
-    width: 5%;
+    width: 100px;
 }
 
 .card_main_info {
@@ -62,6 +62,20 @@ ion-app {
 
 .card_text {
     width: 100%;
+}
+
+.avatar_image {
+    width: 64px;
+    height: 64px;
+}
+
+.card_title {
+    display: flex;
+    align-items: center;
+}
+
+.favorite_icon {
+    margin-left: 0.4em;
 }
 
 .links_item {
