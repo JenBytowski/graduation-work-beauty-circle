@@ -3,8 +3,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-item>
-        <!--        <ion-button class="menu-icon" slot="start" (click)="openFirst()">Menu</ion-button>-->
-        <ion-title>
+        <ion-title [routerLink]="['../']">
           Мастера
           <!--          <lib-bc-common></lib-bc-common>-->
         </ion-title>
@@ -30,7 +29,7 @@
         <ion-item class="card_text">
           <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
           </ion-card-content>
-          <ion-button fill="outline" color="medium" slot="end" href="/master/{{master.Id}}">View</ion-button>
+          <ion-button fill="outline" color="medium" slot="end" [routerLink]="['../master', master.Id]">View</ion-button>
         </ion-item>
         <ion-item>
           <ion-icon icon="star"></ion-icon>
@@ -54,10 +53,6 @@
         <ion-icon class="link" icon="logo-instagram"></ion-icon>
         <ion-icon class="link" icon="logo-google"></ion-icon>
       </ion-item>
-<!--      <ion-item class="mark_item">-->
-<!--        <ion-icon name="thumbs-down"></ion-icon>-->
-<!--        <ion-icon slot="end" name="thumbs-up"></ion-icon>-->
-<!--      </ion-item>-->
     </ion-card>
 
   </ion-content>

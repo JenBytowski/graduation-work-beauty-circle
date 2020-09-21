@@ -18,8 +18,8 @@
     <strong>Ready to create an app?</strong>
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI
       Components</a></p>
-    <a href="/masters">Masters</a>
-    <br>
-    <a href="/authentication">Authentication</a>
+    <a [routerLink]="['../masters']" routerLinkActive="active">Masters</a>
+    <br/>
+    <a [routerLink]="['../authentication']" routerLinkActive="active">Auth</a>
   </div>
 </ion-content>
