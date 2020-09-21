@@ -1,21 +1,67 @@
 <ion-app>
-    <ion-content>
-        <ion-item
-                href="https://oauth.vk.com/authorize?client_id=7525094&redirect_uri={{redirectUrl}}&display=page&response_type=code&scope=email&state=vk">
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <!--        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>-->
+        <ion-title>
+          Аутентификация
+          <!--          <lib-bc-common></lib-bc-common>-->
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="navigation_form_background">
+      <div class="navigation_form">
+
+        <!--        <ion-item>-->
+        <!--          <ion-button (click)="authByPhone()">Get code</ion-button>-->
+        <!--          <ion-input type="number" #code></ion-input>-->
+        <!--          <ion-button (click)="sendCode()">Reg</ion-button>-->
+        <!--        </ion-item>-->
+
+        <div class="form_text">
+          Войдите
+        </div>
+
+        <div class="icon_line">
+          <ion-icon
+                  class="form_icon"
+                  icon="call"
+                  (click)="authByPhone()">
             VKontacte
-        </ion-item>
-        <ion-item
-                href="https://api.instagram.com/oauth/authorize?client_id=1563532247147538&redirect_uri={{redirectUrl}}&response_type=code&scope=user_profile,user_media&state=instagram">
+          </ion-icon>
+          <ion-icon
+                  class="form_icon"
+                  icon="logo-vk"
+                  href="https://oauth.vk.com/authorize?client_id=7525094&redirect_uri={{redirectUrl}}&display=page&response_type=code&scope=email&state=vk">
+            VKontacte
+          </ion-icon>
+          <ion-icon
+                  class="form_icon"
+                  icon="logo-instagram"
+                  href="https://api.instagram.com/oauth/authorize?client_id=1563532247147538&redirect_uri={{redirectUrl}}&response_type=code&scope=user_profile,user_media&state=instagram">
             Instagram
-        </ion-item>
-        <ion-item
-                href="https://accounts.google.com/o/oauth2/v2/auth?client_id=4306410829-7gnaa751oumkn67o1jfbep4lpqlabnbe.apps.googleusercontent.com&response_type=code&redirect_uri={{redirectUrl}}&state=google&scope=openid email ">
+          </ion-icon>
+          <ion-icon
+                  class="form_icon"
+                  icon="logo-google"
+                  href="https://accounts.google.com/o/oauth2/v2/auth?client_id=4306410829-7gnaa751oumkn67o1jfbep4lpqlabnbe.apps.googleusercontent.com&response_type=code&redirect_uri={{redirectUrl}}&state=google&scope=openid email ">
             Goolag
-        </ion-item>
-        <ion-button (click)="authByPhone()">Phone</ion-button>
-        <ion-item>
-            <ion-input type="number" #code></ion-input>
-            <ion-button (click)="sendCode()">Phone</ion-button>
-        </ion-item>
-    </ion-content>
+          </ion-icon>
+        </div>
+
+        <div class="form_text">
+          или
+        </div>
+
+        <div class="form_text">
+          <a href="/">Зарегестрируйтесь</a>
+        </div>
+
+      </div>
+    </div>
+  </ion-content>
 </ion-app>

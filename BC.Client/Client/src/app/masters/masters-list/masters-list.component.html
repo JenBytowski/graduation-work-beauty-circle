@@ -1,64 +1,92 @@
 <ion-app>
 
   <ion-header>
-    <ion-toolbar color="warning">
-      <ion-item color="primary">
-        <!--        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>-->
+    <ion-toolbar>
+      <ion-item>
+        <!--        <ion-button class="menu-icon" slot="start" (click)="openFirst()">Menu</ion-button>-->
         <ion-title>
-          Masters
+          Мастера
           <!--          <lib-bc-common></lib-bc-common>-->
         </ion-title>
       </ion-item>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content #filter color="secondary" [ngClass]="{
+  <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
+
+    <ion-item #topMenu>
+      <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
+      <ion-button fill="outline" color="medium" (click)="filterStatus = true" slot="end">Yes!!</ion-button>
+    </ion-item>
+
+    <ion-card *ngFor="let master of vm.Masters">
+      <ion-card-title class="card_title">{{master.Name}}
+        <ion-icon class="favorite_icon" name="heart"></ion-icon>
+      </ion-card-title>
+      <div class="card_main_info">
+        <ion-avatar>
+          <ion-img class="avatar_image" [src]="master.Avatar"></ion-img>
+        </ion-avatar>
+        <ion-item class="card_text">
+          <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
+          </ion-card-content>
+          <ion-button fill="outline" color="medium" slot="end" href="/master/{{master.Id}}">View</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star"></ion-icon>
+          <ion-icon icon="star-half"></ion-icon>
+        </ion-item>
+      </div>
+      <div class="card_description">
+        Метод map вызывает переданную функцию callback один раз для каждого элемента, в порядке их появления и
+        конструирует новый массив из результатов её вызова. Функция callback вызывается только для индексов массива,
+        имеющих присвоенные значения, включая undefined. Она не вызывается для пропущенных элементов массива (то есть
+        для индексов, которые никогда не были заданы, которые были удалены или которым никогда не было присвоено
+        значение.
+      </div>
+      <ion-item class="links_item">
+        Links: 
+        <ion-icon class="link" icon="logo-vk"></ion-icon>
+        <ion-icon class="link" icon="logo-skype"></ion-icon>
+        <ion-icon class="link" icon="logo-instagram"></ion-icon>
+        <ion-icon class="link" icon="logo-google"></ion-icon>
+      </ion-item>
+<!--      <ion-item class="mark_item">-->
+<!--        <ion-icon name="thumbs-down"></ion-icon>-->
+<!--        <ion-icon slot="end" name="thumbs-up"></ion-icon>-->
+<!--      </ion-item>-->
+    </ion-card>
+
+  </ion-content>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title>
+          BC
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <ion-content #filter color="medium" [ngClass]="{
     'hidden-filter': filterStatus === false, 
     'visible-filter': filterStatus === true
   }">
-    <ion-button color="warning" (click)="filterStatus = false">Exit</ion-button>
-    <ion-button color="warning">Exit2</ion-button>
-    <ion-button color="warning">Exit3</ion-button>
+    <ion-button color="danger" (click)="filterStatus = false">Exit</ion-button>
   </ion-content>
 
   <ion-content (click)="filterStatus = false" class="filter-background" [ngClass]="{
     'hidden-filter': filterStatus === false, 
     'visible-filter': filterStatus === true
   }">
+    <!--    -->
+    <!--    -->
+    <!--    -->
   </ion-content>
-
-  <ion-content [scrollEvents]="true" (ionScrollStart)="logScrollStart()" (ionScroll)="logScrolling($event)">
-
-    <ion-item color="primary" #topMenu>
-      <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
-      <ion-button (click)="filterStatus = true" color="warning" slot="end">Yes!!</ion-button>
-    </ion-item>
-
-    <ion-card *ngFor="let master of vm.Masters">
-      <ion-item color="primary">
-        <ion-img [src]="master.Avatar"></ion-img>
-        <div class="card-text">
-          <ion-card-subtitle>
-            {{master.Name}}
-          </ion-card-subtitle>
-          <ion-card-title>
-            {{master.Spec}}
-          </ion-card-title>
-        </div>
-        <ion-button color="danger" href="/master/{{master.Id}}">View</ion-button>
-      </ion-item>
-    </ion-card>
-
-  </ion-content>
-
-  <ion-footer>
-    <ion-toolbar color="warning">
-      <ion-item color="primary">
-        <ion-title>
-          Footer
-        </ion-title>
-      </ion-item>
-    </ion-toolbar>
-  </ion-footer>
-
 </ion-app>
