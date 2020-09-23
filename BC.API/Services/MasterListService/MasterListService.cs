@@ -15,7 +15,7 @@ namespace BC.API.Services.MasterListService
 
     public IEnumerable<MasterDTO> GetMasters()
     {
-      return _context.Masters.Select(mstr => MasterDTO.ParseFromMastertoMasterDTO(mstr));
+      return _context.Masters.Select(mstr => MasterDTO.ParseFromMaster(mstr)).ToArray();
     }
   }
 }

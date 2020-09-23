@@ -20,5 +20,29 @@
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Services\AuthenticationService\AuthenticationResponse.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\GoogleTokenResponse.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\InstagramTokenResponse.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\SMSCodeAuthenticationResponse.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\SocialMediaAuthCredentials.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\VKTokenResponse.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MasterListService\MasterDTO.cs">
+        <DependentUpon>MasterListService.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 
 </Project>
