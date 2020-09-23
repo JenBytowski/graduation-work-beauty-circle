@@ -1,0 +1,27 @@
+﻿{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/authentication",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5207
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth",
+      "UpstreamHttpMethod": ["Get"]
+    },
+    {
+      "DownstreamPathTemplate": "/masters-list",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5207
+        }
+      ],
+      "UpstreamPathTemplate": "/api/masters-list",
+      "UpstreamHttpMethod": ["Get"]
+    }
+  ]
+}

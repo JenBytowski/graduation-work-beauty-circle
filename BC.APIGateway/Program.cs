@@ -18,7 +18,15 @@ namespace BC.APIGateway
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((host, config) => { config.AddJsonFile("ocelot.json"); })
+                .ConfigureAppConfiguration((host, config) =>
+                {
+
+                  config
+                    .AddJsonFile("appsettings.json", true, true)
+                    .AddJsonFile($"appsettings.{host.HostingEnvironment.EnvironmentName}.json", true, true)
+                    .AddJsonFile("ocelot.json")
+                    .AddJsonFile($"ocelot.{host.HostingEnvironment.EnvironmentName}.json", true, true);
+                })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }
