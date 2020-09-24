@@ -36,19 +36,19 @@
           <ion-icon
                   class="form_icon"
                   icon="logo-vk"
-                  href="https://oauth.vk.com/authorize?client_id=7525094&redirect_uri={{redirectUrl}}&display=page&response_type=code&scope=email&state=vk">
+                  (click)="authByVk()">
             VKontacte
           </ion-icon>
           <ion-icon
                   class="form_icon"
                   icon="logo-instagram"
-                  href="https://api.instagram.com/oauth/authorize?client_id=1563532247147538&redirect_uri={{redirectUrl}}&response_type=code&scope=user_profile,user_media&state=instagram">
+                  (click)="authByInstagram()">
             Instagram
           </ion-icon>
           <ion-icon
                   class="form_icon"
                   icon="logo-google"
-                  href="https://accounts.google.com/o/oauth2/v2/auth?client_id=4306410829-7gnaa751oumkn67o1jfbep4lpqlabnbe.apps.googleusercontent.com&response_type=code&redirect_uri={{redirectUrl}}&state=google&scope=openid email ">
+                  (click)="authByGoogle()">
             Goolag
           </ion-icon>
         </div>
