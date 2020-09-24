@@ -21,7 +21,7 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [ApiExplorerSettings(GroupName = "authentication")]
     [Route("authenticate-by-vk")]
-    public async Task<AuthenticationResponse> AuthentificatebyVK(AuthenticationCodeRequest request)
+    public async Task<AuthenticationResponse> AuthenticatebyVK(AuthenticationCodeRequest request)
     {
       return await _authenticationService.AuthenticatebyVK(request.Code, request.RedirectUrl);
     }
@@ -30,7 +30,7 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [Route("authenticate-by-instagram")]
     [ApiExplorerSettings(GroupName = "authentication")]
-    public async Task<AuthenticationResponse> AuthentificatebyInstagram(AuthenticationCodeRequest request)
+    public async Task<AuthenticationResponse> AuthenticatebyInstagram(AuthenticationCodeRequest request)
     {
       return await _authenticationService.AuthenticatebyInstagram(request.Code, request.RedirectUrl);
     }
@@ -39,7 +39,7 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [Route("authenticate-by-google")]
     [ApiExplorerSettings(GroupName = "authentication")]
-    public async Task<AuthenticationResponse> AuthentificatebyGoogle(AuthenticationCodeRequest request)
+    public async Task<AuthenticationResponse> AuthenticatebyGoogle(AuthenticationCodeRequest request)
     {
       return await _authenticationService.AuthenticatebyGoogle(request.Code, request.RedirectUrl);
     }
@@ -48,7 +48,7 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [Route("get-sms-authentication-code")]
     [ApiExplorerSettings(GroupName = "authentication")]
-    public async Task GetSMSAuthentificationCode(AuthenticationPhoneRequest request)
+    public async Task GetSMSAuthenticationCode(AuthenticationPhoneRequest request)
     {
       await _authenticationService.SendSMSAuthenticationCode(request.Phone);
     }
@@ -57,7 +57,7 @@ namespace BC.API.Controllers
     [AllowAnonymous]
     [Route("authenticate-by-phone")]
     [ApiExplorerSettings(GroupName = "authentication")]
-    public async Task<AuthenticationResponse> AuthentificatebyPhone(SMSCodeAuthenticationResponse model)
+    public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
     {
       return await _authenticationService.AuthenticatebyPhone(model);
     }
