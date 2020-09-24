@@ -12,6 +12,7 @@ import {MastersModule} from "./masters/masters.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ApiClientModule} from "./api-client/api-client.module";
 import {AuthenticationModule} from "./authentication/authentication.module";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     declarations: [AppComponent],
@@ -24,6 +25,7 @@ import {AuthenticationModule} from "./authentication/authentication.module";
         HttpClientModule,
         ApiClientModule,
         AuthenticationModule,
+        BrowserAnimationsModule
     ],
     providers: [
         StatusBar,

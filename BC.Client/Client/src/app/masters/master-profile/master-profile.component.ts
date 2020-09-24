@@ -20,7 +20,7 @@ export class MasterProfileComponent implements OnInit {
     this.masterList.mastersList().subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.Id == id));
   }
 
-  initMasters(masters: any): Vm {
+  public initMasters(masters: any): Vm {
     let vm = new Vm();
     let index: number = 0;
     vm.Masters = masters.map(item => {

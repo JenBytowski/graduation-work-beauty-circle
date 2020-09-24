@@ -27,11 +27,6 @@ export class MastersListComponent implements OnInit {
     this.masterList.mastersList().subscribe(data => this.vm = this.initMasters(data));
   }
 
-  openFirst() {
-    this.menu.enable(true, 'first');
-    this.menu.open('first');
-  }
-
   public logScrollStart() {
     //console.log('scroll started');
   }
