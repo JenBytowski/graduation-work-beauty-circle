@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace BC.API.Services.SMSService
+namespace BC.API.Services.NotificationsService
 {
   public interface ISMSClient
   {

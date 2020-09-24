@@ -1,10 +1,10 @@
 ﻿using System.Text;
 using BC.API.Infrastructure;
-using BC.API.Services.AuthenticationService;
+using AuthenticationService = BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.AuthenticationContext;
 using BC.API.Services.MasterListService;
 using BC.API.Services.MasterListService.MastersContext;
-using BC.API.Services.SMSService;
+using BC.API.Services.NotificationsService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -53,8 +53,9 @@ namespace BC.API
       services.AddCors();
       services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
           .AddDefaultTokenProviders();
-      services.AddTransient<AuthenticationService>();
+      services.AddTransient<AuthenticationService.AuthenticationService>();
       services.AddTransient<MasterListService>();
+      services.AddSingleton<AuthenticationService.ISMSClient, ConsoleSMSClient>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>

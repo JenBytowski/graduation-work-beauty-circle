@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BC.API.Infrastructure
+namespace BC.API.Services.AuthenticationService
 {
   public class CantSendSMSException : ApplicationException
   {

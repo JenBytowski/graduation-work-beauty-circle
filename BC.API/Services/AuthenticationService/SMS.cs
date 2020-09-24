@@ -1,4 +1,4 @@
-﻿namespace BC.API.Services.SMSService
+﻿namespace BC.API.Services.AuthenticationService
 {
   public class SMS
   {

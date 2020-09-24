@@ -42,6 +42,24 @@
       <Compile Update="Services\MasterListService\MasterDTO.cs">
         <DependentUpon>MasterListService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\AuthenticationService\CantSendSMSException.cs">
+        <DependentUpon>ISMSClient.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\AuthenticationCodeRequest.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\AuthenticationPhoneRequest.cs">
+        <DependentUpon>AuthenticationService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\AuthenticationService\SMS.cs">
+        <DependentUpon>ISMSClient.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Infrastructure\RocketSmsOptions.cs">
+        <DependentUpon>RocketSMSClient.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\SMSService\SMS.cs">
+        <DependentUpon>ISMSClient.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 

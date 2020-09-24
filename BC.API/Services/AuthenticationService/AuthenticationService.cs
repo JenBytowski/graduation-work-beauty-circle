@@ -1,6 +1,5 @@
 ﻿using BC.API.Infrastructure;
 using BC.API.Services.AuthenticationService.Exceptions;
-using BC.API.Services.SMSService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
