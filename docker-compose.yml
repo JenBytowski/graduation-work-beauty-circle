@@ -6,6 +6,18 @@ services:
       dockerfile: "BC.API/Dockerfile"
     ports:
     - "5001:80"
+    environment:
+      - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BCAuthentication;User=SA;Password=Password123
+      - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BCMasters;User=SA;Password=Password123
+  sql-server:
+    image: "mcr.microsoft.com/mssql/server"
+    environment:
+      SA_PASSWORD: "Password123"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - "./BC.Data:/var/opt/mssql/data"
+    ports:
+      - "5008:1433"
   bc-client:
     build:
       context: .

@@ -42,7 +42,7 @@ namespace BC.API
 
       services.AddDbContext<AuthenticationContext>(opt =>
      {
-       opt.UseSqlServer(Configuration.GetConnectionString("AuthentificationContext"));
+       opt.UseSqlServer(Configuration.GetConnectionString("AuthenticationContext"));
      }, ServiceLifetime.Transient);
       services.AddDbContext<MastersContext>(opt =>
       {
@@ -82,7 +82,7 @@ namespace BC.API
       {
         app.UseDeveloperExceptionPage();
       }
-      
+
       app.UseCors(builder =>
         builder.AllowAnyOrigin()
           .AllowAnyHeader()
