@@ -1,0 +1,22 @@
+﻿<ion-app>
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title>
+          Добро пожаловать!
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="content">
+      <div class="controls">
+        <ion-button [routerLink]="['../authentication']" [queryParams]="{role: true}">Я Мастер!</ion-button>
+        <ion-button [routerLink]="['../authentication']" [queryParams]="{role: false}">Я не Мастер!</ion-button>
+      </div>
+    </div>
+  </ion-content>
+
+</ion-app>

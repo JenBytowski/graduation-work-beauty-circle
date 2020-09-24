@@ -3,6 +3,7 @@ import {PreloadAllModules, RouterModule, Routes} from '@angular/router';
 import {MastersListComponent} from './masters/masters-list/masters-list.component';
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
 import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
+import {WelcomeComponent} from "./authentication/welcome/welcome.component";
 
 const routes: Routes = [
   {
@@ -30,6 +31,11 @@ const routes: Routes = [
     component: MasterProfileComponent,
     pathMatch: 'full',
     data: {animation: 'isRight'}
+  },
+  {
+    path: 'welcome',
+    component: WelcomeComponent,
+    pathMatch: 'full'
   }
 ];
 

@@ -30,6 +30,8 @@ export class AuthenticationComponent implements OnInit {
         this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
             const code = queryParam['code'];
             const state = queryParam['state'];
+            const role = queryParam['role'];
+            console.log(role);
             if (code && state == 'vk') {
                 this.authClient.authenticateByVk(AuthenticationCodeRequest.fromJS({
                     code: code,
