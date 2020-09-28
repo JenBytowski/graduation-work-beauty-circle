@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using BC.API.Services.MastersListService;
-using BC.API.Services.MastersListService.MastersContext;
+using BC.API.Services.MastersListService.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BC.API.Controllers
 {
-  [Route("masters-list")]
   [ApiController]
+  [Route("masters-list")]
+  [ApiExplorerSettings(GroupName = "masters-list")]
   internal class MasterListController : ControllerBase
   {
     private readonly MasterListService _masterListerService;
@@ -17,7 +18,7 @@ namespace BC.API.Controllers
     }
 
     [HttpGet]
-    [ApiExplorerSettings(GroupName = "master-list")]
+    [Route("authenticate-by-vk")]
     public IEnumerable<MasterRes> GetMasters([FromQuery] MastersFilter filter)
     {
       return _masterListerService.GetMasters(filter);

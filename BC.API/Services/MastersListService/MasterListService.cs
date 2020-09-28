@@ -7,9 +7,9 @@ namespace BC.API.Services.MastersListService
 {
   internal class MasterListService
   {
-    readonly MastersContext.MastersContext _context;
+    readonly Data.MastersContext _context;
 
-    public MasterListService(MastersContext.MastersContext context)
+    public MasterListService(Data.MastersContext context)
     {
       _context = context;
     }

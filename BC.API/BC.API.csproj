@@ -74,6 +74,7 @@
     <ItemGroup>
       <Folder Include="Services\BookingService\Controllers" />
       <Folder Include="Services\BookingService\Handlers" />
+      <Folder Include="Services\MastersListService\Data\Migrations" />
       <Folder Include="Services\NotificationsService" />
     </ItemGroup>
 

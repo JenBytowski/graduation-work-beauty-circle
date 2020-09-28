@@ -8,7 +8,7 @@ using AuthenticationService = BC.API.Services.AuthenticationService;
 using BC.API.Services.BalanceService;
 using BC.API.Services.BalanceService.Data;
 using BC.API.Services.MastersListService;
-using BC.API.Services.MastersListService.MastersContext;
+using BC.API.Services.MastersListService.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -64,7 +64,7 @@ namespace BC.API
       services.AddSwaggerGen(opt =>
       {
         opt.SwaggerDoc("authentication", new OpenApiInfo {Title = "Authentication", Version = "1.0"});
-        opt.SwaggerDoc("master-list", new OpenApiInfo {Title = "Master List", Version = "1.0"});
+        opt.SwaggerDoc("masters-list", new OpenApiInfo {Title = "Masters List", Version = "1.0"});
         opt.EnableAnnotations();
       });
 
@@ -144,9 +144,8 @@ namespace BC.API
       app.UseSwagger();
       app.UseSwaggerUI(opt =>
       {
-        opt.SwaggerEndpoint("/swagger/weather-forecast/swagger.json", "Weather Forecast");
         opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
-        opt.SwaggerEndpoint("/swagger/master-list/swagger.json", "Master List");
+        opt.SwaggerEndpoint("/swagger/masters-list/swagger.json", "Masters List");
       });
 
       app.UseHttpsRedirection();
