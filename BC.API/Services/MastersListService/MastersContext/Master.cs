@@ -28,10 +28,13 @@ namespace BC.API.Services.MastersListService.MastersContext
     public Guid SpecialityId { get; set; }
     public Speciality Speciality { get; set; }
 
-    public List<Review> Reviews { get; set; }
+    // public List<Review> Reviews { get; set; }
     
     public PriceList PriceList { get; set; }
     public Schedule Schedule { get; set; }
+    
+    public double Stars { get; set; }
+    public int ReviewsCount { get; set; }
   }
 
   internal class City
@@ -121,15 +124,6 @@ namespace BC.API.Services.MastersListService.MastersContext
     public int PriceMin { get; set; }
     public int PriceMax { get; set; }
     public int DurationInMinutesMax { get; set; }
-  }
-
-  internal class Review
-  {
-    public Guid Id { get; set; }
-    public Guid ClientId { get; set; }
-    public Guid ClientName { get; set; }
-    public string Text { get; set; }
-    public int Stars { get; set; }
   }
 }
  

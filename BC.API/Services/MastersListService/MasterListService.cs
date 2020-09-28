@@ -19,6 +19,11 @@ namespace BC.API.Services.MastersListService
       return _context.Masters.Select(mstr => MasterRes.ParseFromMaster(mstr)).ToArray();
     }
 
+    public MasterRes GetMasterById(Guid masterId)
+    {
+      return null;
+    }
+
     public void UpdateMasterInfo(UpdateMasterReq req)
     {
       
@@ -40,6 +45,11 @@ namespace BC.API.Services.MastersListService
     }
     
     public void OnUserDeleted()
+    {
+      
+    }
+
+    public void OnReviewPosted()
     {
       
     }
