@@ -86,9 +86,9 @@ namespace BC.API.Services.MastersListService.Data
   {
     public Guid Id { get; set; }
 
-    public Guid ScheduleDayId { get; set;}
+    public Guid ScheduleDayId { get; set; }
 
-    public ScheduleDay ScheduleDay { get; set;}
+    public ScheduleDay ScheduleDay { get; set; }
 
     public DateTime StartTime { get; set; }
 
@@ -97,19 +97,11 @@ namespace BC.API.Services.MastersListService.Data
 
   internal class Booking
   {
-    public Guid Id { get; set;}
+    public Guid Id { get; set; }
 
-    public Guid MasterId { get; set;}
-
-    public Guid ClientId { get; set;}
-
-    public DateTime StartTime { get; set;}
+    public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
-
-    public Guid ServiceTypeId { get; set; }
-
-    public int Price { get; set; }
   }
 
   internal class Speciality
@@ -182,4 +174,3 @@ namespace BC.API.Services.MastersListService.Data
     public int DurationInMinutesMax { get; set; }
   }
 }
-
