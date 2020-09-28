@@ -8,8 +8,12 @@
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.6" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.6" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0-rc.1.20451.17" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0-rc.1.20451.13">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0-rc.1.20451.13" />
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
       <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.5.1" />
@@ -39,27 +43,38 @@
       <Compile Update="Services\AuthenticationService\VKTokenResponse.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\MasterListService\MasterDTO.cs">
-        <DependentUpon>MasterListService.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Services\AuthenticationService\CantSendSMSException.cs">
-        <DependentUpon>ISMSClient.cs</DependentUpon>
-      </Compile>
       <Compile Update="Services\AuthenticationService\AuthenticationCodeRequest.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
       <Compile Update="Services\AuthenticationService\AuthenticationPhoneRequest.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\AuthenticationService\SMS.cs">
-        <DependentUpon>ISMSClient.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Infrastructure\RocketSmsOptions.cs">
-        <DependentUpon>RocketSMSClient.cs</DependentUpon>
-      </Compile>
       <Compile Update="Services\SMSService\SMS.cs">
         <DependentUpon>ISMSClient.cs</DependentUpon>
       </Compile>
+      <Compile Update="Infrastructure\Interfaces\SMS.cs">
+        <DependentUpon>ISMSClient.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Infrastructure\Interfaces\CantSendSMSException.cs">
+        <DependentUpon>ISMSClient.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MastersListService\MasterRes.cs">
+        <DependentUpon>MasterListService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MastersListService\UpdateMasterReq.cs">
+        <DependentUpon>MasterListService.cs</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\StrongCode.Seedwork.EventBus.RabbitMQ\StrongCode.Seedwork.EventBus.RabbitMQ.csproj" />
+      <ProjectReference Include="..\StrongCode.Seedwork.EventBus\StrongCode.Seedwork.EventBus.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\BookingService\Controllers" />
+      <Folder Include="Services\BookingService\Handlers" />
+      <Folder Include="Services\NotificationsService" />
     </ItemGroup>
 
 

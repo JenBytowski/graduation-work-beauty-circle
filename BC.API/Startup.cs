@@ -1,10 +1,14 @@
 ﻿using System.Text;
+using BC.API.Events;
 using BC.API.Infrastructure;
+using BC.API.Infrastructure.Impl;
+using BC.API.Infrastructure.Interfaces;
+using BC.API.Services.AuthenticationService.Data;
 using AuthenticationService = BC.API.Services.AuthenticationService;
-using BC.API.Services.AuthenticationService.AuthenticationContext;
-using BC.API.Services.MasterListService;
-using BC.API.Services.MasterListService.MastersContext;
-using BC.API.Services.NotificationsService;
+using BC.API.Services.BalanceService;
+using BC.API.Services.BalanceService.Data;
+using BC.API.Services.MastersListService;
+using BC.API.Services.MastersListService.MastersContext;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,7 +19,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using JWTokenOptions = BC.API.TokenOptions;
+using StrongCode.Seedwork.EventBus;
+using StrongCode.Seedwork.EventBus.RabbitMQ;
+using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
+using BC.API.Services.BalanceService.Handlers;
 
 namespace BC.API
 {
@@ -28,34 +35,77 @@ namespace BC.API
 
     public IConfiguration Configuration { get; }
 
+    private void AddEventBus(IServiceCollection services)
+    {
+      services.AddTransient<UserCreatedHandler>();
+
+      var eb = this.Configuration.GetSection("RabbitMQEventBus");
+      services.AddSingleton<IEventBus>(provider =>
+      {
+        var bus = new RabbitMqEventBus
+        (
+          eb["Host"],
+          eb["UserName"],
+          eb["Password"],
+          eb["Exchange"],
+          provider
+        );
+
+        bus.Subscribe<UserCreatedEvent, UserCreatedHandler>();
+
+        return bus;
+      });
+    }
+
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
       //Swagger
       services.AddSwaggerGen(opt =>
       {
-        opt.SwaggerDoc("weather-forecast", new OpenApiInfo { Title = "Weather Forecast", Version = "1.0"});
-        opt.SwaggerDoc("authentication", new OpenApiInfo { Title = "Authentication", Version = "1.0" });
-        opt.SwaggerDoc("master-list", new OpenApiInfo { Title = "Master List", Version = "1.0" });
+        opt.SwaggerDoc("authentication", new OpenApiInfo {Title = "Authentication", Version = "1.0"});
+        opt.SwaggerDoc("master-list", new OpenApiInfo {Title = "Master List", Version = "1.0"});
         opt.EnableAnnotations();
       });
 
-      services.AddDbContext<AuthenticationContext>(opt =>
-     {
-       opt.UseSqlServer(Configuration.GetConnectionString("AuthenticationContext"));
-     }, ServiceLifetime.Transient);
-      services.AddDbContext<MastersContext>(opt =>
-      {
-        opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
-      }, ServiceLifetime.Transient);
+      services.AddTransient<BalanceService>();
+      this.AddEventBus(services);
+
+      services.AddDbContext<AuthenticationContext>
+      (opt =>
+        {
+          opt.UseSqlServer(Configuration.GetConnectionString("AuthenticationContext"));
+        },
+        ServiceLifetime.Transient,
+        ServiceLifetime.Transient
+      );
+
+      services.AddDbContext<MastersContext>
+      (
+        opt =>
+        {
+          opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
+        },
+        ServiceLifetime.Transient,
+        ServiceLifetime.Transient
+      );
+
+      services.AddDbContext<BalanceContext>
+      (
+        opt =>
+        {
+          opt.UseSqlServer(Configuration.GetConnectionString("BalanceContext"));
+        },
+        ServiceLifetime.Transient,
+        ServiceLifetime.Transient
+      );
 
       services.AddControllers();
       services.AddCors();
-      services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AuthenticationContext>()
-          .AddDefaultTokenProviders();
+      services.AddIdentity<User, Role>().AddEntityFrameworkStores<AuthenticationContext>()
+        .AddDefaultTokenProviders();
       services.AddTransient<AuthenticationService.AuthenticationService>();
       services.AddTransient<MasterListService>();
-      services.AddSingleton<AuthenticationService.ISMSClient, ConsoleSMSClient>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
