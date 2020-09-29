@@ -7,3 +7,4 @@ riderModule.iml
 /_ReSharper.Caches/
 /.vs/
 /BC.API/BC.API.csproj.user
+/mssql/
