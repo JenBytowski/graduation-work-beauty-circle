@@ -7,7 +7,7 @@ using Day = BC.API.Services.MastersListService.Data.ScheduleDay;
 
 namespace BC.API.Services.MastersListService
 {
-  internal class MasterRes
+  public class MasterRes
   {
     public string Name { get; set; }
 
@@ -59,7 +59,7 @@ namespace BC.API.Services.MastersListService
     }
   }
 
-  internal class ScheduleDay
+  public class ScheduleDay
   {
     public DayOfWeek DayOfWeek { get; set; }
 
@@ -67,9 +67,11 @@ namespace BC.API.Services.MastersListService
 
     public DateTime EndTime { get; set; }
 
-    public IEnumerable<SchedulePause> Pauses { get; set; }
-
-    public IEnumerable<ScheduleBooking> Bookings { get; set; }
+    // public IEnumerable<SchedulePause> Pauses { get; set; }
+    //
+    // public IEnumerable<ScheduleBooking> Bookings { get; set; }
+    
+    public IEnumerable<Window> Windows { get; set; }
 
     public static ScheduleDay ParseFromScheduleDay(Day scheduleDay)
     {
@@ -78,45 +80,61 @@ namespace BC.API.Services.MastersListService
         DayOfWeek = scheduleDay.DayOfWeek,
         StartTime = scheduleDay.StartTime,
         EndTime = scheduleDay.EndTime,
-        Pauses = scheduleDay.Pauses.Select(ps => SchedulePause.ParseFromPause(ps)),
-        Bookings = scheduleDay.Bookings.Select(book => ScheduleBooking.ParseFromBooking(book))
+        // Pauses = scheduleDay.Pauses.Select(ps => SchedulePause.ParseFromPause(ps)),
+        // Bookings = scheduleDay.Bookings.Select(book => ScheduleBooking.ParseFromBooking(book))
+        Windows = scheduleDay.Items.Where(i => i is Data.Window).Select(i => Window.ParseFromWindow(i as Data.Window))
       };
     }
   }
 
-  internal class ScheduleBooking
+  public class Window
   {
     public DateTime StartTime { get; set;}
-
     public DateTime EndTime { get; set; }
 
-    public static ScheduleBooking ParseFromBooking(Booking booking)
+    public static Window ParseFromWindow(Data.Window window)
     {
-      return new ScheduleBooking
+      return new Window()
       {
-        StartTime = booking.StartTime,
-        EndTime = booking.EndTime
+        StartTime = window.StartTime,
+        EndTime = window.EndTime,
       };
     }
   }
+  
+  // public class ScheduleBooking
+  // {
+  //   public DateTime StartTime { get; set;}
+  //
+  //   public DateTime EndTime { get; set; }
+  //
+  //   public static ScheduleBooking ParseFromBooking(Booking booking)
+  //   {
+  //     return new ScheduleBooking
+  //     {
+  //       StartTime = booking.StartTime,
+  //       EndTime = booking.EndTime
+  //     };
+  //   }
+  // }
+  //
+  // public class SchedulePause
+  // {
+  //   public DateTime StartTime { get; set; }
+  //
+  //   public DateTime EndTime { get; set; }
+  //
+  //   public static SchedulePause ParseFromPause(Pause pause)
+  //   {
+  //     return new SchedulePause
+  //     {
+  //       StartTime = pause.StartTime,
+  //       EndTime = pause.EndTime
+  //     };
+  //   }
+  // }
 
-  internal class SchedulePause
-  {
-    public DateTime StartTime { get; set; }
-
-    public DateTime EndTime { get; set; }
-
-    public static SchedulePause ParseFromPause(Pause pause)
-    {
-      return new SchedulePause
-      {
-        StartTime = pause.StartTime,
-        EndTime = pause.EndTime
-      };
-    }
-  }
-
-  internal class PriceListItem
+  public class PriceListItem
   {
     public string Name { get; set; }
 

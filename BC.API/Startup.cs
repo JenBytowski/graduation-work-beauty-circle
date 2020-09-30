@@ -64,7 +64,7 @@ namespace BC.API
       services.AddSwaggerGen(opt =>
       {
         opt.SwaggerDoc("authentication", new OpenApiInfo {Title = "Authentication", Version = "1.0"});
-        opt.SwaggerDoc("masters-list", new OpenApiInfo {Title = "Masters List", Version = "1.0"});
+        opt.SwaggerDoc("masters-list", new OpenApiInfo {Title = "Masters list", Version = "1.0"});
         opt.EnableAnnotations();
       });
 
@@ -145,7 +145,7 @@ namespace BC.API
       app.UseSwaggerUI(opt =>
       {
         opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
-        opt.SwaggerEndpoint("/swagger/masters-list/swagger.json", "Masters List");
+        opt.SwaggerEndpoint("/swagger/masters-list/swagger.json", "Masters list");
       });
 
       app.UseHttpsRedirection();

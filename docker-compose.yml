@@ -7,8 +7,9 @@ services:
     ports:
     - "5001:80"
     environment:
-      - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BCAuthentication;User=SA;Password=Password123
-      - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BCMasters;User=SA;Password=Password123
+      - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
+      - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
+      - ASPNETCORE_URLS=http://+:80
   sql-server:
     image: "mcr.microsoft.com/mssql/server"
     environment:
@@ -24,18 +25,18 @@ services:
       dockerfile: "BC.Client/Dockerfile"
     ports:
     - "5002:80"
-  master:
-    build:
-      context: .
-      dockerfile: "BC.Master/Dockerfile"
-    ports:
-    - "5003:80"
-  saloon:
-    build:
-      context: .
-      dockerfile: "BC.Saloon/Dockerfile"
-    ports:
-    - "5004:80"
+#  master:
+#    build:
+#      context: .
+#      dockerfile: "BC.Master/Dockerfile"
+#    ports:
+#    - "5003:80"
+#  saloon:
+#    build:
+#      context: .
+#      dockerfile: "BC.Saloon/Dockerfile"
+#    ports:
+#    - "5004:80"
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:

@@ -4,14 +4,16 @@ using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BC.API.Services.MastersListService.Data.Migrations
 {
     [DbContext(typeof(MastersContext))]
-    partial class MastersContextModelSnapshot : ModelSnapshot
+    [Migration("20200930081632_Change_Schedule_Day")]
+    partial class Change_Schedule_Day
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +54,7 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CityId")
+                    b.Property<Guid>("CityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("InstagramProfile")
@@ -64,14 +66,8 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PriceListId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("ReviewsCount")
                         .HasColumnType("int");
-
-                    b.Property<Guid>("ScheduleId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("ServiceTypeId")
                         .HasColumnType("uniqueidentifier");
@@ -79,7 +75,7 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("Skype")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("SpecialityId")
+                    b.Property<Guid>("SpecialityId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Stars")
@@ -95,10 +91,6 @@ namespace BC.API.Services.MastersListService.Data.Migrations
 
                     b.HasIndex("CityId");
 
-                    b.HasIndex("PriceListId");
-
-                    b.HasIndex("ScheduleId");
-
                     b.HasIndex("ServiceTypeId");
 
                     b.HasIndex("SpecialityId");
@@ -112,7 +104,13 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("MasterId")
+                        .IsUnique();
 
                     b.ToTable("PriceLists");
                 });
@@ -153,7 +151,13 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("MasterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("MasterId")
+                        .IsUnique();
 
                     b.ToTable("Schedules");
                 });
@@ -298,17 +302,7 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                 {
                     b.HasOne("BC.API.Services.MastersListService.Data.City", "City")
                         .WithMany()
-                        .HasForeignKey("CityId");
-
-                    b.HasOne("BC.API.Services.MastersListService.Data.PriceList", "PriceList")
-                        .WithMany()
-                        .HasForeignKey("PriceListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BC.API.Services.MastersListService.Data.Schedule", "Schedule")
-                        .WithMany()
-                        .HasForeignKey("ScheduleId")
+                        .HasForeignKey("CityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -318,15 +312,24 @@ namespace BC.API.Services.MastersListService.Data.Migrations
 
                     b.HasOne("BC.API.Services.MastersListService.Data.Speciality", "Speciality")
                         .WithMany()
-                        .HasForeignKey("SpecialityId");
+                        .HasForeignKey("SpecialityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("City");
 
-                    b.Navigation("PriceList");
-
-                    b.Navigation("Schedule");
-
                     b.Navigation("Speciality");
+                });
+
+            modelBuilder.Entity("BC.API.Services.MastersListService.Data.PriceList", b =>
+                {
+                    b.HasOne("BC.API.Services.MastersListService.Data.Master", "Master")
+                        .WithOne("PriceList")
+                        .HasForeignKey("BC.API.Services.MastersListService.Data.PriceList", "MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Master");
                 });
 
             modelBuilder.Entity("BC.API.Services.MastersListService.Data.PriceListItem", b =>
@@ -346,6 +349,17 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Navigation("PriceList");
 
                     b.Navigation("ServiceType");
+                });
+
+            modelBuilder.Entity("BC.API.Services.MastersListService.Data.Schedule", b =>
+                {
+                    b.HasOne("BC.API.Services.MastersListService.Data.Master", "Master")
+                        .WithOne("Schedule")
+                        .HasForeignKey("BC.API.Services.MastersListService.Data.Schedule", "MasterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Master");
                 });
 
             modelBuilder.Entity("BC.API.Services.MastersListService.Data.ScheduleDay", b =>
@@ -386,6 +400,13 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                         .HasForeignKey("ServiceTypeGroupId");
 
                     b.Navigation("ServiceTypeGroup");
+                });
+
+            modelBuilder.Entity("BC.API.Services.MastersListService.Data.Master", b =>
+                {
+                    b.Navigation("PriceList");
+
+                    b.Navigation("Schedule");
                 });
 
             modelBuilder.Entity("BC.API.Services.MastersListService.Data.PriceList", b =>

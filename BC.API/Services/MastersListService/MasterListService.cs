@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
+using BC.API.Services.MastersListService.Data;
 
 namespace BC.API.Services.MastersListService
 {
-  internal class MasterListService
+  public class MasterListService
   {
     readonly Data.MastersContext _context;
 
@@ -14,7 +16,7 @@ namespace BC.API.Services.MastersListService
       _context = context;
     }
 
-    public IEnumerable<MasterRes> GetMasters(MastersFilter filter)
+    public async Task<IEnumerable<MasterRes>> GetMasters(MastersFilter filter)
     {
       return _context.Masters.Select(mstr => MasterRes.ParseFromMaster(mstr)).ToArray();
     }
@@ -59,7 +61,7 @@ namespace BC.API.Services.MastersListService
     }
   }
 
-  internal class MastersFilter
+  public class MastersFilter
   {
     public string CityId { get; set; }
     public Guid[] ServiceTypeIds { get; set; }

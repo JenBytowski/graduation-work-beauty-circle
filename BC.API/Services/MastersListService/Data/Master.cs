@@ -4,11 +4,11 @@ using System.IO.Pipelines;
 
 namespace BC.API.Services.MastersListService.Data
 {
-  internal class Master
+  public class Master
   {
     public Guid Id { get; set; }
 
-    public Guid CityId { get; set; }
+    public Guid? CityId { get; set; }
 
     public City City { get; set; }
 
@@ -30,14 +30,13 @@ namespace BC.API.Services.MastersListService.Data
 
     public string Skype { get; set; }
 
-    public Guid SpecialityId { get; set; }
-
+    public Guid? SpecialityId { get; set; }
     public Speciality Speciality { get; set; }
 
-    // public List<Review> Reviews { get; set; }
-
+    public Guid PriceListId { get; set; }
     public PriceList PriceList { get; set; }
-
+    
+    public Guid ScheduleId { get; set; }
     public Schedule Schedule { get; set; }
 
     public double Stars { get; set; }
@@ -45,7 +44,7 @@ namespace BC.API.Services.MastersListService.Data
     public int ReviewsCount { get; set; }
   }
 
-  internal class City
+  public class City
   {
     public Guid Id { get; set; }
 
@@ -54,18 +53,14 @@ namespace BC.API.Services.MastersListService.Data
     public string Name { get; set; }
   }
 
-  internal class Schedule
+  public class Schedule
   {
     public Guid Id { get; set; }
-
-    public Guid MasterId { get; set; }
-
-    public Master Master { get; set; }
 
     public IList<ScheduleDay> Days { get; set; }
   }
 
-  internal class ScheduleDay
+  public class ScheduleDay
   {
     public Guid Id { get; set; }
 
@@ -77,41 +72,38 @@ namespace BC.API.Services.MastersListService.Data
 
     public DateTime EndTime { get; set; }
 
-    public IList<Pause> Pauses { get; set; }
-
-    public IList<Booking> Bookings { get; set; }
+    public IList<ScheduleDayItem> Items { get; set; }
   }
 
-  internal class Pause
+  public class ScheduleDayItem
   {
     public Guid Id { get; set; }
-
     public Guid ScheduleDayId { get; set; }
-
     public ScheduleDay ScheduleDay { get; set; }
-
     public DateTime StartTime { get; set; }
-
     public DateTime EndTime { get; set; }
   }
 
-  internal class Booking
+  public class Pause : ScheduleDayItem
   {
-    public Guid Id { get; set; }
-
-    public DateTime StartTime { get; set; }
-
-    public DateTime EndTime { get; set; }
   }
 
-  internal class Speciality
+  public class Booking : ScheduleDayItem
+  {
+  }
+  
+  public class Window : ScheduleDayItem
+  {
+  }
+
+  public class Speciality
   {
     public Guid Id { get; set; }
 
     public string Name { get; set; }
   }
 
-  internal class ServiceType
+  public class ServiceType
   {
     public Guid Id { get; set; }
 
@@ -124,7 +116,7 @@ namespace BC.API.Services.MastersListService.Data
     public ServiceTypeGroup ServiceTypeGroup { get; set; }
   }
 
-  internal class ServiceTypeGroup
+  public class ServiceTypeGroup
   {
     public Guid Id { get; set; }
 
@@ -135,7 +127,7 @@ namespace BC.API.Services.MastersListService.Data
     public IList<ServiceTypeSubGroup> ServiceTypeSubGroupsGroups { get; set; }
   }
 
-  internal class ServiceTypeSubGroup
+  public class ServiceTypeSubGroup
   {
     public Guid Id { get; set; }
 
@@ -144,18 +136,14 @@ namespace BC.API.Services.MastersListService.Data
     public ServiceTypeGroup ServiceTypeGroup { get; set; }
   }
 
-  internal class PriceList
+  public class PriceList
   {
     public Guid Id { get; set; }
-
-    public Guid MasterId { get; set; }
-
-    public Master Master { get; set; }
 
     public List<PriceListItem> PriceListItems { get; set; }
   }
 
-  internal class PriceListItem
+  public class PriceListItem
   {
     public Guid Id { get; set; }
 

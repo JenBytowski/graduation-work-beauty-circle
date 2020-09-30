@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BC.API.Services.MastersListService;
 using BC.API.Services.MastersListService.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace BC.API.Controllers
   [ApiController]
   [Route("masters-list")]
   [ApiExplorerSettings(GroupName = "masters-list")]
-  internal class MasterListController : ControllerBase
+  public class MasterListController : ControllerBase
   {
     private readonly MasterListService _masterListerService;
 
@@ -18,10 +19,10 @@ namespace BC.API.Controllers
     }
 
     [HttpGet]
-    [Route("authenticate-by-vk")]
-    public IEnumerable<MasterRes> GetMasters([FromQuery] MastersFilter filter)
+    [Route("get-masters")]
+    public async Task<IEnumerable<MasterRes>> GetMasters([FromQuery] MastersFilter filter)
     {
-      return _masterListerService.GetMasters(filter);
+      return await _masterListerService.GetMasters(filter);
     }
   }
 }

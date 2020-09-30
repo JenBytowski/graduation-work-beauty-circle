@@ -4,14 +4,16 @@ using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BC.API.Services.MastersListService.Data.Migrations
 {
     [DbContext(typeof(MastersContext))]
-    partial class MastersContextModelSnapshot : ModelSnapshot
+    [Migration("20200930110434_Some_Changes")]
+    partial class Some_Changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
