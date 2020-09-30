@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuController} from '@ionic/angular';
 import {MasterListClient} from "../../api-client/master-list/clients";
 
@@ -24,7 +24,7 @@ export class MastersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.masterList.mastersList().subscribe(data => this.vm = this.initMasters(data));
+    this.masterList.getMasters(null, null, null, null).subscribe(data => this.vm = this.initMasters(data));
   }
 
   public logScrollStart() {
@@ -52,10 +52,21 @@ export class MastersListComponent implements OnInit {
     let index: number = 0;
     vm.Masters = masters.map(item => {
       let master = new Master();
-      master.Id = index;
-      master.Name = item.name;
-      master.Spec = index.toString();
-      master.Avatar = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      master.id = index;
+      master.name = item.name;
+      master.cityId = item.cityId;
+      master.speciality = item.speciality;
+      master.avatarUrl = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      master.about = item.about;
+      master.address = item.address;
+      master.phone = item.phone;
+      master.instagramProfile = item.instagramProfile;
+      master.vkProfile = item.vkProfile;
+      master.viber = item.viber;
+      master.skype = item.skype;
+      master.priceList = item.priceList;
+      master.schedule = item.schedule;
+      master.averageRating = item.averageRating;
       index++;
       return master;
     });
@@ -68,8 +79,27 @@ class Vm {
 }
 
 class Master {
-  public Id: number;
-  public Name: string;
-  public Spec: string;
-  public Avatar: string;
+  public id: number;
+  public name: string;
+  public cityId: string;
+  public avatarUrl: string;
+  public about: string;
+  public address: string;
+  public phone: string;
+  public instagramProfile: string;
+  public vkProfile: string;
+  public viber: string;
+  public skype: string;
+  public speciality: string;
+  public priceList: PriceListItem[];
+  public schedule: ScheduleDay[];
+  public averageRating: number;
+}
+
+class PriceListItem {
+
+}
+
+class ScheduleDay {
+
 }

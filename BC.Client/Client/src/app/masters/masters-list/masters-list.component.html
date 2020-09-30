@@ -19,17 +19,17 @@
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">
-      <ion-card-title class="card_title">{{master.Name}}
+      <ion-card-title class="card_title">{{master.name}}
         <ion-icon class="favorite_icon" name="heart"></ion-icon>
       </ion-card-title>
       <div class="card_main_info">
         <ion-avatar>
-          <ion-img class="avatar_image" [src]="master.Avatar"></ion-img>
+          <ion-img class="avatar_image" [src]="master.avatarUrl"></ion-img>
         </ion-avatar>
         <ion-item class="card_text">
-          <ion-card-content>{{master.Spec}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
+          <ion-card-content>{{master.speciality}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
           </ion-card-content>
-          <ion-button fill="outline" color="medium" slot="end" [routerLink]="['../master', master.Id]">View</ion-button>
+          <ion-button fill="outline" color="medium" slot="end" [routerLink]="['../master', master.id]">View</ion-button>
         </ion-item>
         <ion-item>
           <ion-icon icon="star"></ion-icon>

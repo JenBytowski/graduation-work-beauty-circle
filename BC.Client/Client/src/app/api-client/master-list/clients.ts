@@ -26,10 +26,22 @@ export class MasterListClient {
     }
 
     /**
+     * @param cityId (optional) 
+     * @param serviceTypeIds (optional) 
+     * @param startHour (optional) 
+     * @param endHour (optional) 
      * @return Success
      */
-    mastersList(): Observable<MasterDTO[]> {
-        let url_ = this.baseUrl + "/masters-list";
+    getMasters(cityId: string | null | undefined, serviceTypeIds: string[] | null | undefined, startHour: number | null | undefined, endHour: number | null | undefined): Observable<MasterRes[]> {
+        let url_ = this.baseUrl + "/masters-list/get-masters?";
+        if (cityId !== undefined && cityId !== null)
+            url_ += "CityId=" + encodeURIComponent("" + cityId) + "&";
+        if (serviceTypeIds !== undefined && serviceTypeIds !== null)
+            serviceTypeIds && serviceTypeIds.forEach(item => { url_ += "ServiceTypeIds=" + encodeURIComponent("" + item) + "&"; });
+        if (startHour !== undefined && startHour !== null)
+            url_ += "StartHour=" + encodeURIComponent("" + startHour) + "&";
+        if (endHour !== undefined && endHour !== null)
+            url_ += "EndHour=" + encodeURIComponent("" + endHour) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -41,20 +53,20 @@ export class MasterListClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMastersList(response_);
+            return this.processGetMasters(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMastersList(<any>response_);
+                    return this.processGetMasters(<any>response_);
                 } catch (e) {
-                    return <Observable<MasterDTO[]>><any>_observableThrow(e);
+                    return <Observable<MasterRes[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<MasterDTO[]>><any>_observableThrow(response_);
+                return <Observable<MasterRes[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processMastersList(response: HttpResponseBase): Observable<MasterDTO[]> {
+    protected processGetMasters(response: HttpResponseBase): Observable<MasterRes[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -68,7 +80,7 @@ export class MasterListClient {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200!.push(MasterDTO.fromJS(item));
+                    result200!.push(MasterRes.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -77,14 +89,17 @@ export class MasterListClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<MasterDTO[]>(<any>null);
+        return _observableOf<MasterRes[]>(<any>null);
     }
 }
 
-export class MasterDTO implements IMasterDTO {
+export class PriceListItem implements IPriceListItem {
     name?: string | undefined;
+    priceMin?: number;
+    priceMax?: number;
+    durationInMinutesMax?: number;
 
-    constructor(data?: IMasterDTO) {
+    constructor(data?: IPriceListItem) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -96,12 +111,15 @@ export class MasterDTO implements IMasterDTO {
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
+            this.priceMin = _data["priceMin"];
+            this.priceMax = _data["priceMax"];
+            this.durationInMinutesMax = _data["durationInMinutesMax"];
         }
     }
 
-    static fromJS(data: any): MasterDTO {
+    static fromJS(data: any): PriceListItem {
         data = typeof data === 'object' ? data : {};
-        let result = new MasterDTO();
+        let result = new PriceListItem();
         result.init(data);
         return result;
     }
@@ -109,12 +127,228 @@ export class MasterDTO implements IMasterDTO {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
+        data["priceMin"] = this.priceMin;
+        data["priceMax"] = this.priceMax;
+        data["durationInMinutesMax"] = this.durationInMinutesMax;
         return data; 
     }
 }
 
-export interface IMasterDTO {
+export interface IPriceListItem {
     name?: string | undefined;
+    priceMin?: number;
+    priceMax?: number;
+    durationInMinutesMax?: number;
+}
+
+export enum DayOfWeek {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
+    _5 = 5,
+    _6 = 6,
+}
+
+export class Window implements IWindow {
+    startTime?: Date;
+    endTime?: Date;
+
+    constructor(data?: IWindow) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Window {
+        data = typeof data === 'object' ? data : {};
+        let result = new Window();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IWindow {
+    startTime?: Date;
+    endTime?: Date;
+}
+
+export class ScheduleDay implements IScheduleDay {
+    dayOfWeek?: DayOfWeek;
+    startTime?: Date;
+    endTime?: Date;
+    windows?: Window[] | undefined;
+
+    constructor(data?: IScheduleDay) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.dayOfWeek = _data["dayOfWeek"];
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["windows"])) {
+                this.windows = [] as any;
+                for (let item of _data["windows"])
+                    this.windows!.push(Window.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ScheduleDay {
+        data = typeof data === 'object' ? data : {};
+        let result = new ScheduleDay();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["dayOfWeek"] = this.dayOfWeek;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.windows)) {
+            data["windows"] = [];
+            for (let item of this.windows)
+                data["windows"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IScheduleDay {
+    dayOfWeek?: DayOfWeek;
+    startTime?: Date;
+    endTime?: Date;
+    windows?: Window[] | undefined;
+}
+
+export class MasterRes implements IMasterRes {
+    name?: string | undefined;
+    cityId?: string | undefined;
+    avatarUrl?: string | undefined;
+    about?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    instagramProfile?: string | undefined;
+    vkProfile?: string | undefined;
+    viber?: string | undefined;
+    skype?: string | undefined;
+    speciality?: string | undefined;
+    priceList?: PriceListItem[] | undefined;
+    schedule?: ScheduleDay[] | undefined;
+    averageRating?: number;
+
+    constructor(data?: IMasterRes) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.cityId = _data["cityId"];
+            this.avatarUrl = _data["avatarUrl"];
+            this.about = _data["about"];
+            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.instagramProfile = _data["instagramProfile"];
+            this.vkProfile = _data["vkProfile"];
+            this.viber = _data["viber"];
+            this.skype = _data["skype"];
+            this.speciality = _data["speciality"];
+            if (Array.isArray(_data["priceList"])) {
+                this.priceList = [] as any;
+                for (let item of _data["priceList"])
+                    this.priceList!.push(PriceListItem.fromJS(item));
+            }
+            if (Array.isArray(_data["schedule"])) {
+                this.schedule = [] as any;
+                for (let item of _data["schedule"])
+                    this.schedule!.push(ScheduleDay.fromJS(item));
+            }
+            this.averageRating = _data["averageRating"];
+        }
+    }
+
+    static fromJS(data: any): MasterRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new MasterRes();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["cityId"] = this.cityId;
+        data["avatarUrl"] = this.avatarUrl;
+        data["about"] = this.about;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["instagramProfile"] = this.instagramProfile;
+        data["vkProfile"] = this.vkProfile;
+        data["viber"] = this.viber;
+        data["skype"] = this.skype;
+        data["speciality"] = this.speciality;
+        if (Array.isArray(this.priceList)) {
+            data["priceList"] = [];
+            for (let item of this.priceList)
+                data["priceList"].push(item.toJSON());
+        }
+        if (Array.isArray(this.schedule)) {
+            data["schedule"] = [];
+            for (let item of this.schedule)
+                data["schedule"].push(item.toJSON());
+        }
+        data["averageRating"] = this.averageRating;
+        return data; 
+    }
+}
+
+export interface IMasterRes {
+    name?: string | undefined;
+    cityId?: string | undefined;
+    avatarUrl?: string | undefined;
+    about?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    instagramProfile?: string | undefined;
+    vkProfile?: string | undefined;
+    viber?: string | undefined;
+    skype?: string | undefined;
+    speciality?: string | undefined;
+    priceList?: PriceListItem[] | undefined;
+    schedule?: ScheduleDay[] | undefined;
+    averageRating?: number;
 }
 
 export class ApiException extends Error {
