@@ -10,21 +10,21 @@ services:
       - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ASPNETCORE_URLS=http://+:80
-  sql-server:
-    image: "mcr.microsoft.com/mssql/server"
-    environment:
-      SA_PASSWORD: "Password123"
-      ACCEPT_EULA: "Y"
-    volumes:
-      - "./mssql/data:/var/opt/mssql/data"
-    ports:
-      - "5008:1433"
-  bc-client:
-    build:
-      context: .
-      dockerfile: "BC.Client/Dockerfile"
-    ports:
-    - "5002:80"
+#  sql-server:
+#    image: "mcr.microsoft.com/mssql/server"
+#    environment:
+#      SA_PASSWORD: "Password123"
+#      ACCEPT_EULA: "Y"
+#    volumes:
+#      - "./mssql/data:/var/opt/mssql/data"
+#    ports:
+#      - "5008:1433"
+#  bc-client:
+#    build:
+#      context: .
+#      dockerfile: "BC.Client/Dockerfile"
+#    ports:
+#    - "5002:80"
 #  master:
 #    build:
 #      context: .

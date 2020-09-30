@@ -8,10 +8,10 @@ COPY ["BC.API/BC.API.csproj", "BC.API/"]
 RUN dotnet restore "BC.API/BC.API.csproj"
 COPY . .
 WORKDIR /src/BC.API
-RUN dotnet build "BC.API.csproj" -c Release -o /app/build
+RUN dotnet build "BC.API.csproj" -c Debug -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "BC.API.csproj" -c Release -o /app/publish
+RUN dotnet publish "BC.API.csproj" -c Debug -o /app/publish
 
 FROM base AS final
 WORKDIR /app
