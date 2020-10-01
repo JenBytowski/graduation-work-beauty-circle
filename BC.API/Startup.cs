@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using BC.API.Events;
-using BC.API.Infrastructure;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
 using BC.API.Services.AuthenticationService.Data;
@@ -23,6 +22,7 @@ using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
 using BC.API.Services.BalanceService.Handlers;
+using BC.API.Services.BookingService.Data;
 using BC.API.Services.MastersListService.Handlers;
 
 namespace BC.API
@@ -88,6 +88,14 @@ namespace BC.API
         opt =>
         {
           opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
+        },
+        ServiceLifetime.Transient,
+        ServiceLifetime.Transient
+      );
+
+      services.AddDbContext<BookingContext>(opt =>
+        {
+          opt.UseSqlServer(Configuration.GetConnectionString("BookingContext"));
         },
         ServiceLifetime.Transient,
         ServiceLifetime.Transient

@@ -6,6 +6,26 @@ namespace BC.API.Services.BookingService.Data
 {
   public class BookingContext : DbContext
   {
+    public DbSet<Schedule> Schedules { get; set; }
+
+    public DbSet<ScheduleDay> ScheduleDays { get; set; }
+
+    public  DbSet<ScheduleDayItem> ScheduleDayItems { get; set; }
+
+    public  DbSet<Pause> Pauses { get; set; }
+
+    public DbSet<Booking> Bookings { get; set; }
+
+    public  DbSet<Window> Windows { get; set; }
+
+    public BookingContext(DbContextOptions<BookingContext> options) : base(options)
+    { }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+      builder.HasDefaultSchema("booking");
+      base.OnModelCreating(builder);
+    }
   }
 
   public class Schedule
