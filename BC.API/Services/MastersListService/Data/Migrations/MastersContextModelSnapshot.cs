@@ -220,12 +220,12 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ServiceTypeGroupId")
+                    b.Property<Guid>("ServiceTypeSubGroupId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceTypeGroupId");
+                    b.HasIndex("ServiceTypeSubGroupId");
 
                     b.ToTable("ServiceTypes");
                 });
@@ -238,9 +238,6 @@ namespace BC.API.Services.MastersListService.Data.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ParentServiceTypeGroupId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -256,7 +253,7 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("ServiceTypeGroupId")
+                    b.Property<Guid>("ServiceTypeGroupId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -370,20 +367,22 @@ namespace BC.API.Services.MastersListService.Data.Migrations
 
             modelBuilder.Entity("BC.API.Services.MastersListService.Data.ServiceType", b =>
                 {
-                    b.HasOne("BC.API.Services.MastersListService.Data.ServiceTypeGroup", "ServiceTypeGroup")
+                    b.HasOne("BC.API.Services.MastersListService.Data.ServiceTypeSubGroup", "ServiceTypeSubGroup")
                         .WithMany()
-                        .HasForeignKey("ServiceTypeGroupId")
+                        .HasForeignKey("ServiceTypeSubGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceTypeGroup");
+                    b.Navigation("ServiceTypeSubGroup");
                 });
 
             modelBuilder.Entity("BC.API.Services.MastersListService.Data.ServiceTypeSubGroup", b =>
                 {
                     b.HasOne("BC.API.Services.MastersListService.Data.ServiceTypeGroup", "ServiceTypeGroup")
                         .WithMany("ServiceTypeSubGroupsGroups")
-                        .HasForeignKey("ServiceTypeGroupId");
+                        .HasForeignKey("ServiceTypeGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ServiceTypeGroup");
                 });
