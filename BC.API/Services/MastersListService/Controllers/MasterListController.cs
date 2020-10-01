@@ -11,18 +11,18 @@ namespace BC.API.Controllers
   [ApiExplorerSettings(GroupName = "masters-list")]
   public class MasterListController : ControllerBase
   {
-    private readonly MasterListService _masterListerService;
+    private readonly MastersListService _mastersListerService;
 
-    public MasterListController(MasterListService masterListerService)
+    public MasterListController(MastersListService mastersListerService)
     {
-      _masterListerService = masterListerService;
+      _mastersListerService = mastersListerService;
     }
 
     [HttpGet]
     [Route("get-masters")]
     public async Task<IEnumerable<MasterRes>> GetMasters([FromQuery] MastersFilter filter)
     {
-      return await _masterListerService.GetMasters(filter);
+      return await _mastersListerService.GetMasters(filter);
     }
   }
 }

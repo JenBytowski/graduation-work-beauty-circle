@@ -23,6 +23,7 @@ using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
 using BC.API.Services.BalanceService.Handlers;
+using BC.API.Services.MastersListService.Handlers;
 
 namespace BC.API
 {
@@ -37,6 +38,7 @@ namespace BC.API
 
     private void AddEventBus(IServiceCollection services)
     {
+      services.AddTransient<ScheduleDayChangedEventHandler>();
       services.AddTransient<UserCreatedHandler>();
 
       var eb = this.Configuration.GetSection("RabbitMQEventBus");
@@ -52,6 +54,7 @@ namespace BC.API
         );
 
         bus.Subscribe<UserCreatedEvent, UserCreatedHandler>();
+        bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
 
         return bus;
       });
@@ -105,7 +108,7 @@ namespace BC.API
       services.AddIdentity<User, Role>().AddEntityFrameworkStores<AuthenticationContext>()
         .AddDefaultTokenProviders();
       services.AddTransient<AuthenticationService.AuthenticationService>();
-      services.AddTransient<MasterListService>();
+      services.AddTransient<MastersListService>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>

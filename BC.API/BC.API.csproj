@@ -58,11 +58,11 @@
       <Compile Update="Infrastructure\Interfaces\CantSendSMSException.cs">
         <DependentUpon>ISMSClient.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\MastersListService\MasterRes.cs">
+      <Compile Update="Services\MastersListService\MastersRes.cs">
         <DependentUpon>MasterListService.cs</DependentUpon>
       </Compile>
       <Compile Update="Services\MastersListService\UpdateMasterReq.cs">
-        <DependentUpon>MasterListService.cs</DependentUpon>
+        <DependentUpon>MastersListService.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 
@@ -76,6 +76,7 @@
       <Folder Include="Services\BookingService\Controllers" />
       <Folder Include="Services\BookingService\Handlers" />
       <Folder Include="Services\MastersListService\Data\Migrations" />
+      <Folder Include="Services\MastersListService\ServiceClients" />
       <Folder Include="Services\NotificationsService" />
     </ItemGroup>
 

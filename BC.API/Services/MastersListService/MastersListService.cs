@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime;
 using System.Threading.Tasks;
+using BC.API.Events;
 using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BC.API.Services.MastersListService
 {
-  public class MasterListService
+  public class MastersListService
   {
     readonly Data.MastersContext _context;
 
-    public MasterListService(Data.MastersContext context)
+    public MastersListService(Data.MastersContext context)
     {
       _context = context;
     }
@@ -62,6 +63,11 @@ namespace BC.API.Services.MastersListService
 
     public async Task ReorderMasters()
     {
+    }
+
+    public void OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
+    {
+      throw new NotImplementedException();
     }
   }
 
