@@ -32,18 +32,14 @@
           <ion-button fill="outline" color="medium" slot="end" [routerLink]="['../master', master.id]">View</ion-button>
         </ion-item>
         <ion-item>
-          <ion-icon icon="star"></ion-icon>
-          <ion-icon icon="star"></ion-icon>
-          <ion-icon icon="star"></ion-icon>
-          <ion-icon icon="star"></ion-icon>
-          <ion-icon icon="star-half"></ion-icon>
+          <ion-icon *ngFor="let star of master.starRating" [icon]="star"></ion-icon>
         </ion-item>
       </div>
       <div class="card_description">
         {{master.about}}
       </div>
       <ion-item class="links_item">
-        Links: 
+        Links:
         <ion-icon class="link" icon="logo-vk"></ion-icon>
         <ion-icon class="link" icon="logo-skype"></ion-icon>
         <ion-icon class="link" icon="logo-instagram"></ion-icon>
