@@ -27,7 +27,7 @@
           <ion-img class="avatar_image" [src]="master.avatarUrl"></ion-img>
         </ion-avatar>
         <ion-item class="card_text">
-          <ion-card-content>{{master.speciality}} Content root path: D:\Code\Timur\BC\beauty-circle\BC.API
+          <ion-card-content>{{master.speciality}}
           </ion-card-content>
           <ion-button fill="outline" color="medium" slot="end" [routerLink]="['../master', master.id]">View</ion-button>
         </ion-item>
@@ -40,11 +40,7 @@
         </ion-item>
       </div>
       <div class="card_description">
-        Метод map вызывает переданную функцию callback один раз для каждого элемента, в порядке их появления и
-        конструирует новый массив из результатов её вызова. Функция callback вызывается только для индексов массива,
-        имеющих присвоенные значения, включая undefined. Она не вызывается для пропущенных элементов массива (то есть
-        для индексов, которые никогда не были заданы, которые были удалены или которым никогда не было присвоено
-        значение.
+        {{master.about}}
       </div>
       <ion-item class="links_item">
         Links: 

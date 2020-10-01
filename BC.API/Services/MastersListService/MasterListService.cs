@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime;
 using System.Threading.Tasks;
 using BC.API.Services.MastersListService.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace BC.API.Services.MastersListService
 {
@@ -18,7 +19,16 @@ namespace BC.API.Services.MastersListService
 
     public async Task<IEnumerable<MasterRes>> GetMasters(MastersFilter filter)
     {
-      return _context.Masters.Select(mstr => MasterRes.ParseFromMaster(mstr)).ToArray();
+      return _context.Masters
+        .Include(mstr => mstr.PriceList)
+        .ThenInclude(mstr => mstr.PriceListItems)
+        .Include(mstr => mstr.Speciality)
+        .Include(mstr => mstr.Schedule)
+        .ThenInclude(mstr => mstr.Days)
+        .ThenInclude(mstr => mstr.Items)
+        .ThenInclude(mstr => mstr.ScheduleDay)
+        .ThenInclude(mstr => mstr.Items)
+        .Select(mstr => MasterRes.ParseFromMaster(mstr)).ToArray();
     }
 
     public MasterRes GetMasterById(Guid masterId)
@@ -28,34 +38,28 @@ namespace BC.API.Services.MastersListService
 
     public void UpdateMasterInfo(UpdateMasterReq req)
     {
-      
     }
 
     public void Publish(Guid masterId)
     {
-      
     }
 
     public void UnPublish(Guid masterId)
     {
-      
     }
-    
+
     public void OnUserCreated()
     {
-      
     }
-    
+
     public void OnUserDeleted()
     {
-      
     }
 
     public void OnReviewPosted()
     {
-      
     }
-    
+
     public async Task ReorderMasters()
     {
     }
