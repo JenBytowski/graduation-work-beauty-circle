@@ -35,7 +35,7 @@ namespace BC.API.Services.MastersListService.Data
 
     public Guid PriceListId { get; set; }
     public PriceList PriceList { get; set; }
-    
+
     public Guid ScheduleId { get; set; }
     public Schedule Schedule { get; set; }
 
@@ -91,7 +91,7 @@ namespace BC.API.Services.MastersListService.Data
   public class Booking : ScheduleDayItem
   {
   }
-  
+
   public class Window : ScheduleDayItem
   {
   }
@@ -111,9 +111,9 @@ namespace BC.API.Services.MastersListService.Data
 
     public IList<Master> Masters { get; set; }
 
-    public Guid ServiceTypeGroupId { get; set; }
+    public Guid ServiceTypeSubGroupId { get; set; }
 
-    public ServiceTypeGroup ServiceTypeGroup { get; set; }
+    public ServiceTypeSubGroup ServiceTypeSubGroup { get; set; }
   }
 
   public class ServiceTypeGroup
@@ -121,8 +121,6 @@ namespace BC.API.Services.MastersListService.Data
     public Guid Id { get; set; }
 
     public string Name { get; set; }
-
-    public Guid ParentServiceTypeGroupId { get; set; }
 
     public IList<ServiceTypeSubGroup> ServiceTypeSubGroupsGroups { get; set; }
   }
@@ -133,6 +131,7 @@ namespace BC.API.Services.MastersListService.Data
 
     public string Name { get; set; }
 
+    public Guid ServiceTypeGroupId { get; set; }
     public ServiceTypeGroup ServiceTypeGroup { get; set; }
   }
 
