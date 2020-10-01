@@ -56,7 +56,7 @@ export class MastersListComponent implements OnInit {
       master.name = item.name;
       master.cityId = item.cityId;
       master.speciality = item.speciality;
-      master.avatarUrl = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      master.avatarUrl = item.avatarUrl ? item.avatarUrl : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRgAefR8jkzapHvRFbIIug_q3PcaqYmmbWdDQ&usqp=CAU';
       master.about = item.about;
       master.address = item.address;
       master.phone = item.phone;
