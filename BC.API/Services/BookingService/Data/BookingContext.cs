@@ -12,12 +12,6 @@ namespace BC.API.Services.BookingService.Data
 
     public  DbSet<ScheduleDayItem> ScheduleDayItems { get; set; }
 
-    public  DbSet<Pause> Pauses { get; set; }
-
-    public DbSet<Booking> Bookings { get; set; }
-
-    public  DbSet<Window> Windows { get; set; }
-
     public BookingContext(DbContextOptions<BookingContext> options) : base(options)
     { }
 
@@ -33,7 +27,9 @@ namespace BC.API.Services.BookingService.Data
     public Guid Id { get; set; }
     public Guid MasterId { get; set; }
     public IList<ScheduleDay> Days { get; set; }
+    
     public bool ConnectedBookingsPrefered { get; set; }
+    
     public bool PreferedGapInMinutes { get; set; }
   }
 
