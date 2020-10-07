@@ -29,7 +29,7 @@ export class MasterProfileComponent implements OnInit {
       master.name = item.name;
       master.cityId = item.cityId;
       master.speciality = item.speciality;
-      master.avatarUrl = 'https://24smi.org/public/media/celebrity/2019/04/16/ebullttytnug-sergei-zverev.jpg';
+      master.avatarUrl = item.avatarUrl ? item.avatarUrl : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRgAefR8jkzapHvRFbIIug_q3PcaqYmmbWdDQ&usqp=CAU';
       master.about = item.about;
       master.address = item.address;
       master.phone = item.phone;
@@ -40,10 +40,22 @@ export class MasterProfileComponent implements OnInit {
       master.priceList = item.priceList;
       master.schedule = item.schedule;
       master.averageRating = item.averageRating;
+      master.starRating = this.countStarRating(item.averageRating);
       index++;
       return master;
     });
     return vm;
+  }
+
+  public countStarRating(rating: number) {
+    rating = Math.round(rating * 2) / 2;
+    return [
+      (rating >= 1 ? 'star' : rating >= 0.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 2 ? 'star' : rating >= 1.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 3 ? 'star' : rating >= 2.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 4 ? 'star' : rating >= 3.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 5 ? 'star' : rating >= 4.5 ? 'star-half-outline' : 'star-outline'),
+    ];
   }
 }
 
@@ -68,6 +80,7 @@ class Master {
   public priceList: PriceListItem[];
   public schedule: ScheduleDay[];
   public averageRating: number;
+  public starRating: string[];
 }
 
 class PriceListItem {

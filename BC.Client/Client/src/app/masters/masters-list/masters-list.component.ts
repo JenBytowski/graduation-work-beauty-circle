@@ -24,7 +24,9 @@ export class MastersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.masterList.getMasters(null, null, null, null).subscribe(data => this.vm = this.initMasters(data));
+    this.masterList.getMasters(null, null, null, null).subscribe(data => {
+      this.vm = this.initMasters(data);
+    });
   }
 
   public logScrollStart() {
@@ -67,10 +69,22 @@ export class MastersListComponent implements OnInit {
       master.priceList = item.priceList;
       master.schedule = item.schedule;
       master.averageRating = item.averageRating;
+      master.starRating = this.countStarRating(item.averageRating);
       index++;
       return master;
     });
     return vm;
+  }
+
+  public countStarRating(rating: number) {
+    rating = Math.round(rating * 2) / 2;
+    return [
+      (rating >= 1 ? 'star' : rating >= 0.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 2 ? 'star' : rating >= 1.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 3 ? 'star' : rating >= 2.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 4 ? 'star' : rating >= 3.5 ? 'star-half-outline' : 'star-outline'),
+      (rating >= 5 ? 'star' : rating >= 4.5 ? 'star-half-outline' : 'star-outline'),
+    ];
   }
 }
 
@@ -94,6 +108,7 @@ class Master {
   public priceList: PriceListItem[];
   public schedule: ScheduleDay[];
   public averageRating: number;
+  public starRating: string[];
 }
 
 class PriceListItem {
