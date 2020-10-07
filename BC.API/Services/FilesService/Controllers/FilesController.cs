@@ -23,8 +23,8 @@ namespace BC.API.Services.FilesService.Controllers
       _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "FilesFolder"); // TODO: Вынести в конфигурацию
     }
 
-    [Route("{name}")]
     [HttpGet]
+    [Route("{name}")]
     public IActionResult GetFile([FromRoute] string name)
     {
       var filePath = GenerateFilePatch(name);
@@ -34,7 +34,7 @@ namespace BC.API.Services.FilesService.Controllers
     }
 
     [HttpPost]
-    public IActionResult PostFile()
+    public IActionResult PostFile([FromQuery] bool isTemporary = false)
     {
       try
       {
@@ -59,6 +59,13 @@ namespace BC.API.Services.FilesService.Controllers
       {
         return StatusCode(500, $"Internal server error: {ex}");
       }
+    }
+
+    [HttpDelete]
+    [Route("{name}")]
+    public IActionResult DeleteFile([FromRoute] string name)
+    {
+      return Ok();
     }
   }
 }

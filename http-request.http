@@ -1,0 +1,12 @@
+﻿POST https://localhost:5207/pre
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="my-file.txt"; filename="file.txt"
+
+< ./BC.sln
+--WebAppBoundary--
+
+<> 2020-10-05T064316.200.txt
+
+###

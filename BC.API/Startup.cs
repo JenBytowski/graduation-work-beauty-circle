@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http;
+using System.Text;
 using BC.API.Events;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
@@ -121,6 +122,7 @@ namespace BC.API
       services.AddTransient<MastersListService>();
       services.AddTransient<BookingService>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
+      services.AddTransient<HttpClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {
