@@ -123,6 +123,7 @@ namespace BC.API
       services.AddTransient<BookingService>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
       services.AddTransient<HttpClient>();
+      services.AddTransient<IFilesServiceClient, FilesServiceClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {
