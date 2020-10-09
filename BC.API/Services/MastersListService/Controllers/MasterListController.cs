@@ -4,7 +4,7 @@ using BC.API.Services.MastersListService;
 using BC.API.Services.MastersListService.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BC.API.Controllers
+namespace BC.API.Services.MastersListService.Controllers
 {
   [ApiController]
   [Route("masters-list")]

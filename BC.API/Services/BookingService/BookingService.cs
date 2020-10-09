@@ -27,14 +27,14 @@ namespace BC.API.Services.BookingService
       _context.ScheduleDayItems.RemoveRange(windows);
       _context.SaveChanges();
 
-      for (var counter = 0; counter < newWindows.Count; counter++)
+      for (var counter = 0; counter < newWindows.Count;)
       {
         var window = newWindows[counter];
-        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime);
+        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
 
         if (windowtoConcatenate == null)
         {
-          continue;
+          counter++;
         }
 
         newWindows[counter] = new Window
@@ -125,10 +125,10 @@ namespace BC.API.Services.BookingService
             }
           });
         });
-
-        _context.ScheduleDays.AddRange(newWeek);
-        _context.SaveChanges();
       }
+
+      _context.ScheduleDays.AddRange(newWeek);
+      _context.SaveChanges();
     }
 
     public void AddBooking(AddBookingReq req)

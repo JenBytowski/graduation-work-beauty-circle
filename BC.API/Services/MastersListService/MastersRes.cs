@@ -52,8 +52,8 @@ namespace BC.API.Services.MastersListService
         Viber = master.Viber,
         Skype = master.Skype,
         Speciality = master.Speciality.Name,
-        PriceList = master.PriceList.PriceListItems.Select(itm => PriceListItem.ParseFromPriseListItem(itm)),
-        Schedule = master.Schedule.Days.Select(day => ScheduleDay.ParseFromScheduleDay(day)),
+        PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItem.ParseFromPriseListItem(itm)),
+        Schedule = master.Schedule?.Days.Select(day => ScheduleDay.ParseFromScheduleDay(day)),
         AverageRating = master.Stars / master.ReviewsCount
       };
     }
@@ -101,7 +101,7 @@ namespace BC.API.Services.MastersListService
       };
     }
   }
-  
+
   // public class ScheduleBooking
   // {
   //   public DateTime StartTime { get; set;}
