@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BC.API.Events;
 using BC.API.Services.BookingService.Data;
 using Microsoft.EntityFrameworkCore;
 using StrongCode.Seedwork.EventBus;
@@ -14,43 +13,76 @@ namespace BC.API.Services.BookingService
 
     private BookingContext _context;
 
-    public BookingService(IEventBus eventBus, BookingContext context)
+    public BookingService(BookingContext context)
     {
-      _eventBus = eventBus;
       _context = context;
+    }
+
+    private void ConcatenateWindows(Guid dayId)
+    {
+      var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
+      var windows = day.Items.Where(imt => imt is Window);
+      var newWindows = windows.ToList();
+
+      _context.ScheduleDayItems.RemoveRange(windows);
+      _context.SaveChanges();
+
+      for (var counter = 0; counter < newWindows.Count; counter++)
+      {
+        var window = newWindows[counter];
+        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime);
+
+        if (windowtoConcatenate == null)
+        {
+          continue;
+        }
+
+        newWindows[counter] = new Window
+        {
+          Id = window.Id,
+          ScheduleDayId = window.ScheduleDayId,
+          StartTime = window.StartTime,
+          EndTime = windowtoConcatenate.EndTime
+        };
+        newWindows.Remove(windowtoConcatenate);
+      }
+
+      _context.ScheduleDayItems.AddRange(newWindows);
+      _context.SaveChanges();
     }
 
     public GetScheduleRes GetSchedule(GetScheduleReq req)
     {
-      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items).
-        FirstOrDefault(sch => sch.MasterId == req.MasterId);
+      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
+        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
 
       if (schedule == null)
       {
         throw new Exception("Dont found schedule for this master.");
       }
 
-      return new GetScheduleRes { Days = schedule.Days };
+      return new GetScheduleRes {Days = schedule.Days};
     }
 
     public void AddWorkingWeek(AddWorkingWeekReq req)
     {
-      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items).
-        FirstOrDefault(sch => sch.MasterId == req.MasterId);
-      
+      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
+        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+
       if (schedule == null)
       {
         throw new Exception("Dont found schedule for this master.");
       }
 
       var newWeek = new List<ScheduleDay>();
-      
+
       if (req.MondayDateOfPausesDonorWeek != null)
       {
-        var donorWeekMonday = schedule.Days.First(day => day.StartTime.Date == req.MondayDateOfPausesDonorWeek.Value.Date);
+        var donorWeekMonday =
+          schedule.Days.First(day => day.StartTime.Date == req.MondayDateOfPausesDonorWeek.Value.Date);
         var donorWeek = schedule.Days.Where(day =>
           day.StartTime.Date >= donorWeekMonday.StartTime.Date &&
-          day.StartTime.Date < donorWeekMonday.StartTime.AddDays(4).Date).OrderBy(
+          day.StartTime.Date < donorWeekMonday.StartTime.AddDays(6).Date).OrderBy(
           day => day.StartTime.Date);
 
         newWeek = donorWeek.Select((day, i) =>
@@ -59,56 +91,61 @@ namespace BC.API.Services.BookingService
           return new ScheduleDay
           {
             ScheduleId = day.ScheduleId,
-            DayOfWeek = day.DayOfWeek,
-            StartTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, day.StartTime.Hour, day.StartTime.Minute, day.StartTime.Millisecond),
-            EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, day.EndTime.Hour, day.EndTime.Minute, day.EndTime.Millisecond),
+            StartTime =
+              new DateTime(newDate.Year, newDate.Month, newDate.Day, day.StartTime.Hour, day.StartTime.Minute,
+                day.StartTime.Millisecond),
+            EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, day.EndTime.Hour, day.EndTime.Minute,
+              day.EndTime.Millisecond),
             Items = day.Items
           };
         }).ToList();
       }
       else
       {
-        for (var counter = 0; counter < 5; counter++)
+        req.DaysToWork.ForEach(day =>
         {
-          var newDate = req.MondayDate.AddDays(counter);
+          var newDate = req.MondayDate.AddDays(day != DayOfWeek.Sunday ? (int)day - 1 : 6);
+          var startTime = TimeSpan.Parse(req.StartTime);
+          var endTime = TimeSpan.Parse(req.EndTime);
 
           newWeek.Add(new ScheduleDay
           {
             ScheduleId = schedule.Id,
             StartTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 0, 0, 0),
-            //TODO пофиксить 
             EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 23, 59, 59),
             Items = new List<ScheduleDayItem>
             {
               new Window
               {
-                StartTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 0, 0, 0),
-                EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 23, 59, 59)
+                StartTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, startTime.Hours,
+                  startTime.Minutes, 0),
+                EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, endTime.Hours,
+                  endTime.Minutes, 0)
               }
             }
           });
-        }
-      }
+        });
 
-      _context.ScheduleDays.AddRange(newWeek);
-      _context.SaveChanges();
+        _context.ScheduleDays.AddRange(newWeek);
+        _context.SaveChanges();
+      }
     }
-    
+
     public void AddBooking(AddBookingReq req)
     {
-      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items).
-        FirstOrDefault(sch => sch.MasterId == req.MasterId);
-      
+      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
+        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+
       if (schedule == null)
       {
         throw new Exception("Dont found schedule for this master.");
       }
 
       var scheduleDay = schedule.Days.First(day => day.StartTime.Date == req.StartTime.Date);
-      var windowses = scheduleDay.Items.Where(itm => itm is Window);
+      var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
-        windowses.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
-      
+        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+
       if (windowtoRemove == null)
       {
         throw new Exception("Dont found window by this time.");
@@ -116,34 +153,30 @@ namespace BC.API.Services.BookingService
 
       var newBooking = new Booking
       {
+        ScheduleDayId = scheduleDay.Id,
         ClientId = req.ClientId,
         StartTime = req.StartTime,
         EndTime = req.EndTime,
         ServiceTypeId = req.ServiceType,
         Description = req.Description
       };
-      var newWindowses = new List<Window>
+
+      var newWindows = new List<Window>
       {
-        new Window
-        {
-          ScheduleDayId = scheduleDay.Id, 
-          StartTime = windowtoRemove.StartTime,
-          EndTime = req.StartTime
-        },
-        new Window
-        {
-          ScheduleDayId = scheduleDay.Id, 
-          StartTime = req.EndTime,
-          EndTime = windowtoRemove.EndTime
-        }
-      }; 
-      
+        scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newBooking.StartTime) == null
+          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
+          : null,
+        scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newBooking.EndTime) == null
+          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
+          : null
+      }.Where(wind => wind != null);
+
       _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindowses);
+      _context.ScheduleDayItems.AddRange(newWindows);
       _context.ScheduleDayItems.Add(newBooking);
       _context.SaveChanges();
-      
-      this._eventBus.Publish(new ScheduleDayChangedEvent(){ });
+
+      //this._eventBus.Publish(new ScheduleDayChangedEvent() { });
     }
 
     public void CancelBooking(CancelBookingReq req)
@@ -157,31 +190,31 @@ namespace BC.API.Services.BookingService
 
       var newWindow = new Window
       {
-        ScheduleDayId = booking.ScheduleDayId,
-        StartTime = booking.StartTime,
-        EndTime = booking.EndTime
+        ScheduleDayId = booking.ScheduleDayId, StartTime = booking.StartTime, EndTime = booking.EndTime
       };
 
       _context.ScheduleDayItems.Remove(booking);
       _context.ScheduleDayItems.Add(newWindow);
       _context.SaveChanges();
+
+      ConcatenateWindows(booking.ScheduleDayId);
     }
 
     public void AddPause(AddPauseReq req)
     {
-      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items).
-        FirstOrDefault(sch => sch.MasterId == req.MasterId);
-      
+      var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
+        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+
       if (schedule == null)
       {
         throw new Exception("Dont found schedule for this master.");
       }
 
       var scheduleDay = schedule.Days.First(day => day.StartTime.Date == req.StartTime.Date);
-      var windowses = scheduleDay.Items.Where(itm => itm is Window);
+      var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
-        windowses.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
-      
+        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+
       if (windowtoRemove == null)
       {
         throw new Exception("Dont found window by this time.");
@@ -189,29 +222,23 @@ namespace BC.API.Services.BookingService
 
       var newPause = new Pause
       {
-        ScheduleDayId = schedule.Id,
+        ScheduleDayId = scheduleDay.Id,
         StartTime = req.StartTime,
         EndTime = req.EndTime,
         Description = req.Description
       };
-      var newWindowses = new List<Window>
+      var newWindows = new List<Window>
       {
-        new Window
-        {
-          ScheduleDayId = scheduleDay.Id, 
-          StartTime = windowtoRemove.StartTime,
-          EndTime = req.StartTime
-        },
-        new Window
-        {
-          ScheduleDayId = scheduleDay.Id, 
-          StartTime = req.EndTime,
-          EndTime = windowtoRemove.EndTime
-        }
-      };
-      
+        scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newPause.StartTime) == null
+          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
+          : null,
+        scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newPause.EndTime) == null
+          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
+          : null
+      }.Where(wind => wind != null);
+
       _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindowses);
+      _context.ScheduleDayItems.AddRange(newWindows);
       _context.ScheduleDayItems.Add(newPause);
       _context.SaveChanges();
     }
@@ -227,75 +254,14 @@ namespace BC.API.Services.BookingService
 
       var newWindow = new Window
       {
-        ScheduleDayId = pause.ScheduleDayId,
-        StartTime = pause.StartTime,
-        EndTime = pause.EndTime
+        ScheduleDayId = pause.ScheduleDayId, StartTime = pause.StartTime, EndTime = pause.EndTime
       };
 
       _context.ScheduleDayItems.Remove(pause);
       _context.ScheduleDayItems.Add(newWindow);
       _context.SaveChanges();
+
+      ConcatenateWindows(pause.ScheduleDayId);
     }
-  }
-
-  public class AddWorkingWeekReq
-  {
-    public Guid MasterId { get; set; }
-    
-    public DateTime MondayDate { get; set; }
-    
-    public DateTime? MondayDateOfPausesDonorWeek { get; set; }
-    
-    public List<DayOfWeek> DaysToWork { get; set; }
-    
-    public DateTime StartTime { get; set; }
-    
-    public DateTime EndTime { get; set; }
-  }
-
-  public class GetScheduleReq
-  {
-    public Guid MasterId { get; set; }
-  }
-
-  public class GetScheduleRes
-  {
-    public IEnumerable<ScheduleDay> Days { get; set; }
-  }
-
-  public class CancelPauseReq
-  {
-    public Guid PauseId { get; set; }
-  }
-
-  public class AddPauseReq
-  {
-    public Guid MasterId { get; set; }
-    
-    public DateTime StartTime { get; set; }
-    
-    public DateTime EndTime { get; set; }
-    
-    public string Description { get; set; }
-  }
-
-  public class CancelBookingReq
-  {
-    public Guid BookingId { get; set; }
-  }
-
-  public class AddBookingReq
-  {
-    public Guid MasterId { get; set; }
-    
-    public Guid ClientId { get; set; }
-    
-    public Guid ServiceType { get; set; }
-    
-    public string Description { get; set; }
-    
-    public DateTime StartTime { get; set; }
-    
-    public DateTime EndTime { get; set; }
   }
 }

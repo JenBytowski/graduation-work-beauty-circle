@@ -64,6 +64,27 @@
       <Compile Update="Services\MastersListService\UpdateMasterReq.cs">
         <DependentUpon>MastersListService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\BookingService\CancelBookingReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\CancelPauseReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\GetScheduleReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\GetScheduleRes.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\AddWorkingWeekReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\AddPauseReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\BookingService\AddBookingReq.cs">
+        <DependentUpon>BookingService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -73,7 +94,6 @@
 
     <ItemGroup>
       <Folder Include="Services\AuthenticationService\Data\Migrations" />
-      <Folder Include="Services\BookingService\Controllers" />
       <Folder Include="Services\BookingService\Handlers" />
       <Folder Include="Services\MastersListService\Data\Migrations" />
       <Folder Include="Services\MastersListService\ServiceClients" />

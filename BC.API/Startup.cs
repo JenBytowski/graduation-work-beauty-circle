@@ -22,6 +22,7 @@ using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
 using BC.API.Services.BalanceService.Handlers;
+using BC.API.Services.BookingService;
 using BC.API.Services.BookingService.Data;
 using BC.API.Services.MastersListService.Handlers;
 
@@ -68,6 +69,7 @@ namespace BC.API
       {
         opt.SwaggerDoc("authentication", new OpenApiInfo {Title = "Authentication", Version = "1.0"});
         opt.SwaggerDoc("masters-list", new OpenApiInfo {Title = "Masters list", Version = "1.0"});
+        opt.SwaggerDoc("booking", new OpenApiInfo {Title = "Booking", Version = "1.0"});
         opt.EnableAnnotations();
       });
 
@@ -117,6 +119,7 @@ namespace BC.API
         .AddDefaultTokenProviders();
       services.AddTransient<AuthenticationService.AuthenticationService>();
       services.AddTransient<MastersListService>();
+      services.AddTransient<BookingService>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -157,6 +160,7 @@ namespace BC.API
       {
         opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
         opt.SwaggerEndpoint("/swagger/masters-list/swagger.json", "Masters list");
+        opt.SwaggerEndpoint("/swagger/booking/swagger.json", "Booking");
       });
 
       app.UseHttpsRedirection();
