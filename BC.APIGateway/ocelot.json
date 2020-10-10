@@ -1,6 +1,18 @@
 ﻿{
-  "Routes": [],
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "{xxx}",
+      "DownstreamPathTemplate": "{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
+    }
+  ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:5220"
+    "BaseUrl": "http://localhost:5100"
   }
 }
