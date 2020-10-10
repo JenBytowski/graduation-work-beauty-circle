@@ -21,10 +21,16 @@ namespace BC.API.Services.MastersListService.Controllers
     }
 
     [HttpGet]
-    [Route("get-masters")]
     public async Task<IEnumerable<MasterRes>> GetMasters([FromQuery] MastersFilter filter)
     {
       return await _mastersListerService.GetMasters(filter);
+    }
+
+    [HttpPut]
+    [Route("{id}")]
+    public async void UpdateMaster()
+    {
+      
     }
 
     [HttpPost]
@@ -36,7 +42,7 @@ namespace BC.API.Services.MastersListService.Controllers
         return BadRequest();
       }
 
-      await this._masterListerService.UploadMasterAvatar(id, file.OpenReadStream());
+      // await this._mastersListerService.Up(id, file.OpenReadStream());
 
       return Ok();
     }
