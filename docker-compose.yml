@@ -29,12 +29,12 @@ services:
       - "./mssql/data:/var/opt/mssql/data"
     ports:
       - "5008:1433"
-  #  bc-client:
-  #    build:
-  #      context: .
-  #      dockerfile: "BC.Client/Dockerfile"
-  #    ports:
-  #    - "5002:80"
+  bc-client:
+    build:
+      context: .
+      dockerfile: "BC.Client/Dockerfile"
+    ports:
+      - "5002:80"
   #  master:
   #    build:
   #      context: .

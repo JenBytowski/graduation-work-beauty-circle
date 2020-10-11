@@ -1,8 +1,19 @@
 ﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "{xxx}",
-      "DownstreamPathTemplate": "{xxx}",
+      "UpstreamPathTemplate": "/api/masters-list/{xxx}",
+      "DownstreamPathTemplate": "/masters-list/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/masters-list",
+      "DownstreamPathTemplate": "/masters-list",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
