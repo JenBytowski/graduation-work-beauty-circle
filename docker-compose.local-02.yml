@@ -18,9 +18,12 @@ services:
     volumes:
       - "./volumes/sql-server/data:/var/opt/mssql/data"
   rabbitmq:
+    ports:
       - "5241:5672"
       - "5251:15672"
   bc-client:
+    build:
+      dockerfile: "BC.Client/Dockerfile.Local-02"
     ports:
       - "5261:80"
   #  master:
