@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "nswag-master-list": "nswag run ./projects/bc-common/src/lib/api-client/master-list/nswag.json",
+    "nswag-authentication": "nswag run ./projects/bc-common/src/lib/api-client/authentication/nswag.json"
   },
   "private": true,
   "dependencies": {
