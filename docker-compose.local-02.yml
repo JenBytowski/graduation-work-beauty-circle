@@ -1,45 +1,28 @@
 ﻿version: '3'
 services:
   gateway:
-    build:
-      context: .
-      dockerfile: "BC.APIGateway/Dockerfile"
     ports:
-      - "5100:80"
+      - "5211:80"
     volumes:
       - "./volumes/gateway/config:/app/Config"
-    environment:
-      - ASPNETCORE_URLS=http://+:80
   bc-api:
-    build:
-      context: .
-      dockerfile: "BC.API/Dockerfile"
     ports:
-      - "5001:80"
+      - "5221:80"
     environment:
       - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ASPNETCORE_URLS=http://+:80
   sql-server:
-    image: "mcr.microsoft.com/mssql/server"
-    environment:
-      SA_PASSWORD: "Password123"
-      ACCEPT_EULA: "Y"
+    ports:
+      - "5231:1433"
     volumes:
-      - "./mssql/data:/var/opt/mssql/data"
-    ports:
-      - "5008:1433"
+      - "./volumes/sql-server/data:/var/opt/mssql/data"
   rabbitmq:
-    image: "rabbitmq:3-management"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5241:5672"
+      - "5251:15672"
   bc-client:
-    build:
-      context: .
-      dockerfile: "BC.Client/Dockerfile"
     ports:
-      - "5002:80"
+      - "5261:80"
   #  master:
   #    build:
   #      context: .

@@ -18,6 +18,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{84DFAB58-EFF8-4977-BE63-6DB8609B9AFE}"
 ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
+	docker-compose.local-01.yml = docker-compose.local-01.yml
+	docker-compose.local-02.yml = docker-compose.local-02.yml
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BC.Common", "BC.Common\BC.Common.csproj", "{F18F08B0-40A7-4F21-981A-5F666951A6ED}"
