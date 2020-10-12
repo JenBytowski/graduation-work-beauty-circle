@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BC.API.Services.BookingService.Controllers
 {
@@ -16,9 +17,9 @@ namespace BC.API.Services.BookingService.Controllers
 
     [HttpGet]
     [Route("get-schedule")]
-    public GetScheduleRes GetSchedule(GetScheduleReq request)
+    public GetScheduleRes GetSchedule(Guid masterId)
     {
-      return _bookingService.GetSchedule(request);
+      return _bookingService.GetSchedule(masterId);
     }
 
     [HttpPost]

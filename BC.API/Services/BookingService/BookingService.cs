@@ -51,17 +51,17 @@ namespace BC.API.Services.BookingService
       _context.SaveChanges();
     }
 
-    public GetScheduleRes GetSchedule(GetScheduleReq req)
+    public GetScheduleRes GetSchedule(Guid MasterId)
     {
       var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
-        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+        .FirstOrDefault(sch => sch.MasterId == MasterId);
 
       if (schedule == null)
       {
         throw new Exception("Dont found schedule for this master.");
       }
 
-      return new GetScheduleRes {Days = schedule.Days};
+      return new GetScheduleRes {Days = schedule.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day))};
     }
 
     public void AddWorkingWeek(AddWorkingWeekReq req)

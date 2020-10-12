@@ -70,9 +70,6 @@
       <Compile Update="Services\BookingService\CancelPauseReq.cs">
         <DependentUpon>BookingService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\BookingService\GetScheduleReq.cs">
-        <DependentUpon>BookingService.cs</DependentUpon>
-      </Compile>
       <Compile Update="Services\BookingService\GetScheduleRes.cs">
         <DependentUpon>BookingService.cs</DependentUpon>
       </Compile>
@@ -85,6 +82,7 @@
       <Compile Update="Services\BookingService\AddBookingReq.cs">
         <DependentUpon>BookingService.cs</DependentUpon>
       </Compile>
+      <Compile Remove="Services\BookingService\GetScheduleReq.cs" />
     </ItemGroup>
 
     <ItemGroup>
