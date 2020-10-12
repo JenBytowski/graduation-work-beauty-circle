@@ -217,6 +217,12 @@
             },
             "sanya": {
               "browserTarget": "app:build:sanya"
+            },
+            "local-01": {
+              "browserTarget": "app:build:local-01"
+            },
+            "local-02": {
+              "browserTarget": "app:build:local-02"
             }
           }
         },

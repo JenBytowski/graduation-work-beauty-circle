@@ -85,6 +85,14 @@ namespace BC.Client
         {
           spa.UseAngularCliServer(npmScript: "start-sanya");
         }
+        else if (env.IsEnvironment("Local-01"))
+        {
+          spa.UseAngularCliServer(npmScript: "start-local-01");
+        }
+        else if (env.IsEnvironment("Local-02"))
+        {
+          spa.UseAngularCliServer(npmScript: "start-local-02");
+        }
       });
     }
   }
