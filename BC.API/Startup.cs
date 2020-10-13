@@ -146,7 +146,7 @@ namespace BC.API
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-      if (env.IsDevelopment())
+      if (env.IsDevelopment() || env.IsEnvironment("Local-01") || env.IsEnvironment("Local-02"))
       {
         app.UseDeveloperExceptionPage();
       }
@@ -166,7 +166,7 @@ namespace BC.API
         opt.SwaggerEndpoint("/swagger/booking/swagger.json", "Booking");
       });
 
-      app.UseHttpsRedirection();
+      // app.UseHttpsRedirection();
       app.UseRouting();
 
       app.UseAuthentication();

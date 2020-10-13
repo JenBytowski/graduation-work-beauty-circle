@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: "BC.APIGateway/Dockerfile"
-    ports:
-      - "5100:80"
     volumes:
       - "./volumes/gateway/config:/app/Config"
     environment:
@@ -14,8 +12,6 @@ services:
     build:
       context: .
       dockerfile: "BC.API/Dockerfile"
-    ports:
-      - "5001:80"
     environment:
       - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
@@ -27,19 +23,12 @@ services:
       ACCEPT_EULA: "Y"
     volumes:
       - "./mssql/data:/var/opt/mssql/data"
-    ports:
-      - "5008:1433"
   rabbitmq:
     image: "rabbitmq:3-management"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
   bc-client:
     build:
       context: .
       dockerfile: "BC.Client/Dockerfile"
-    ports:
-      - "5002:80"
   #  master:
   #    build:
   #      context: .
