@@ -65,27 +65,7 @@ namespace BC.Client
 
         spa.Options.StartupTimeout = new TimeSpan(0, 5, 0);
 
-        if (env.IsDevelopment())
-        {
-          spa.UseAngularCliServer(npmScript: "start");
-        }
-        else if (env.IsEnvironment("Timur"))
-        {
-          spa.UseAngularCliServer(npmScript: "start-timur");
-        }
-        else if (env.IsEnvironment("Roman"))
-        {
-          spa.UseAngularCliServer(npmScript: "start-roman");
-        }
-        else if (env.IsEnvironment("Wolk"))
-        {
-          spa.UseAngularCliServer(npmScript: "start-wolk");
-        }
-        else if (env.IsEnvironment("Sanya"))
-        {
-          spa.UseAngularCliServer(npmScript: "start-sanya");
-        }
-        else if (env.IsEnvironment("Local-01"))
+        if (env.IsEnvironment("Local-01"))
         {
           spa.UseAngularCliServer(npmScript: "start-local-01");
         }
