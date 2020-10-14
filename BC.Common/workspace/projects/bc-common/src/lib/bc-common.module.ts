@@ -1,8 +1,7 @@
-import { NgModule } from '@angular/core';
-import { BcCommonComponent } from './bc-common.component';
-import { IonComponent } from './ion/ion.component';
+import {NgModule} from '@angular/core';
+import {BcCommonComponent} from './bc-common.component';
+import {IonComponent} from './ion/ion.component';
 import {IonicModule} from "@ionic/angular";
-
 
 
 @NgModule({
@@ -12,4 +11,5 @@ import {IonicModule} from "@ionic/angular";
   ],
   exports: [BcCommonComponent]
 })
-export class BcCommonModule { }
+export class BcCommonModule {
+}

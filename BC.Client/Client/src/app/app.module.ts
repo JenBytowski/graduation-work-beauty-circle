@@ -13,6 +13,8 @@ import {HttpClientModule} from "@angular/common/http";
 import {ApiClientModule} from "./api-client/api-client.module";
 import {AuthenticationModule} from "./authentication/authentication.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {BcCommonModule} from "@bc-common/bc-common.module";
+import {HomePageModule} from "./home/home.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -25,7 +27,9 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         HttpClientModule,
         ApiClientModule,
         AuthenticationModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        HomePageModule,
+        BcCommonModule
     ],
     providers: [
         StatusBar,
