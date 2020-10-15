@@ -1,6 +1,6 @@
-﻿using BC.API.Services.AuthenticationService;
+﻿using System.Threading.Tasks;
+using BC.API.Services.AuthenticationService;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace BC.API.Controllers
 {

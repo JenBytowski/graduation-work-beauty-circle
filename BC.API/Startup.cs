@@ -4,11 +4,14 @@ using BC.API.Events;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
 using BC.API.Services.AuthenticationService.Data;
-using AuthenticationService = BC.API.Services.AuthenticationService;
 using BC.API.Services.BalanceService;
 using BC.API.Services.BalanceService.Data;
+using BC.API.Services.BalanceService.Handlers;
+using BC.API.Services.BookingService;
+using BC.API.Services.BookingService.Data;
 using BC.API.Services.MastersListService;
 using BC.API.Services.MastersListService.Data;
+using BC.API.Services.MastersListService.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,11 +24,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
+using AuthenticationService = BC.API.Services.AuthenticationService;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
-using BC.API.Services.BalanceService.Handlers;
-using BC.API.Services.BookingService;
-using BC.API.Services.BookingService.Data;
-using BC.API.Services.MastersListService.Handlers;
 
 namespace BC.API
 {
@@ -71,6 +71,7 @@ namespace BC.API
         opt.SwaggerDoc("authentication", new OpenApiInfo {Title = "Authentication", Version = "1.0"});
         opt.SwaggerDoc("masters-list", new OpenApiInfo {Title = "Masters list", Version = "1.0"});
         opt.SwaggerDoc("booking", new OpenApiInfo {Title = "Booking", Version = "1.0"});
+        opt.SwaggerDoc("file-service", new OpenApiInfo {Title = "File service", Version = "1.0"});
         opt.EnableAnnotations();
       });
 
@@ -90,7 +91,7 @@ namespace BC.API
       (
         opt =>
         {
-          opt.UseSqlServer(Configuration.GetConnectionString("MasterContext"));
+          opt.UseSqlServer(Configuration.GetConnectionString("MastersContext"));
         },
         ServiceLifetime.Transient,
         ServiceLifetime.Transient
@@ -164,6 +165,7 @@ namespace BC.API
         opt.SwaggerEndpoint("/swagger/authentication/swagger.json", "Authentication");
         opt.SwaggerEndpoint("/swagger/masters-list/swagger.json", "Masters list");
         opt.SwaggerEndpoint("/swagger/booking/swagger.json", "Booking");
+        opt.SwaggerEndpoint("/swagger/file-service/swagger.json", "File service");
       });
 
       // app.UseHttpsRedirection();

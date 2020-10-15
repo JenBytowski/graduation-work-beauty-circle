@@ -1,12 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BC.API.Services.FilesService.Controllers
 {
   [Route("pre")]
+  [ApiExplorerSettings(GroupName = "file-service")]
   public class PreController : Controller
   {
     private HttpClient _client;

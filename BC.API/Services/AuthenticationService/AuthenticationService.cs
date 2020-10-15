@@ -1,8 +1,4 @@
-﻿using BC.API.Services.AuthenticationService.Exceptions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -14,6 +10,10 @@ using System.Threading.Tasks;
 using BC.API.Events;
 using BC.API.Infrastructure.Interfaces;
 using BC.API.Services.AuthenticationService.Data;
+using BC.API.Services.AuthenticationService.Exceptions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using StrongCode.Seedwork.EventBus;
 
 namespace BC.API.Services.AuthenticationService

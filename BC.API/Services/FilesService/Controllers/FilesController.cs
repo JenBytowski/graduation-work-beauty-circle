@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 namespace BC.API.Services.FilesService.Controllers
 {
   [Route("files")]
+  [ApiExplorerSettings(GroupName = "file-service")]
   public class FilesController : Controller
   {
     private readonly IWebHostEnvironment _appEnvironment;
