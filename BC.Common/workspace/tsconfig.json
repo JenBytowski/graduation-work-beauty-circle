@@ -12,6 +12,12 @@
     },
     {
       "path": "./projects/bc-common/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/bc-client/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/bc-client/tsconfig.spec.json"
     }
-]
+  ]
 }

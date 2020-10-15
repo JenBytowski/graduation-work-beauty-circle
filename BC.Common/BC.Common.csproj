@@ -34,6 +34,21 @@
       <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tslint.json" />
       <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.json" />
       <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\dist\bc-common\package.json" />
+      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\ng-package.json" />
+      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.lib.prod.json" />
+      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.spec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.component.spec.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.component.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.module.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.service.spec.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.service.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\projects.ts" />
+      <TypeScriptCompile Include="workspace\projects\bc-common\src\test.ts" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

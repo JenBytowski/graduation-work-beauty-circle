@@ -42,6 +42,127 @@
           }
         }
       }
+    },
+    "bc-client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/bc-client",
+      "sourceRoot": "projects/bc-client/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/bc-client",
+            "index": "projects/bc-client/src/index.html",
+            "main": "projects/bc-client/src/main.ts",
+            "polyfills": "projects/bc-client/src/polyfills.ts",
+            "tsConfig": "projects/bc-client/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "projects/bc-client/src/favicon.ico",
+              "projects/bc-client/src/assets"
+            ],
+            "styles": [
+              "projects/bc-client/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/bc-client/src/environments/environment.ts",
+                  "with": "projects/bc-client/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "bc-client:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "bc-client:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "bc-client:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/bc-client/src/test.ts",
+            "polyfills": "projects/bc-client/src/polyfills.ts",
+            "tsConfig": "projects/bc-client/tsconfig.spec.json",
+            "karmaConfig": "projects/bc-client/karma.conf.js",
+            "assets": [
+              "projects/bc-client/src/favicon.ico",
+              "projects/bc-client/src/assets"
+            ],
+            "styles": [
+              "projects/bc-client/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/bc-client/tsconfig.app.json",
+              "projects/bc-client/tsconfig.spec.json",
+              "projects/bc-client/e2e/tsconfig.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "projects/bc-client/e2e/protractor.conf.js",
+            "devServerTarget": "bc-client:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "bc-client:serve:production"
+            }
+          }
+        }
+      }
     }},
   "defaultProject": "bc-common"
 }

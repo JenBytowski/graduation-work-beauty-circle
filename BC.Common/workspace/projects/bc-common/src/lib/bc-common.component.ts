@@ -1,18 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'lib-bc-common',
   template: `
-    <p>
-      bc-common works!
-    </p>
+    <ion-button>It works!!</ion-button>
   `,
-  styles: [
-  ]
+  styles: []
 })
 export class BcCommonComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
