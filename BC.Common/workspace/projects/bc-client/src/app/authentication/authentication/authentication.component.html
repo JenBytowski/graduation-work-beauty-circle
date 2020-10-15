@@ -1,0 +1,63 @@
+<ion-app>
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <!--        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>-->
+        <ion-title>
+          Аутентификация
+          <!--          <lib-bc-common></lib-bc-common>-->
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="navigation_form_background">
+      <div class="navigation_form">
+
+        <!--        <ion-item>-->
+        <!--          <ion-button (click)="authByPhone()">Get code</ion-button>-->
+        <!--          <ion-input type="number" #code></ion-input>-->
+        <!--          <ion-button (click)="sendCode()">Reg</ion-button>-->
+        <!--        </ion-item>-->
+
+        <div class="form_text">
+          Войдите
+        </div>
+
+        <div class="icon_line">
+          <ion-icon
+                  (click)="authByPhone()"
+                  class="form_icon"
+                  icon="call">
+          </ion-icon>
+          <ion-icon
+                  (click)="authByVk()"
+                  class="form_icon"
+                  icon="logo-vk">
+          </ion-icon>
+          <ion-icon
+                  (click)="authByInstagram()"
+                  class="form_icon"
+                  icon="logo-instagram">
+          </ion-icon>
+          <ion-icon
+                  (click)="authByGoogle()"
+                  class="form_icon"
+                  icon="logo-google">
+          </ion-icon>
+        </div>
+
+        <div class="form_text">
+          или
+        </div>
+
+        <div class="form_text">
+          <a [routerLink]="['../']">Зарегестрируйтесь</a>
+        </div>
+
+      </div>
+    </div>
+  </ion-content>
+</ion-app>

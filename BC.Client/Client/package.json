@@ -12,7 +12,7 @@
     "start-wolk": "ng run app:serve:wolk",
     "start-sanya": "ng run app:serve:sanya",
     "start-local-01": "ng run app:serve:local-01",
-    "start-local-02": "ng run app:serve:local-02 --port=4300",
+    "start-local-02": "ng run app:serve:local-02",
     "start": "ng serve",
     "build-staging": "ng run app:build:staging",
     "build-prod": "ng run app:build:production",

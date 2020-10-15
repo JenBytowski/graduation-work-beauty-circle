@@ -1,0 +1,7 @@
+{
+  "name": "beauty-circle",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

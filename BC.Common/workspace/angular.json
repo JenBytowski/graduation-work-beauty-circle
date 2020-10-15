@@ -68,7 +68,12 @@
               "projects/bc-client/src/assets"
             ],
             "styles": [
-              "projects/bc-client/src/styles.scss"
+              {
+                "input": "projects/bc-client/src/theme/variables.scss"
+              },
+              {
+                "input": "projects/bc-client/src/styles.scss"
+              }
             ],
             "scripts": []
           },
@@ -100,6 +105,22 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "local-01": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/bc-client/src/environments/environment.ts",
+                  "with": "projects/bc-client/src/environments/environment.local-01.ts"
+                }
+              ]
+            },
+            "local-02": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/bc-client/src/environments/environment.ts",
+                  "with": "projects/bc-client/src/environments/environment.local-02.ts"
+                }
+              ]
             }
           }
         },
@@ -111,6 +132,12 @@
           "configurations": {
             "production": {
               "browserTarget": "bc-client:build:production"
+            },
+            "local-01": {
+              "browserTarget": "bc-client:build:local-01"
+            },
+            "local-02": {
+              "browserTarget": "bc-client:build:local-02"
             }
           }
         },
@@ -159,10 +186,17 @@
           "configurations": {
             "production": {
               "devServerTarget": "bc-client:serve:production"
+            },
+            "local-01": {
+              "devServerTarget": "bc-client:serve:local-01"
+            },
+            "local-02": {
+              "devServerTarget": "bc-client:serve:local-02"
             }
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "bc-common"
 }
