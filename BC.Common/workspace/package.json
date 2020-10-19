@@ -14,7 +14,8 @@
     "start-bc-client-local-01": "ng run bc-client:serve:local-01",
     "start-bc-client-local-02": "ng run bc-client:serve:local-02",
     "start-bc-client": "ng run bc-client:serve",
-    "build-bc-common": "ng build bc-common"
+    "build-bc-client": "ng run bc-client:build",
+    "build-bc-common": "ng run bc-common:build"
   },
   "private": true,
   "dependencies": {

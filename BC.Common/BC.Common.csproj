@@ -24,31 +24,21 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\angular.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\e2e\tsconfig.e2e.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\package-lock.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\package.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.app.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.server.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.spec.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tslint.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\angular.json" />
+      <_ContentIncludedByDefault Remove="workspace\e2e\tsconfig.e2e.json" />
+      <_ContentIncludedByDefault Remove="workspace\package-lock.json" />
+      <_ContentIncludedByDefault Remove="workspace\package.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.app.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.server.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="workspace\tslint.json" />
       <_ContentIncludedByDefault Remove="workspace\dist\bc-common\package.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\ng-package.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.lib.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.lib.prod.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.spec.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.component.spec.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.component.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.module.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.service.spec.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\lib\bc-common.service.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\projects.ts" />
-      <TypeScriptCompile Include="workspace\projects\bc-common\src\test.ts" />
+      <_ContentIncludedByDefault Remove="workspace\ng-package.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.prod.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.spec.json" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
