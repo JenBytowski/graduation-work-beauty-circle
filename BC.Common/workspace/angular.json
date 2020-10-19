@@ -64,8 +64,16 @@
             "tsConfig": "projects/bc-client/tsconfig.app.json",
             "aot": true,
             "assets": [
-              "projects/bc-client/src/favicon.ico",
-              "projects/bc-client/src/assets"
+              {
+                "glob": "**/*",
+                "input": "projects/bc-client/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
             ],
             "styles": [
               {

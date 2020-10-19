@@ -16,7 +16,7 @@ import {MasterProfileComponent} from './master-profile/master-profile.component'
     MastersListComponent
   ],
   imports: [
-    IonicModule.forRoot(),
+    IonicModule,
     CommonModule,
     MastersRoutingModule
   ],

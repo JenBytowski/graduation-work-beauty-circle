@@ -16,9 +16,9 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
 export class FilesClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -57,37 +57,6 @@ export class FilesClient {
     }
 
     /**
-     * @return Success
-     */
-    filesDelete(name: string | null): Observable<void> {
-        let url_ = this.baseUrl + "/files/{name}";
-        if (name === undefined || name === null)
-            throw new Error("The parameter 'name' must be defined.");
-        url_ = url_.replace("{name}", encodeURIComponent("" + name));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processFilesDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processFilesDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
      * @param isTemporary (optional)
      * @return Success
      */
@@ -112,6 +81,37 @@ export class FilesClient {
             if (response_ instanceof HttpResponseBase) {
                 try {
                     return this.processFilesPost(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    /**
+     * @return Success
+     */
+    filesDelete(name: string | null): Observable<void> {
+        let url_ = this.baseUrl + "/files/{name}";
+        if (name === undefined || name === null)
+            throw new Error("The parameter 'name' must be defined.");
+        url_ = url_.replace("{name}", encodeURIComponent("" + name));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processFilesDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processFilesDelete(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -180,9 +180,9 @@ export class FilesClient {
 
 @Injectable()
 export class MasterListClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -231,37 +231,6 @@ export class MasterListClient {
     }
 
     /**
-     * @return Success
-     */
-    mastersListPut(id: string): Observable<void> {
-        let url_ = this.baseUrl + "/masters-list/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMastersListPut(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMastersListPut(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
      * @param file (optional)
      * @return Success
      */
@@ -290,6 +259,37 @@ export class MasterListClient {
             if (response_ instanceof HttpResponseBase) {
                 try {
                     return this.processAvatar(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    /**
+     * @return Success
+     */
+    mastersListPut(id: string): Observable<void> {
+        let url_ = this.baseUrl + "/masters-list/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMastersListPut(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMastersListPut(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -365,9 +365,9 @@ export class MasterListClient {
 
 @Injectable()
 export class PreClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -442,13 +442,6 @@ export class PriceListItem implements IPriceListItem {
         }
     }
 
-    static fromJS(data: any): PriceListItem {
-        data = typeof data === 'object' ? data : {};
-        let result = new PriceListItem();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -456,6 +449,13 @@ export class PriceListItem implements IPriceListItem {
             this.priceMax = _data["priceMax"];
             this.durationInMinutesMax = _data["durationInMinutesMax"];
         }
+    }
+
+    static fromJS(data: any): PriceListItem {
+        data = typeof data === 'object' ? data : {};
+        let result = new PriceListItem();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -498,18 +498,18 @@ export class Window implements IWindow {
         }
     }
 
-    static fromJS(data: any): Window {
-        data = typeof data === 'object' ? data : {};
-        let result = new Window();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
         }
+    }
+
+    static fromJS(data: any): Window {
+        data = typeof data === 'object' ? data : {};
+        let result = new Window();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -540,13 +540,6 @@ export class ScheduleDay implements IScheduleDay {
         }
     }
 
-    static fromJS(data: any): ScheduleDay {
-        data = typeof data === 'object' ? data : {};
-        let result = new ScheduleDay();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.dayOfWeek = _data["dayOfWeek"];
@@ -558,6 +551,13 @@ export class ScheduleDay implements IScheduleDay {
                     this.windows!.push(Window.fromJS(item));
             }
         }
+    }
+
+    static fromJS(data: any): ScheduleDay {
+        data = typeof data === 'object' ? data : {};
+        let result = new ScheduleDay();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -606,13 +606,6 @@ export class MasterRes implements IMasterRes {
         }
     }
 
-    static fromJS(data: any): MasterRes {
-        data = typeof data === 'object' ? data : {};
-        let result = new MasterRes();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
@@ -638,6 +631,13 @@ export class MasterRes implements IMasterRes {
             }
             this.averageRating = _data["averageRating"];
         }
+    }
+
+    static fromJS(data: any): MasterRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new MasterRes();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -696,7 +696,6 @@ export class ApiException extends Error {
     response: string;
     headers: { [key: string]: any; };
     result: any;
-    protected isApiException = true;
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -707,6 +706,8 @@ export class ApiException extends Error {
         this.headers = headers;
         this.result = result;
     }
+
+    protected isApiException = true;
 
     static isApiException(obj: any): obj is ApiException {
         return obj.isApiException === true;

@@ -15,10 +15,10 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
-export class AuthenticationClient {
+export class BookingClient {
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -26,36 +26,36 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param masterId (optional)
      * @return Success
      */
-    authenticateByVk(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-vk";
+    getSchedule(masterId: string | undefined): Observable<GetScheduleRes> {
+        let url_ = this.baseUrl + "/booking/get-schedule?";
+        if (masterId === null)
+            throw new Error("The parameter 'masterId' cannot be null.");
+        else if (masterId !== undefined)
+            url_ += "masterId=" + encodeURIComponent("" + masterId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json",
                 "Accept": "text/plain"
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAuthenticateByVk(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSchedule(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAuthenticateByVk(<any>response_);
+                    return this.processGetSchedule(<any>response_);
                 } catch (e) {
-                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
+                    return <Observable<GetScheduleRes>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
+                return <Observable<GetScheduleRes>><any>_observableThrow(response_);
         }));
     }
 
@@ -63,76 +63,8 @@ export class AuthenticationClient {
      * @param body (optional)
      * @return Success
      */
-    authenticateByInstagram(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-instagram";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAuthenticateByInstagram(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAuthenticateByInstagram(<any>response_);
-                } catch (e) {
-                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
-     * @param body (optional)
-     * @return Success
-     */
-    authenticateByGoogle(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-google";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAuthenticateByGoogle(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAuthenticateByGoogle(<any>response_);
-                } catch (e) {
-                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
-     * @param body (optional)
-     * @return Success
-     */
-    getSmsAuthenticationCode(body: AuthenticationPhoneRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/authentication/get-sms-authentication-code";
+    addWorkingWeek(body: AddWorkingWeekReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/booking/add-working-week";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -147,11 +79,11 @@ export class AuthenticationClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSmsAuthenticationCode(response_);
+            return this.processAddWorkingWeek(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSmsAuthenticationCode(<any>response_);
+                    return this.processAddWorkingWeek(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -164,8 +96,8 @@ export class AuthenticationClient {
      * @param body (optional)
      * @return Success
      */
-    authenticateByPhone(body: SMSCodeAuthenticationResponse | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-phone";
+    addBooking(body: AddBookingReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/booking/add-booking";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -176,25 +108,123 @@ export class AuthenticationClient {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "text/plain"
             })
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAuthenticateByPhone(response_);
+            return this.processAddBooking(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAuthenticateByPhone(<any>response_);
+                    return this.processAddBooking(<any>response_);
                 } catch (e) {
-                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processAuthenticateByVk(response: HttpResponseBase): Observable<AuthenticationResponse> {
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    cancelBooking(body: CancelBookingReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/booking/cancel-booking";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelBooking(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelBooking(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    addPause(body: AddPauseReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/booking/add-pause";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAddPause(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAddPause(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    cancelPause(body: CancelPauseReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/booking/cancel-pause";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelPause(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelPause(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSchedule(response: HttpResponseBase): Observable<GetScheduleRes> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -205,7 +235,7 @@ export class AuthenticationClient {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
+            result200 = GetScheduleRes.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -213,54 +243,10 @@ export class AuthenticationClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<AuthenticationResponse>(<any>null);
+        return _observableOf<GetScheduleRes>(<any>null);
     }
 
-    protected processAuthenticateByInstagram(response: HttpResponseBase): Observable<AuthenticationResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AuthenticationResponse>(<any>null);
-    }
-
-    protected processAuthenticateByGoogle(response: HttpResponseBase): Observable<AuthenticationResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AuthenticationResponse>(<any>null);
-    }
-
-    protected processGetSmsAuthenticationCode(response: HttpResponseBase): Observable<void> {
+    protected processAddWorkingWeek(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -279,7 +265,7 @@ export class AuthenticationClient {
         return _observableOf<void>(<any>null);
     }
 
-    protected processAuthenticateByPhone(response: HttpResponseBase): Observable<AuthenticationResponse> {
+    protected processAddBooking(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -288,17 +274,71 @@ export class AuthenticationClient {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<AuthenticationResponse>(<any>null);
+        return _observableOf<void>(<any>null);
+    }
+
+    protected processCancelBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    protected processAddPause(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    protected processCancelPause(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -530,11 +570,14 @@ export class PreClient {
     }
 }
 
-export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
-    code?: string | undefined;
-    redirectUrl?: string | undefined;
+export class ScheduleDayItemRes implements IScheduleDayItemRes {
+    id?: string;
+    scheduleDayId?: string;
+    scheduleDayRes?: ScheduleDayRes;
+    startTime?: Date;
+    endTime?: Date;
 
-    constructor(data?: IAuthenticationCodeRequest) {
+    constructor(data?: IScheduleDayItemRes) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -543,40 +586,50 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
         }
     }
 
-    init(_data?: any) {
-        if (_data) {
-            this.code = _data["code"];
-            this.redirectUrl = _data["redirectUrl"];
-        }
-    }
-
-    static fromJS(data: any): AuthenticationCodeRequest {
+    static fromJS(data: any): ScheduleDayItemRes {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticationCodeRequest();
+        let result = new ScheduleDayItemRes();
         result.init(data);
         return result;
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scheduleDayId = _data["scheduleDayId"];
+            this.scheduleDayRes = _data["scheduleDayRes"] ? ScheduleDayRes.fromJS(_data["scheduleDayRes"]) : <any>undefined;
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+        }
+    }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["code"] = this.code;
-        data["redirectUrl"] = this.redirectUrl;
+        data["id"] = this.id;
+        data["scheduleDayId"] = this.scheduleDayId;
+        data["scheduleDayRes"] = this.scheduleDayRes ? this.scheduleDayRes.toJSON() : <any>undefined;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
         return data;
     }
 }
 
-export interface IAuthenticationCodeRequest {
-    code?: string | undefined;
-    redirectUrl?: string | undefined;
+export interface IScheduleDayItemRes {
+    id?: string;
+    scheduleDayId?: string;
+    scheduleDayRes?: ScheduleDayRes;
+    startTime?: Date;
+    endTime?: Date;
 }
 
-export class AuthenticationResponse implements IAuthenticationResponse {
-    /** Access API token */
-    token?: string | undefined;
-    /** Unique username */
-    username?: string | undefined;
+export class ScheduleDayRes implements IScheduleDayRes {
+    id?: string;
+    scheduleId?: string;
+    startTime?: Date;
+    endTime?: Date;
+    items?: ScheduleDayItemRes[] | undefined;
 
-    constructor(data?: IAuthenticationResponse) {
+    constructor(data?: IScheduleDayRes) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -585,39 +638,54 @@ export class AuthenticationResponse implements IAuthenticationResponse {
         }
     }
 
-    init(_data?: any) {
-        if (_data) {
-            this.token = _data["token"];
-            this.username = _data["username"];
-        }
-    }
-
-    static fromJS(data: any): AuthenticationResponse {
+    static fromJS(data: any): ScheduleDayRes {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticationResponse();
+        let result = new ScheduleDayRes();
         result.init(data);
         return result;
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.scheduleId = _data["scheduleId"];
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ScheduleDayItemRes.fromJS(item));
+            }
+        }
+    }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["token"] = this.token;
-        data["username"] = this.username;
+        data["id"] = this.id;
+        data["scheduleId"] = this.scheduleId;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IAuthenticationResponse {
-    /** Access API token */
-    token?: string | undefined;
-    /** Unique username */
-    username?: string | undefined;
+export interface IScheduleDayRes {
+    id?: string;
+    scheduleId?: string;
+    startTime?: Date;
+    endTime?: Date;
+    items?: ScheduleDayItemRes[] | undefined;
 }
 
-export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
-    phone?: string | undefined;
+export class GetScheduleRes implements IGetScheduleRes {
+    days?: ScheduleDayRes[] | undefined;
 
-    constructor(data?: IAuthenticationPhoneRequest) {
+    constructor(data?: IGetScheduleRes) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -626,35 +694,57 @@ export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
         }
     }
 
-    init(_data?: any) {
-        if (_data) {
-            this.phone = _data["phone"];
-        }
-    }
-
-    static fromJS(data: any): AuthenticationPhoneRequest {
+    static fromJS(data: any): GetScheduleRes {
         data = typeof data === 'object' ? data : {};
-        let result = new AuthenticationPhoneRequest();
+        let result = new GetScheduleRes();
         result.init(data);
         return result;
     }
 
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["days"])) {
+                this.days = [] as any;
+                for (let item of _data["days"])
+                    this.days!.push(ScheduleDayRes.fromJS(item));
+            }
+        }
+    }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["phone"] = this.phone;
+        if (Array.isArray(this.days)) {
+            data["days"] = [];
+            for (let item of this.days)
+                data["days"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IAuthenticationPhoneRequest {
-    phone?: string | undefined;
+export interface IGetScheduleRes {
+    days?: ScheduleDayRes[] | undefined;
 }
 
-export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResponse {
-    phone?: string | undefined;
-    code?: string | undefined;
+export enum DayOfWeek {
+    _0 = 0,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4,
+    _5 = 5,
+    _6 = 6,
+}
 
-    constructor(data?: ISMSCodeAuthenticationResponse) {
+export class AddWorkingWeekReq implements IAddWorkingWeekReq {
+    masterId?: string;
+    mondayDate?: Date;
+    mondayDateOfPausesDonorWeek?: Date | undefined;
+    daysToWork?: DayOfWeek[] | undefined;
+    startTime?: string | undefined;
+    endTime?: string | undefined;
+
+    constructor(data?: IAddWorkingWeekReq) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -663,31 +753,227 @@ export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResp
         }
     }
 
-    init(_data?: any) {
-        if (_data) {
-            this.phone = _data["phone"];
-            this.code = _data["code"];
-        }
-    }
-
-    static fromJS(data: any): SMSCodeAuthenticationResponse {
+    static fromJS(data: any): AddWorkingWeekReq {
         data = typeof data === 'object' ? data : {};
-        let result = new SMSCodeAuthenticationResponse();
+        let result = new AddWorkingWeekReq();
         result.init(data);
         return result;
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.masterId = _data["masterId"];
+            this.mondayDate = _data["mondayDate"] ? new Date(_data["mondayDate"].toString()) : <any>undefined;
+            this.mondayDateOfPausesDonorWeek = _data["mondayDateOfPausesDonorWeek"] ? new Date(_data["mondayDateOfPausesDonorWeek"].toString()) : <any>undefined;
+            if (Array.isArray(_data["daysToWork"])) {
+                this.daysToWork = [] as any;
+                for (let item of _data["daysToWork"])
+                    this.daysToWork!.push(item);
+            }
+            this.startTime = _data["startTime"];
+            this.endTime = _data["endTime"];
+        }
+    }
+
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["phone"] = this.phone;
-        data["code"] = this.code;
+        data["masterId"] = this.masterId;
+        data["mondayDate"] = this.mondayDate ? this.mondayDate.toISOString() : <any>undefined;
+        data["mondayDateOfPausesDonorWeek"] = this.mondayDateOfPausesDonorWeek ? this.mondayDateOfPausesDonorWeek.toISOString() : <any>undefined;
+        if (Array.isArray(this.daysToWork)) {
+            data["daysToWork"] = [];
+            for (let item of this.daysToWork)
+                data["daysToWork"].push(item);
+        }
+        data["startTime"] = this.startTime;
+        data["endTime"] = this.endTime;
         return data;
     }
 }
 
-export interface ISMSCodeAuthenticationResponse {
-    phone?: string | undefined;
-    code?: string | undefined;
+export interface IAddWorkingWeekReq {
+    masterId?: string;
+    mondayDate?: Date;
+    mondayDateOfPausesDonorWeek?: Date | undefined;
+    daysToWork?: DayOfWeek[] | undefined;
+    startTime?: string | undefined;
+    endTime?: string | undefined;
+}
+
+export class AddBookingReq implements IAddBookingReq {
+    masterId?: string;
+    clientId?: string;
+    serviceType?: string;
+    description?: string | undefined;
+    startTime?: Date;
+    endTime?: Date;
+
+    constructor(data?: IAddBookingReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): AddBookingReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddBookingReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.masterId = _data["masterId"];
+            this.clientId = _data["clientId"];
+            this.serviceType = _data["serviceType"];
+            this.description = _data["description"];
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["masterId"] = this.masterId;
+        data["clientId"] = this.clientId;
+        data["serviceType"] = this.serviceType;
+        data["description"] = this.description;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IAddBookingReq {
+    masterId?: string;
+    clientId?: string;
+    serviceType?: string;
+    description?: string | undefined;
+    startTime?: Date;
+    endTime?: Date;
+}
+
+export class CancelBookingReq implements ICancelBookingReq {
+    bookingId?: string;
+
+    constructor(data?: ICancelBookingReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): CancelBookingReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelBookingReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.bookingId = _data["bookingId"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bookingId"] = this.bookingId;
+        return data;
+    }
+}
+
+export interface ICancelBookingReq {
+    bookingId?: string;
+}
+
+export class AddPauseReq implements IAddPauseReq {
+    masterId?: string;
+    startTime?: Date;
+    endTime?: Date;
+    description?: string | undefined;
+
+    constructor(data?: IAddPauseReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): AddPauseReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddPauseReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.masterId = _data["masterId"];
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+            this.description = _data["description"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["masterId"] = this.masterId;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        data["description"] = this.description;
+        return data;
+    }
+}
+
+export interface IAddPauseReq {
+    masterId?: string;
+    startTime?: Date;
+    endTime?: Date;
+    description?: string | undefined;
+}
+
+export class CancelPauseReq implements ICancelPauseReq {
+    pauseId?: string;
+
+    constructor(data?: ICancelPauseReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): CancelPauseReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelPauseReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.pauseId = _data["pauseId"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["pauseId"] = this.pauseId;
+        return data;
+    }
+}
+
+export interface ICancelPauseReq {
+    pauseId?: string;
 }
 
 export class ApiException extends Error {
@@ -696,6 +982,7 @@ export class ApiException extends Error {
     response: string;
     headers: { [key: string]: any; };
     result: any;
+    protected isApiException = true;
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -706,8 +993,6 @@ export class ApiException extends Error {
         this.headers = headers;
         this.result = result;
     }
-
-    protected isApiException = true;
 
     static isApiException(obj: any): obj is ApiException {
         return obj.isApiException === true;

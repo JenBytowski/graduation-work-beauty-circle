@@ -22,7 +22,7 @@ import {RouteReuseStrategy} from "@angular/router";
     BrowserModule,
     AppRoutingModule,
     BcCommonModule,
-    IonicModule.forRoot(),
+    IonicModule,
     MastersModule,
     HttpClientModule,
     ApiClientModule,
