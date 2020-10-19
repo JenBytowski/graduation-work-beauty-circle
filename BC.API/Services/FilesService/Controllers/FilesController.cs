@@ -13,6 +13,8 @@ namespace BC.API.Services.FilesService.Controllers
     private readonly IWebHostEnvironment _appEnvironment;
     private readonly string _filesFolder;
 
+    
+    
     private string GenerateFilePatch(string name)
     {
       return Path.Combine(this._filesFolder, name);
@@ -21,7 +23,7 @@ namespace BC.API.Services.FilesService.Controllers
     public FilesController(IWebHostEnvironment appEnvironment)
     {
       _appEnvironment = appEnvironment;
-      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "FilesFolder"); // TODO: Вынести в конфигурацию
+      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "Data/FilesFolder"); // TODO: Вынести в конфигурацию
     }
 
     [HttpGet]

@@ -1,0 +1,8 @@
+﻿POST http://localhost:5001/pre
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+
+< ./UploadAvatarImage.jpg
+--WebAppBoundary--

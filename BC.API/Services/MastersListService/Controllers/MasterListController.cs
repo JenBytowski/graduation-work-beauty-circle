@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,13 +37,7 @@ namespace BC.API.Services.MastersListService.Controllers
     [Route("{id}/avatar")]
     public async Task<IActionResult> UploadAvatar([FromRoute] Guid id, IFormFile file)
     {
-      if (file.Length <= 0)
-      {
-        return BadRequest();
-      }
-
-      // await this._mastersListerService.Up(id, file.OpenReadStream());
-
+      this._mastersListerService.UploadAvatar(id, file.OpenReadStream());
       return Ok();
     }
   }

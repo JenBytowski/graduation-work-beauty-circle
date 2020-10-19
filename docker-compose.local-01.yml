@@ -11,6 +11,7 @@ services:
     environment:
       - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__MasterContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
+      - Services__MastersList__FilesServiceUrl=http://gateway/api/files
       - ASPNETCORE_URLS=http://+:80
   sql-server:
     ports:

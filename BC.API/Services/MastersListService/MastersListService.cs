@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime;
 using System.Threading.Tasks;
 using BC.API.Events;
@@ -12,10 +14,14 @@ namespace BC.API.Services.MastersListService
   public class MastersListService
   {
     readonly Data.MastersContext _context;
+    private readonly MastersListServiceConfig _config;
+    private readonly HttpClient _httpClient;
 
-    public MastersListService(Data.MastersContext context)
+    public MastersListService(Data.MastersContext context, MastersListServiceConfig config, HttpClient httpClient)
     {
       _context = context;
+      _config = config;
+      _httpClient = httpClient;
     }
 
     public async Task<IEnumerable<MasterRes>> GetMasters(MastersFilter filter)
@@ -39,6 +45,17 @@ namespace BC.API.Services.MastersListService
 
     public void UpdateMasterInfo(UpdateMasterReq req)
     {
+    }
+
+    public async void UploadAvatar(Guid masterId, Stream stream)
+    {
+      var formData = new MultipartFormDataContent();
+      formData.Add(new StreamContent(stream), "random_file_name", "random_file_name");
+      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
+      var fileName = await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
+
+      var master =  await this._context.Masters.SingleAsync(m => m.Id == masterId);
+      master.AvatarUrl = fileName;
     }
 
     public void Publish(Guid masterId)
@@ -69,6 +86,11 @@ namespace BC.API.Services.MastersListService
     {
       throw new NotImplementedException();
     }
+  }
+
+  public class MastersListServiceConfig
+  {
+    public string FilesServiceUrl { get; set; }
   }
 
   public class MastersFilter

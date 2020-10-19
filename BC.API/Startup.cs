@@ -125,6 +125,12 @@ namespace BC.API
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
       services.AddTransient<HttpClient>();
       services.AddTransient<IFilesServiceClient, FilesServiceClient>();
+      
+      services.AddTransient<MastersListServiceConfig>(provider =>
+        provider.GetService<IConfiguration>()
+          .GetSection("Services:MastersList")
+          .Get<MastersListServiceConfig>()
+      );
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {

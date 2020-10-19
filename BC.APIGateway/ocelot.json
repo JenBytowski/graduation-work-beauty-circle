@@ -21,6 +21,28 @@
           "Port": 80
         }
       ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files/{xxx}",
+      "DownstreamPathTemplate": "/files/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files",
+      "DownstreamPathTemplate": "/files",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
     }
   ],
   "GlobalConfiguration": {
