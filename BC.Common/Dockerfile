@@ -1,0 +1,26 @@
+﻿FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash
+RUN apt-get install -y --no-install-recommends nodejs
+RUN npm i -g npm@latest
+WORKDIR /src
+COPY . .
+WORKDIR /src/BC.Client
+RUN dotnet restore "BC.Client.csproj"
+RUN dotnet build "BC.Client.csproj" -c Release -o /app/build
+
+FROM build AS publish
+WORKDIR /src/BC.Client
+RUN dotnet publish "BC.Client.csproj" -c Release -o /app/publish
+
+FROM base AS final
+ENV DEBIAN_FRONTEND noninteractive
+WORKDIR /app
+COPY --from=publish /app/publish .
+COPY --from=publish /src/BC.Client/Client ./Client
+ENTRYPOINT ["dotnet", "BC.Client.dll"]

@@ -23,7 +23,7 @@ namespace BC.Common
     {
       services.AddControllersWithViews();
       // In production, the Angular files will be served from this directory
-      services.AddSpaStaticFiles(configuration => { configuration.RootPath = "workspace/www"; });
+      services.AddSpaStaticFiles(configuration => { configuration.RootPath = "workspace/dist/bc-client"; });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

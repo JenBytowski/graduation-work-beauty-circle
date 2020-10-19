@@ -30,8 +30,9 @@ services:
   bc-client:
     build:
       context: .
-      dockerfile: "BC.Client/Dockerfile"
-
+  bc-client-2:
+    build:
+      context: .
   #  master:
   #    build:
   #      context: .

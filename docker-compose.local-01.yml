@@ -28,6 +28,11 @@ services:
       dockerfile: "BC.Client/Dockerfile.Local-01"
     ports:
       - "5260:80"
+  bc-client-2:
+    build:
+      dockerfile: "BC.Common/Dockerfile.Client.Local-01"
+    ports:
+      - "5270:80"
   #  master:
   #    build:
   #      context: .
