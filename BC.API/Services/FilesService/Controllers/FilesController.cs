@@ -23,7 +23,7 @@ namespace BC.API.Services.FilesService.Controllers
     public FilesController(IWebHostEnvironment appEnvironment)
     {
       _appEnvironment = appEnvironment;
-      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "Data/FilesFolder"); // TODO: Вынести в конфигурацию
+      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, @"Data\FilesFolder"); // TODO: Вынести в конфигурацию
     }
 
     [HttpGet]
@@ -50,6 +50,7 @@ namespace BC.API.Services.FilesService.Controllers
 
         var fileName = Guid.NewGuid() + Path.GetExtension(Request.Form.Files[0].FileName);
         var fullPath = GenerateFilePatch(fileName);
+        Directory.CreateDirectory(_filesFolder);
 
         using (var stream = new FileStream(fullPath, FileMode.Create))
         {
