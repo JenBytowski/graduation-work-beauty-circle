@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppRoutingModule} from "./app-routing.module";
 import {AppComponent} from "./app.component";
-import {BcCommonModule} from "bc-common";
+import {ApiClientModule, AuthenticationClient, BcCommonModule, BookingClient, MasterListClient} from "bc-common";
 import {IonicModule, IonicRouteStrategy} from "@ionic/angular";
 import {HttpClientModule} from "@angular/common/http";
 import {MastersModule} from "./masters/masters.module";
@@ -12,10 +12,6 @@ import {HomePageModule} from "./home/home.module";
 import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
-import {ApiClientModule} from "bc-common";
-import {MasterListClient} from "bc-common";
-import {BookingClient} from "bc-common";
-import {AuthenticationClient} from "bc-common";
 import {environment} from "../environments/environment";
 
 @NgModule({

@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {slideInAnimation} from "./common/animations";
+import {slideInAnimation} from "bc-common";
 import {IonRouterOutlet, Platform} from "@ionic/angular";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {StatusBar} from "@ionic-native/status-bar/ngx";

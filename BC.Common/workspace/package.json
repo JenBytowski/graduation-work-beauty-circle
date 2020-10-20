@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-
     "build-bc-common": "ng run bc-common:build",
     "build-bc-client-local-01": "ng run bc-client:build:local-01",
     "build-bc-client-local-02": "ng run bc-client:build:local-02",
