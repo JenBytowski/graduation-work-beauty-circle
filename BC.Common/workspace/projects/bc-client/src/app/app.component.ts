@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {slideInAnimation} from "./common/animations";
 import {IonRouterOutlet, Platform} from "@ionic/angular";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
@@ -8,9 +8,7 @@ import {StatusBar} from "@ionic-native/status-bar/ngx";
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [
-    slideInAnimation
-  ]
+  animations: [slideInAnimation]
 })
 export class AppComponent {
   title = 'bc-client';

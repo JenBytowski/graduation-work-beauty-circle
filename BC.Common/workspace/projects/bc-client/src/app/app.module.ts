@@ -23,16 +23,18 @@ import {environment} from "../environments/environment";
     AppComponent
   ],
   imports: [
+    IonicModule.forRoot(),
     BrowserModule,
     AppRoutingModule,
     BcCommonModule,
-    IonicModule.forRoot(),
     MastersModule,
     HttpClientModule,
     AuthenticationModule,
     BrowserAnimationsModule,
     HomePageModule,
     ApiClientModule
+
+
   ],
   providers: [
     StatusBar,

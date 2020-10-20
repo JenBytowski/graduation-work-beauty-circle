@@ -4,11 +4,13 @@ import {AuthenticationComponent} from "./authentication/authentication/authentic
 import {MastersListComponent} from "./masters/masters-list/masters-list.component";
 import {WelcomeComponent} from "./authentication/welcome/welcome.component";
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
+import {HomePage} from "./home/home.page";
 
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule)
+    component: HomePage,
+    pathMatch: 'full'
   },
   {
     path: '',
@@ -23,14 +25,12 @@ const routes: Routes = [
   {
     path: 'masters',
     component: MastersListComponent,
-    pathMatch: 'full',
-    data: {animation: 'isLeft'}
+    pathMatch: 'full'
   },
   {
     path: 'master/:id',
     component: MasterProfileComponent,
-    pathMatch: 'full',
-    data: {animation: 'isRight'}
+    pathMatch: 'full'
   },
   {
     path: 'welcome',
