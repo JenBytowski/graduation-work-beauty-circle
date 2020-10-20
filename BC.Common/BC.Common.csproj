@@ -5,7 +5,7 @@
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <IsPackable>false</IsPackable>
-        <WorkspaceSpaRootRoot>workspace\</WorkspaceSpaRootRoot>
+        <WorkspaceRoot>workspace\</WorkspaceRoot>
         <SpaRoot>workspace\projects\$(NG_PROJ)\</SpaRoot>
         <DefaultItemExcludes>$(DefaultItemExcludes);$(WorkspaceRoot)node_modules\**</DefaultItemExcludes>
 
