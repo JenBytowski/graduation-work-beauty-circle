@@ -30,9 +30,6 @@ services:
   bc-client:
     build:
       context: .
-  bc-client-2:
-    build:
-      context: .
   #  master:
   #    build:
   #      context: .
