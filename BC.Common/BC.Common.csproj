@@ -23,8 +23,12 @@
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
         <Content Remove="$(WorkspaceRoot)**" />
+        <Content Include="workspace\projects\bc-common\src\lib\api-client\authentication\nswag.json" />
+        <Content Include="workspace\projects\bc-common\src\lib\api-client\booking\nswag.json" />
+        <Content Include="workspace\projects\bc-common\src\lib\api-client\master-list\nswag.json" />
         <None Remove="$(WorkspaceRoot)**" />
         <None Include="$(WorkspaceRoot)**" Exclude="$(WorkspaceRoot)node_modules\**" />
+        <None Include="workspace\projects\bc-common\src\lib\api-client\authentication\nswag.json" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,6 +47,12 @@
       <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.json" />
       <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.prod.json" />
       <_ContentIncludedByDefault Remove="workspace\tsconfig.spec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="workspace\projects\bc-client\src\app\api-client\authentication" />
+      <Folder Include="workspace\projects\bc-client\src\app\api-client\booking" />
+      <Folder Include="workspace\projects\bc-client\src\app\api-client\master-list" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(WorkspaceRoot)node_modules') ">

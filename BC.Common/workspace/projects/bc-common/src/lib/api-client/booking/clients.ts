@@ -16,9 +16,9 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
 export class BookingClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -59,6 +59,28 @@ export class BookingClient {
         }));
     }
 
+    protected processGetSchedule(response: HttpResponseBase): Observable<GetScheduleRes> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetScheduleRes.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetScheduleRes>(<any>null);
+    }
+
     /**
      * @param body (optional)
      * @return Success
@@ -90,6 +112,25 @@ export class BookingClient {
             } else
                 return <Observable<void>><any>_observableThrow(response_);
         }));
+    }
+
+    protected processAddWorkingWeek(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -125,6 +166,25 @@ export class BookingClient {
         }));
     }
 
+    protected processAddBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
     /**
      * @param body (optional)
      * @return Success
@@ -156,6 +216,25 @@ export class BookingClient {
             } else
                 return <Observable<void>><any>_observableThrow(response_);
         }));
+    }
+
+    protected processCancelBooking(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -191,6 +270,25 @@ export class BookingClient {
         }));
     }
 
+    protected processAddPause(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
     /**
      * @param body (optional)
      * @return Success
@@ -224,104 +322,6 @@ export class BookingClient {
         }));
     }
 
-    protected processGetSchedule(response: HttpResponseBase): Observable<GetScheduleRes> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = GetScheduleRes.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetScheduleRes>(<any>null);
-    }
-
-    protected processAddWorkingWeek(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    protected processAddBooking(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    protected processCancelBooking(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    protected processAddPause(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
     protected processCancelPause(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
@@ -344,9 +344,9 @@ export class BookingClient {
 
 @Injectable()
 export class FilesClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -384,6 +384,25 @@ export class FilesClient {
         }));
     }
 
+    protected processFilesGet(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
     /**
      * @return Success
      */
@@ -413,6 +432,25 @@ export class FilesClient {
             } else
                 return <Observable<void>><any>_observableThrow(response_);
         }));
+    }
+
+    protected processFilesDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 
     /**
@@ -448,44 +486,6 @@ export class FilesClient {
         }));
     }
 
-    protected processFilesGet(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    protected processFilesDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
     protected processFilesPost(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
@@ -508,9 +508,9 @@ export class FilesClient {
 
 @Injectable()
 export class PreClient {
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
     private http: HttpClient;
     private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
@@ -586,13 +586,6 @@ export class ScheduleDayItemRes implements IScheduleDayItemRes {
         }
     }
 
-    static fromJS(data: any): ScheduleDayItemRes {
-        data = typeof data === 'object' ? data : {};
-        let result = new ScheduleDayItemRes();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -601,6 +594,13 @@ export class ScheduleDayItemRes implements IScheduleDayItemRes {
             this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
         }
+    }
+
+    static fromJS(data: any): ScheduleDayItemRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new ScheduleDayItemRes();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -638,13 +638,6 @@ export class ScheduleDayRes implements IScheduleDayRes {
         }
     }
 
-    static fromJS(data: any): ScheduleDayRes {
-        data = typeof data === 'object' ? data : {};
-        let result = new ScheduleDayRes();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
@@ -657,6 +650,13 @@ export class ScheduleDayRes implements IScheduleDayRes {
                     this.items!.push(ScheduleDayItemRes.fromJS(item));
             }
         }
+    }
+
+    static fromJS(data: any): ScheduleDayRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new ScheduleDayRes();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -694,13 +694,6 @@ export class GetScheduleRes implements IGetScheduleRes {
         }
     }
 
-    static fromJS(data: any): GetScheduleRes {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetScheduleRes();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             if (Array.isArray(_data["days"])) {
@@ -709,6 +702,13 @@ export class GetScheduleRes implements IGetScheduleRes {
                     this.days!.push(ScheduleDayRes.fromJS(item));
             }
         }
+    }
+
+    static fromJS(data: any): GetScheduleRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetScheduleRes();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -753,13 +753,6 @@ export class AddWorkingWeekReq implements IAddWorkingWeekReq {
         }
     }
 
-    static fromJS(data: any): AddWorkingWeekReq {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddWorkingWeekReq();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.masterId = _data["masterId"];
@@ -773,6 +766,13 @@ export class AddWorkingWeekReq implements IAddWorkingWeekReq {
             this.startTime = _data["startTime"];
             this.endTime = _data["endTime"];
         }
+    }
+
+    static fromJS(data: any): AddWorkingWeekReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddWorkingWeekReq();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -817,13 +817,6 @@ export class AddBookingReq implements IAddBookingReq {
         }
     }
 
-    static fromJS(data: any): AddBookingReq {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddBookingReq();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.masterId = _data["masterId"];
@@ -833,6 +826,13 @@ export class AddBookingReq implements IAddBookingReq {
             this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
         }
+    }
+
+    static fromJS(data: any): AddBookingReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddBookingReq();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -868,17 +868,17 @@ export class CancelBookingReq implements ICancelBookingReq {
         }
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.bookingId = _data["bookingId"];
+        }
+    }
+
     static fromJS(data: any): CancelBookingReq {
         data = typeof data === 'object' ? data : {};
         let result = new CancelBookingReq();
         result.init(data);
         return result;
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.bookingId = _data["bookingId"];
-        }
     }
 
     toJSON(data?: any) {
@@ -907,13 +907,6 @@ export class AddPauseReq implements IAddPauseReq {
         }
     }
 
-    static fromJS(data: any): AddPauseReq {
-        data = typeof data === 'object' ? data : {};
-        let result = new AddPauseReq();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.masterId = _data["masterId"];
@@ -921,6 +914,13 @@ export class AddPauseReq implements IAddPauseReq {
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
             this.description = _data["description"];
         }
+    }
+
+    static fromJS(data: any): AddPauseReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new AddPauseReq();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -952,17 +952,17 @@ export class CancelPauseReq implements ICancelPauseReq {
         }
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.pauseId = _data["pauseId"];
+        }
+    }
+
     static fromJS(data: any): CancelPauseReq {
         data = typeof data === 'object' ? data : {};
         let result = new CancelPauseReq();
         result.init(data);
         return result;
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.pauseId = _data["pauseId"];
-        }
     }
 
     toJSON(data?: any) {
@@ -982,7 +982,6 @@ export class ApiException extends Error {
     response: string;
     headers: { [key: string]: any; };
     result: any;
-    protected isApiException = true;
 
     constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
         super();
@@ -993,6 +992,8 @@ export class ApiException extends Error {
         this.headers = headers;
         this.result = result;
     }
+
+    protected isApiException = true;
 
     static isApiException(obj: any): obj is ApiException {
         return obj.isApiException === true;
