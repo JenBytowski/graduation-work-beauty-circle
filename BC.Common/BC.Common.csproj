@@ -49,12 +49,6 @@
       <_ContentIncludedByDefault Remove="workspace\tsconfig.spec.json" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="workspace\projects\bc-client\src\app\api-client\authentication" />
-      <Folder Include="workspace\projects\bc-client\src\app\api-client\booking" />
-      <Folder Include="workspace\projects\bc-client\src\app\api-client\master-list" />
-    </ItemGroup>
-
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(WorkspaceRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->
         <Exec Command="node --version" ContinueOnError="true">

@@ -12,9 +12,10 @@ import {HomePageModule} from "./home/home.module";
 import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
-import {API_BASE_URL as API_BASE_URL_MASTER_LIST, MasterListClient} from "../../../bc-common/src/lib/api-client/master-list/clients";
-import {API_BASE_URL as API_BASE_URL_AUTHENTICATION, } from "bc-common";
-import {API_BASE_URL as API_BASE_URL_BOOKING, BookingClient} from "./booking/clients";
+import {ApiClientModule} from "bc-common";
+import {MasterListClient} from "bc-common";
+import {BookingClient} from "bc-common";
+import {AuthenticationClient} from "bc-common";
 import {environment} from "../environments/environment";
 
 @NgModule({
@@ -31,20 +32,19 @@ import {environment} from "../environments/environment";
     AuthenticationModule,
     BrowserAnimationsModule,
     HomePageModule,
+    ApiClientModule
 
 
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    ///
-    MasterListClient,
-    AuthenticationClient,
-    BookingClient,
-    {provide: API_BASE_URL_MASTER_LIST, useValue: environment.apiUrl},
-    {provide: API_BASE_URL_AUTHENTICATION, useValue: environment.apiUrl},
-    {provide: API_BASE_URL_BOOKING, useValue: environment.apiUrl},
-    ///
+    MasterListClient.MasterListClient,
+    AuthenticationClient.AuthenticationClient,
+    BookingClient.BookingClient,
+    {provide: MasterListClient.API_BASE_URL, useValue: environment.apiUrl},
+    {provide: AuthenticationClient.API_BASE_URL, useValue: environment.apiUrl},
+    {provide: BookingClient.API_BASE_URL, useValue: environment.apiUrl},
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
   ],
   bootstrap: [AppComponent]

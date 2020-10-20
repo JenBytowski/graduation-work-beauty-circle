@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuController} from '@ionic/angular';
-import {MasterListClient} from "../../api-client/master-list/clients";
+import {MasterListClient} from "bc-common";
 
 @Component({
   selector: 'app-masters-list',
@@ -20,7 +20,7 @@ export class MastersListComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private menu: MenuController, private masterList: MasterListClient) {
+  constructor(private menu: MenuController, private masterList: MasterListClient.MasterListClient) {
   }
 
   ngOnInit(): void {
