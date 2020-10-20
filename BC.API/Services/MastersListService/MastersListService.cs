@@ -53,8 +53,8 @@ namespace BC.API.Services.MastersListService
       formData.Add(new StreamContent(stream), "random_file_name", "random_file_name");
       var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
       var fileName = await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
-
-      var master =  await this._context.Masters.SingleAsync(m => m.Id == masterId);
+      
+      var master =  this._context.Masters.Single(m => m.Id == masterId);
       master.AvatarUrl = fileName;
     }
 

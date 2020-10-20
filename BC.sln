@@ -20,6 +20,7 @@ ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
 	docker-compose.local-01.yml = docker-compose.local-01.yml
 	docker-compose.local-02.yml = docker-compose.local-02.yml
+	.dockerignore = .dockerignore
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BC.Common", "BC.Common\BC.Common.csproj", "{F18F08B0-40A7-4F21-981A-5F666951A6ED}"

@@ -1,0 +1,79 @@
+<ion-app>
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title [routerLink]="['../']">
+          Мастера
+          <!--          <lib-bc-common></lib-bc-common>-->
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content (ionScroll)="logScrolling($event)" (ionScrollStart)="logScrollStart()" [scrollEvents]="true">
+
+    <ion-item #topMenu>
+      <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
+      <ion-button (click)="filterStatus = true" color="medium" fill="outline" slot="end">Yes!!</ion-button>
+    </ion-item>
+
+    <ion-card *ngFor="let master of vm.Masters">
+      <ion-card-title class="card_title">{{master.name}}
+        <ion-icon class="favorite_icon" name="heart"></ion-icon>
+      </ion-card-title>
+      <div class="card_main_info">
+        <ion-avatar>
+          <ion-img [src]="master.avatarUrl" class="avatar_image"></ion-img>
+        </ion-avatar>
+        <ion-item class="card_text">
+          <ion-card-content>{{master.speciality}}
+          </ion-card-content>
+          <ion-button [routerLink]="['../master', master.id]" color="medium" fill="outline" slot="end">View</ion-button>
+        </ion-item>
+        <ion-item>
+          <ion-icon *ngFor="let star of master.starRating" [icon]="star"></ion-icon>
+        </ion-item>
+      </div>
+      <div class="card_description">
+        {{master.about}}
+      </div>
+      <ion-item class="links_item">
+        Links:
+        <ion-icon class="link" icon="logo-vk"></ion-icon>
+        <ion-icon class="link" icon="logo-skype"></ion-icon>
+        <ion-icon class="link" icon="logo-instagram"></ion-icon>
+        <ion-icon class="link" icon="logo-google"></ion-icon>
+      </ion-item>
+    </ion-card>
+
+  </ion-content>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title>
+          BC
+        </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+  <!--  -->
+  <!--  -->
+  <!--  -->
+  <ion-content #filter [ngClass]="{
+    'hidden-filter': filterStatus === false,
+    'visible-filter': filterStatus === true
+  }" color="medium">
+    <ion-button (click)="filterStatus = false" color="danger">Exit</ion-button>
+  </ion-content>
+
+  <ion-content (click)="filterStatus = false" [ngClass]="{
+    'hidden-filter': filterStatus === false,
+    'visible-filter': filterStatus === true
+  }" class="filter-background">
+    <!--    -->
+    <!--    -->
+    <!--    -->
+  </ion-content>
+</ion-app>

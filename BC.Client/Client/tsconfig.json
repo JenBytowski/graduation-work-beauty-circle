@@ -22,6 +22,9 @@
       "@angular/*": [
         "./node_modules/@angular/*"
       ],
+      "@ionic/*": [
+        "./node_modules/@ionic/*"
+      ],
       "bc-common": [
         "../../BC.Common/workspace/projects/bc-common/src/public-api"
       ]

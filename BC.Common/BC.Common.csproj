@@ -5,9 +5,13 @@
         <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
         <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
         <IsPackable>false</IsPackable>
-        <SpaRoot>workspace\projects\bc-common</SpaRoot>
-        <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+        <WorkspaceRoot>workspace\</WorkspaceRoot>
+        <SpaRoot>workspace\projects\$(NG_PROJ)\</SpaRoot>
+        <DefaultItemExcludes>$(DefaultItemExcludes);$(WorkspaceRoot)node_modules\**</DefaultItemExcludes>
 
+        <NG_PROJ Condition=" '$(NG_PROJ)' == '' ">bc-client</NG_PROJ>
+        <NG_ENV Condition=" '$(NG_ENV)' == '' ">production</NG_ENV>
+        
         <!-- Set this to true if you enable server-side prerendering -->
         <BuildServerSideRenderer>false</BuildServerSideRenderer>
     </PropertyGroup>
@@ -18,44 +22,51 @@
 
     <ItemGroup>
         <!-- Don't publish the SPA source files, but do show them in the project files list -->
-        <Content Remove="$(SpaRoot)**" />
-        <None Remove="$(SpaRoot)**" />
-        <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
+        <Content Remove="$(WorkspaceRoot)**" />
+        <None Remove="$(WorkspaceRoot)**" />
+        <None Include="$(WorkspaceRoot)**" Exclude="$(WorkspaceRoot)node_modules\**" />
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\angular.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\e2e\tsconfig.e2e.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\package-lock.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\package.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.app.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.server.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tsconfig.spec.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\src\tslint.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tsconfig.json" />
-      <_ContentIncludedByDefault Remove="workspace\projects\bc-common\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\angular.json" />
+      <_ContentIncludedByDefault Remove="workspace\e2e\tsconfig.e2e.json" />
+      <_ContentIncludedByDefault Remove="workspace\package-lock.json" />
+      <_ContentIncludedByDefault Remove="workspace\package.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.app.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.server.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tsconfig.spec.json" />
+      <_ContentIncludedByDefault Remove="workspace\src\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.json" />
+      <_ContentIncludedByDefault Remove="workspace\tslint.json" />
+      <_ContentIncludedByDefault Remove="workspace\dist\bc-common\package.json" />
+      <_ContentIncludedByDefault Remove="workspace\ng-package.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.lib.prod.json" />
+      <_ContentIncludedByDefault Remove="workspace\tsconfig.spec.json" />
     </ItemGroup>
 
-    <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+    <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(WorkspaceRoot)node_modules') ">
         <!-- Ensure Node.js is installed -->
         <Exec Command="node --version" ContinueOnError="true">
             <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
         </Exec>
         <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
         <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
-        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
+        <Exec WorkingDirectory="$(WorkspaceRoot)" Command="npm install" />
     </Target>
 
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --prod" />
-        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
+<!--        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />-->
+        <Exec WorkingDirectory="$(WorkspaceRoot)\projects\bc-common" Command="npm install" />
+        <Exec WorkingDirectory="$(WorkspaceRoot)\projects\$(NG_PROJ)" Command="npm install" />
+        <Exec WorkingDirectory="$(WorkspaceRoot)\projects\$(NG_PROJ)" Command="npm run ng run $(NG_PROJ):build:$(NG_ENV)" />
+<!--        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr &#45;&#45; &#45;&#45;prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />-->
 
         <!-- Include the newly-built files in the publish output -->
         <ItemGroup>
-            <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
-            <DistFiles Include="$(SpaRoot)node_modules\**" Condition="'$(BuildServerSideRenderer)' == 'true'" />
+            <DistFiles Include="$(WorkspaceRoot)dist\**; $(SpaRoot)dist-server\**" />
+            <DistFiles Include="$(WorkspaceRoot)node_modules\**" Condition="'$(BuildServerSideRenderer)' == 'true'" />
             <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
                 <RelativePath>%(DistFiles.Identity)</RelativePath>
                 <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
