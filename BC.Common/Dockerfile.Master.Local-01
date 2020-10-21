@@ -5,8 +5,8 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV NG_PROJ bc-client
-ENV NG_ENV local-02
+ENV NG_PROJ bc-master
+ENV NG_ENV local-01
 
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash
@@ -25,10 +25,10 @@ RUN dotnet publish "BC.Common.csproj" -c Release -o /app/publish
 FROM base AS final
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV NG_PROJ bc-client
-ENV NG_ENV local-02
+ENV NG_PROJ bc-master
+ENV NG_ENV local-01
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY --from=publish /src/BC.Common/workspace/dist/bc-client ./workspace/dist/bc-client
+COPY --from=publish /src/BC.Common/workspace/dist/bc-master ./workspace/dist/bc-master
 ENTRYPOINT ["dotnet", "BC.Common.dll"]

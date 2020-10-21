@@ -3,18 +3,19 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
-    "nswag-master-list": "nswag run ./projects/bc-common/src/lib/api-client/master-list/nswag.json",
-    "nswag-authentication": "nswag run ./projects/bc-common/src/lib/api-client/authentication/nswag.json",
-    "nswag-booking": "nswag run ./projects/bc-common/src/lib/api-client/booking/nswag.json",
+
+    "build-bc-common": "ng run bc-common:build",
+    "build-bc-client-local-01": "ng run bc-client:build:local-01",
+    "build-bc-client-local-02": "ng run bc-client:build:local-02",
+    "build-bc-master-local-01": "ng run bc-master:build:local-01",
+    "build-bc-master-local-02": "ng run bc-master:build:local-02",
     "start-bc-client-local-01": "ng run bc-client:serve:local-01",
     "start-bc-client-local-02": "ng run bc-client:serve:local-02",
-    "build-bc-client": "ng run bc-client:build",
-    "build-bc-common": "ng run bc-common:build"
+    "start-bc-master-local-01": "ng run bc-master:serve:local-01",
+    "start-bc-master-local-02": "ng run bc-master:serve:local-02",
+    "nswag-master-list": "nswag run ./projects/bc-common/src/lib/api-client/master-list/nswag.json",
+    "nswag-authentication": "nswag run ./projects/bc-common/src/lib/api-client/authentication/nswag.json",
+    "nswag-booking": "nswag run ./projects/bc-common/src/lib/api-client/booking/nswag.json"
   },
   "private": true,
   "dependencies": {

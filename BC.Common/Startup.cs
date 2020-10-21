@@ -11,19 +11,25 @@ namespace BC.Common
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    private readonly IWebHostEnvironment _env;
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
-      Configuration = configuration;
+      _env = env;
+      _configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddControllersWithViews();
+
+      var app = Environment.GetEnvironmentVariable("NG_PROJ") ?? "bc-client";
+      
       // In production, the Angular files will be served from this directory
-      services.AddSpaStaticFiles(configuration => { configuration.RootPath = "workspace/dist/bc-client"; });
+      services.AddSpaStaticFiles(configuration => { configuration.RootPath = $"workspace/dist/{app}"; });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

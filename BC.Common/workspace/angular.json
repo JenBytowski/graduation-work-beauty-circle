@@ -262,6 +262,22 @@
                   "maximumError": "10kb"
                 }
               ]
+            },
+            "local-01": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/bc-master/src/environments/environment.ts",
+                  "with": "projects/bc-master/src/environments/environment.local-01.ts"
+                }
+              ]
+            },
+            "local-02": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/bc-master/src/environments/environment.ts",
+                  "with": "projects/bc-master/src/environments/environment.local-02.ts"
+                }
+              ]
             }
           }
         },
@@ -273,6 +289,12 @@
           "configurations": {
             "production": {
               "browserTarget": "bc-master:build:production"
+            },
+            "local-01": {
+              "browserTarget": "bc-master:build:local-01"
+            },
+            "local-02": {
+              "browserTarget": "bc-master:build:local-02"
             }
           }
         },
