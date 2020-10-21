@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {MasterListClient} from "../../api-client/master-list/clients";
+import {MasterListClient} from "bc-common";
 
 @Component({
   selector: 'app-master-profile',
@@ -11,7 +11,7 @@ export class MasterProfileComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(private route: ActivatedRoute, private masterList: MasterListClient) {
+  constructor(private route: ActivatedRoute, private masterList: MasterListClient.MasterListClient) {
   }
 
   ngOnInit(): void {
