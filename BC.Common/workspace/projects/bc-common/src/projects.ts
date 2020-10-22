@@ -10,4 +10,5 @@ export * from './lib/api-client/api-client.module';
 export * as MasterListClient from './lib/api-client/master-list/clients';
 export * as AuthenticationClient from './lib/api-client/authentication/clients';
 export * as BookingClient from './lib/api-client/booking/clients';
-``
+
+export {slideInAnimation} from './lib/common/animations';

@@ -226,11 +226,24 @@
             "tsConfig": "projects/bc-master/tsconfig.app.json",
             "aot": true,
             "assets": [
-              "projects/bc-master/src/favicon.ico",
-              "projects/bc-master/src/assets"
+              {
+                "glob": "**/*",
+                "input": "projects/bc-master/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*.svg",
+                "input": "node_modules/ionicons/dist/ionicons/svg",
+                "output": "./svg"
+              }
             ],
             "styles": [
-              "projects/bc-master/src/styles.scss"
+              {
+                "input": "projects/bc-master/src/theme/variables.scss"
+              },
+              {
+                "input": "projects/bc-master/src/styles.scss"
+              }
             ],
             "scripts": []
           },
@@ -343,6 +356,12 @@
           "configurations": {
             "production": {
               "devServerTarget": "bc-master:serve:production"
+            },
+            "local-01": {
+              "devServerTarget": "bc-master:serve:local-01"
+            },
+            "local-02": {
+              "devServerTarget": "bc-master:serve:local-02"
             }
           }
         }
