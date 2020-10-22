@@ -1,0 +1,15 @@
+<ion-content>
+  <ion-item>
+    <ion-button (click)="vm.currentIndex !== 0 ? vm.currentIndex = vm.currentIndex - 1 : {}" color="medium"
+                fill="outline">Prev
+    </ion-button>
+    <ion-title>{{vm.schedule[vm.currentIndex].day}}</ion-title>
+    <ion-button (click)="vm.currentIndex !== vm.schedule.length - 1 ? vm.currentIndex = vm.currentIndex + 1 : {}" color="medium" fill="outline"
+                slot="end">Next
+    </ion-button>
+  </ion-item>
+  <ion-card *ngFor="let item of vm.schedule[vm.currentIndex].items">
+    <ion-card-title>)))
+    </ion-card-title>
+  </ion-card>
+</ion-content>
