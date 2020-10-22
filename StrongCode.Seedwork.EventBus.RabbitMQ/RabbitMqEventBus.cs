@@ -11,6 +11,7 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
   public class RabbitMqEventBus : IEventBus, IDisposable
   {
     private readonly string HOST;
+    private readonly string PORT;
     private readonly string USER_NAME;
     private readonly string PASSWORD;
     private readonly string EXCHANGE_NAME;
@@ -26,6 +27,7 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
     public RabbitMqEventBus
     (
       string host,
+      string port,
       string userName,
       string password,
       string exchangeName,
@@ -33,15 +35,16 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
     )
     {
       this.HOST = host;
+      this.PORT = port;
       this.USER_NAME = userName;
       this.PASSWORD = password;
       this.EXCHANGE_NAME = exchangeName;
       this._serviceProvider = serviceProvider;
     }
 
-    private static IConnection CreateConnection(string hostName, string userName, string password)
+    private static IConnection CreateConnection(string hostName,string port, string userName, string password)
     {
-      var factory = new ConnectionFactory() {HostName = hostName, UserName = userName, Password = password};
+      var factory = new ConnectionFactory() {HostName = hostName, Port = int.Parse(port),UserName = userName, Password = password};
       return factory.CreateConnection();
     }
 
@@ -53,7 +56,7 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
 
       if (connectionBroken)
       {
-        this._connection = CreateConnection(this.HOST, this.USER_NAME, this.PASSWORD);
+        this._connection = CreateConnection(this.HOST, this.PORT, this.USER_NAME, this.PASSWORD);
       }
 
       return this._connection;

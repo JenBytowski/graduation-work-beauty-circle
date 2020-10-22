@@ -12,6 +12,8 @@ services:
       - ConnectionStrings__AuthenticationContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__MastersContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__BookingContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
+      - RabbitMQEventBus__Host=rabbitmq
+      - RabbitMQEventBus__Port=5672
       - ASPNETCORE_URLS=http://+:80
   sql-server:
     ports:

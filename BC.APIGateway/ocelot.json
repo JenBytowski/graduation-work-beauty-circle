@@ -1,6 +1,17 @@
 ﻿{
   "Routes": [
     {
+      "UpstreamPathTemplate": "/api/authentication/{xxx}",
+      "DownstreamPathTemplate": "/authentication/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/api/masters-list/{xxx}",
       "DownstreamPathTemplate": "/masters-list/{xxx}",
       "DownstreamScheme": "http",
@@ -14,6 +25,17 @@
     {
       "UpstreamPathTemplate": "/api/masters-list",
       "DownstreamPathTemplate": "/masters-list",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/booking/{xxx}",
+      "DownstreamPathTemplate": "/booking/{xxx}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

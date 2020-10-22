@@ -49,6 +49,7 @@ namespace BC.API
         var bus = new RabbitMqEventBus
         (
           eb["Host"],
+          eb["Port"],
           eb["UserName"],
           eb["Password"],
           eb["Exchange"],
