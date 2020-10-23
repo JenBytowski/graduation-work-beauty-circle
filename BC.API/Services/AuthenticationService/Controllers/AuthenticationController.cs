@@ -41,7 +41,7 @@ namespace BC.API.Controllers
     [Route("authenticate-by-phone-step-1")]
     public async Task AuthenticatebyPhoneStep1(AuthenticationPhoneRequest request)
     {
-      await _authenticationService.AuthenticatebyPhoneStep1(request.Phone);
+      await _authenticationService.AuthenticatebyPhoneStep1(request.Phone, request.Role);
     }
 
     [HttpPost]

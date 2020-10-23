@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BC.API.Domain;
 using BC.API.Events;
 using BC.API.Infrastructure.Interfaces;
 using BC.API.Services.AuthenticationService.Data;
@@ -59,8 +60,10 @@ namespace BC.API.Services.AuthenticationService
       {
         var parsedResponse =
           JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
+
         var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
                    await CreateUserbyVK(parsedResponse);
+
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
@@ -172,9 +175,9 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task AuthenticatebyPhoneStep1(string phone)
+    public async Task AuthenticatebyPhoneStep1(string phone, string role)
     {
-      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone);
+      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone, role);
 
       var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
@@ -251,7 +254,10 @@ namespace BC.API.Services.AuthenticationService
 
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = userId, Email = userEmail, EmailConfirmed = true
+        UserName = userId,
+        Email = userEmail,
+        EmailConfirmed =
+          true // TODO: убедиться, что в userId лежит что-то подобное на имя, сувать айдишки в имя всё таки не надо
       });
 
       if (!createUserResult.Succeeded)
@@ -272,7 +278,8 @@ namespace BC.API.Services.AuthenticationService
       return user;
     }
 
-    private async Task<User> CreateUserbyInstagram(InstagramTokenResponse response)
+    private async Task<User>
+      CreateUserbyInstagram(InstagramTokenResponse response) // TODO: Все by в именах - с большой буквы
     {
       var createUserResult = await _userManager.CreateAsync(new User {UserName = response.UserId.ToString(),});
 
@@ -294,7 +301,7 @@ namespace BC.API.Services.AuthenticationService
       return user;
     }
 
-    private async Task<User> CreateUserbyPhone(string phone)
+    private async Task<User> CreateUserbyPhone(string phone, string role)
     {
       var createUserResult =
         await _userManager.CreateAsync(new User {UserName = phone, PhoneNumber = phone, PhoneNumberConfirmed = true});
@@ -304,9 +311,13 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(phone);
+      var user = await _userManager
+        .FindByNameAsync(phone); // TODO: Не ставить номер в имя и не искать так потом. А то мб не все хотят палить таким образом свой номер
 
-      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = "Master"});
+      role = UserRoles.Validate(role) ? role : UserRoles.Client;
+      this._userManager.AddToRoleAsync(user, role);
+
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = role});
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
         new UserLoginInfo("phone", user.UserName, "phone"));
