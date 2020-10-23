@@ -39,6 +39,12 @@ namespace BC.APIGateway
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseCors(builder =>
+              builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
 
             app.UseHttpsRedirection();
 
