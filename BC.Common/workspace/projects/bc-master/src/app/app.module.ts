@@ -9,7 +9,8 @@ import {ApiClientModule, AuthenticationClient, BcCommonModule, BookingClient, Ma
 import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {environment} from "../environments/environment";
-import {RouteReuseStrategy} from "@angular/router";
+import {RouteReuseStrategy} from "@angular/router";;
+import { CalendarModule } from './calendar/calendar.module'
 
 @NgModule({
   declarations: [
@@ -22,8 +23,8 @@ import {RouteReuseStrategy} from "@angular/router";
     BcCommonModule,
     HttpClientModule,
     ApiClientModule,
-    BrowserAnimationsModule
-
+    BrowserAnimationsModule,
+    CalendarModule
   ],
   providers: [
     StatusBar,
