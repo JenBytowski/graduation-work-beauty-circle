@@ -1,0 +1,7 @@
+﻿POST http://localhost:5210/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"Phone": "375298434614"
+}

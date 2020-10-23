@@ -1,6 +1,6 @@
 ﻿namespace BC.API.Services.AuthenticationService
 {
-  public class SMSCodeAuthenticationResponse
+  public class AuthenticatebyPhoneStep2Req
   {
     public string Phone { get; set; }
 

@@ -172,7 +172,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task SendSMSAuthenticationCode(string phone)
+    public async Task AuthenticatebyPhoneStep1(string phone)
     {
       var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone);
 
@@ -181,12 +181,12 @@ namespace BC.API.Services.AuthenticationService
       await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
+    public async Task<AuthenticationResponse> AuthenticatebyPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
       try
       {
-        var user = await _userManager.FindByLoginAsync("phone", model.Phone);
-        var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", model.Code);
+        var user = await _userManager.FindByLoginAsync("phone", req.Phone);
+        var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
 
         if (!checkCodeResult)
         {

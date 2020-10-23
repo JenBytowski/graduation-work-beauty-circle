@@ -38,17 +38,17 @@ namespace BC.API.Controllers
     }
 
     [HttpPost]
-    [Route("get-sms-authentication-code")]
-    public async Task GetSMSAuthenticationCode(AuthenticationPhoneRequest request)
+    [Route("authenticate-by-phone-step-1")]
+    public async Task AuthenticatebyPhoneStep1(AuthenticationPhoneRequest request)
     {
-      await _authenticationService.SendSMSAuthenticationCode(request.Phone);
+      await _authenticationService.AuthenticatebyPhoneStep1(request.Phone);
     }
 
     [HttpPost]
-    [Route("authenticate-by-phone")]
-    public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
+    [Route("authenticate-by-phone-step-2")]
+    public async Task<AuthenticationResponse> AuthenticatebyPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
-      return await _authenticationService.AuthenticatebyPhone(model);
+      return await _authenticationService.AuthenticatebyPhoneStep2(req);
     }
   }
 }

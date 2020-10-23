@@ -10,7 +10,7 @@ namespace BC.API.Services.BalanceService.Data
       var optionsBuilder = new DbContextOptionsBuilder<BalanceContext>();
       optionsBuilder
         // .UseSqlServer("Server=.;Database=BC;Trusted_Connection=True;MultipleActiveResultSets=true")
-        .UseSqlServer("Server=.,5008;Database=BC;User Id=sa;Password=Password123;")
+        .UseSqlServer("Server=.,5230;Database=BC;User Id=sa;Password=Password123;")
         ;
 
       return new BalanceContext(optionsBuilder.Options);
