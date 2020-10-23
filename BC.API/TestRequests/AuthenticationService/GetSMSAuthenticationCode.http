@@ -1,0 +1,7 @@
+﻿POST http://localhost:5210/api/authentication/get-sms-authentication-code
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"Phone": "375299693178"
+}

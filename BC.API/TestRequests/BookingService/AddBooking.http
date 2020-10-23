@@ -1,0 +1,12 @@
+﻿POST http://localhost:5210/api/booking/add-booking
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "",
+"ClientId": "",
+"ServiceType": "",
+"Description": "",
+"StartTime": "",
+"EndTime": ""
+}

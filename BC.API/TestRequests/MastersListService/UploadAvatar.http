@@ -1,5 +1,6 @@
-﻿POST http://localhost:5001/pre
+﻿POST http://localhost:5210/api/30a9a068-1c46-4a76-9c00-c29d1fb64c9c
 Content-Type: multipart/form-data; boundary=WebAppBoundary
+Connection: keep-alive
 
 --WebAppBoundary
 Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"

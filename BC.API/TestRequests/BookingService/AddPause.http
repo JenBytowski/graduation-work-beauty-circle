@@ -1,0 +1,10 @@
+﻿POST http://localhost:5210/api/booking/add-pause
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "",
+"StartTime": "",
+"EndTime": "",
+"Description": ""
+}

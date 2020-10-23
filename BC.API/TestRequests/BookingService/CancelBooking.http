@@ -1,0 +1,7 @@
+﻿POST http://localhost:5210/api/booking/cancel-booking
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"BookingId": ""
+}
