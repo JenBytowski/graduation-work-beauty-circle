@@ -63,8 +63,28 @@ namespace BC.API
       });
     }
 
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
+    private void AddApplicationServices(IServiceCollection services)
+    {
+      services.AddTransient<MastersListServiceConfig>(provider =>
+        provider.GetService<IConfiguration>()
+          .GetSection("Services:MastersList")
+          .Get<MastersListServiceConfig>()
+      );
+      
+      services.AddTransient<BalanceService>();
+      services.AddTransient<AuthenticationService.AuthenticationService>();
+      services.AddTransient<MastersListService>();
+      services.AddTransient<BookingService>();
+    }
+
+    private void AddInfrastructureServices(IServiceCollection services)
+    {
+      services.AddTransient<HttpClient>();
+      services.AddSingleton<ISMSClient, ConsoleSMSClient>();
+      services.AddTransient<IFilesServiceClient, FilesServiceClient>();
+    }
+
+    private void AddSwagger(IServiceCollection services)
     {
       //Swagger
       services.AddSwaggerGen(opt =>
@@ -75,10 +95,10 @@ namespace BC.API
         opt.SwaggerDoc("file-service", new OpenApiInfo {Title = "File service", Version = "1.0"});
         opt.EnableAnnotations();
       });
+    }
 
-      services.AddTransient<BalanceService>();
-      this.AddEventBus(services);
-
+    private void AddDbConexts(IServiceCollection services)
+    {
       services.AddDbContext<AuthenticationContext>
       (opt =>
         {
@@ -115,24 +135,16 @@ namespace BC.API
         ServiceLifetime.Transient,
         ServiceLifetime.Transient
       );
+    }
 
-      services.AddControllers();
-      services.AddCors();
+    private void AddIdentity(IServiceCollection services)
+    {
       services.AddIdentity<User, Role>().AddEntityFrameworkStores<AuthenticationContext>()
         .AddDefaultTokenProviders();
-      services.AddTransient<AuthenticationService.AuthenticationService>();
-      services.AddTransient<MastersListService>();
-      services.AddTransient<BookingService>();
-      services.AddSingleton<ISMSClient, ConsoleSMSClient>();
-      services.AddTransient<HttpClient>();
-      services.AddTransient<IFilesServiceClient, FilesServiceClient>();
-      
-      services.AddTransient<MastersListServiceConfig>(provider =>
-        provider.GetService<IConfiguration>()
-          .GetSection("Services:MastersList")
-          .Get<MastersListServiceConfig>()
-      );
+    }
 
+    private void AddAuthentication(IServiceCollection services)
+    {
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
       {
         var jwtOptions = Configuration.GetSection("JWTokenOptions").Get<JWTokenOptions>();
@@ -151,7 +163,20 @@ namespace BC.API
       });
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void ConfigureServices(IServiceCollection services)
+    {
+      this.AddInfrastructureServices(services);
+      this.AddIdentity(services);
+      this.AddDbConexts(services);
+      this.AddEventBus(services);
+      this.AddApplicationServices(services);
+      this.AddSwagger(services);
+      this.AddAuthentication(services);
+
+      services.AddControllers();
+      services.AddCors();
+    }
+
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       if (env.IsDevelopment() || env.IsEnvironment("Local-01") || env.IsEnvironment("Local-02"))
