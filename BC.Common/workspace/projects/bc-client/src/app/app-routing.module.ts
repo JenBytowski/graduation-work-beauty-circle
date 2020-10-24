@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
 import {MastersListComponent} from "./masters/masters-list/masters-list.component";
-import {WelcomeComponent} from "./authentication/welcome/welcome.component";
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
 import {HomePage} from "./home/home.page";
 
@@ -30,11 +29,6 @@ const routes: Routes = [
   {
     path: 'master/:id',
     component: MasterProfileComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: 'welcome',
-    component: WelcomeComponent,
     pathMatch: 'full'
   }
 ];
