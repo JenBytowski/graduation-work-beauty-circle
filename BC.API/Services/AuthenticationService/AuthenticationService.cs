@@ -35,7 +35,7 @@ namespace BC.API.Services.AuthenticationService
       _eventBus = eventBus;
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyVK(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByVK(string authCode, string redirectUrl, string role)
     {
       var client = new HttpClient();
       var authCredentials = _configuration.GetSection("VKCredentials").Get<SocialMediaAuthCredentials>();
@@ -62,7 +62,7 @@ namespace BC.API.Services.AuthenticationService
           JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
 
         var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
-                   await CreateUserbyVK(parsedResponse);
+                   await CreateUserByVK(parsedResponse, role);
 
         var jwToken = await GenerateJWToken(user);
 
@@ -78,7 +78,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyGoogle(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByGoogle(string authCode, string redirectUrl, string role)
     {
       var client = new HttpClient();
       var googleCredentials = _configuration.GetSection("GoogleCredentials").Get<SocialMediaAuthCredentials>();
@@ -111,7 +111,7 @@ namespace BC.API.Services.AuthenticationService
 
         var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
         var user = await _userManager.FindByLoginAsync("google", userid) ??
-                   await CreateUserbyGoogle(encodedToken);
+                   await CreateUserByGoogle(encodedToken, role);
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
@@ -126,7 +126,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyInstagram(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByInstagram(string authCode, string redirectUrl, string role)
     {
       var httpClient = new HttpClient();
       var credentials = _configuration.GetSection("InstagramCredentials").Get<SocialMediaAuthCredentials>();
@@ -161,7 +161,7 @@ namespace BC.API.Services.AuthenticationService
           JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
 
         var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
-                   await CreateUserbyInstagram(parsedResponse);
+                   await CreateUserByInstagram(parsedResponse, role);
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
@@ -175,16 +175,16 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task AuthenticatebyPhoneStep1(string phone, string role)
+    public async Task AuthenticateByPhoneStep1(string phone, string role)
     {
-      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone, role);
+      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserByPhone(phone, role);
 
       var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
       await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyPhoneStep2(AuthenticatebyPhoneStep2Req req)
+    public async Task<AuthenticationResponse> AuthenticateByPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
       try
       {
@@ -222,11 +222,12 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    private async Task<User> CreateUserbyVK(VKTokenResponse response)
+    private async Task<User> CreateUserByVK(VKTokenResponse response, string role)
     {
+      var username = Guid.NewGuid().ToString();
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = response.UserId.ToString(), Email = response.Email, EmailConfirmed = true
+        UserName = username, Email = response.Email, EmailConfirmed = true
       });
 
       if (!createUserResult.Succeeded)
@@ -234,30 +235,39 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+      var user = await _userManager.FindByNameAsync(username);
+      
+      var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+      
+      if (!addRoleResult.Succeeded)
+      {
+        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+      }
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("vk", user.UserName, "vk"));
+        new UserLoginInfo("vk", response.UserId.ToString(), "vk"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = role});
 
       return user;
     }
 
-    private async Task<User> CreateUserbyGoogle(JwtSecurityToken userInfo)
+    private async Task<User> CreateUserByGoogle(JwtSecurityToken userInfo, string role)
     {
+      var username = Guid.NewGuid().ToString();
       var userId = userInfo.Claims.First(clm => clm.Type == "sub").Value;
       var userEmail = userInfo.Claims.First(clm => clm.Type == "email").Value;
 
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = userId,
+        UserName = username,
         Email = userEmail,
-        EmailConfirmed =
-          true // TODO: убедиться, что в userId лежит что-то подобное на имя, сувать айдишки в имя всё таки не надо
+        EmailConfirmed = true
       });
 
       if (!createUserResult.Succeeded)
@@ -265,54 +275,72 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(userId);
+      var user = await _userManager.FindByNameAsync(username);
+      
+      var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+      
+      if (!addRoleResult.Succeeded)
+      {
+        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+      }
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("google", user.UserName, "google"));
+        new UserLoginInfo("google", userId, "google"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = role});
 
       return user;
     }
 
-    private async Task<User>
-      CreateUserbyInstagram(InstagramTokenResponse response) // TODO: Все by в именах - с большой буквы
+    private async Task<User> CreateUserByInstagram(InstagramTokenResponse response, string role)
     {
-      var createUserResult = await _userManager.CreateAsync(new User {UserName = response.UserId.ToString(),});
+      var username = Guid.NewGuid().ToString();
+      var createUserResult = await _userManager.CreateAsync(new User {UserName = username});
 
       if (!createUserResult.Succeeded)
       {
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+      var user = await _userManager.FindByNameAsync(username);
+      
+      var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+      
+      if (!addRoleResult.Succeeded)
+      {
+        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+      }
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("instagram", user.UserName, "instagram"));
+        new UserLoginInfo("instagram", response.UserId.ToString(), "instagram"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = role});
 
       return user;
     }
 
-    private async Task<User> CreateUserbyPhone(string phone, string role)
+    private async Task<User> CreateUserByPhone(string phone, string role)
     {
+      var username = Guid.NewGuid().ToString();
       var createUserResult =
-        await _userManager.CreateAsync(new User {UserName = phone, PhoneNumber = phone, PhoneNumberConfirmed = true});
+        await _userManager.CreateAsync(new User {UserName = username, PhoneNumber = phone, PhoneNumberConfirmed = true});
 
       if (!createUserResult.Succeeded)
       {
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager
-        .FindByNameAsync(phone); // TODO: Не ставить номер в имя и не искать так потом. А то мб не все хотят палить таким образом свой номер
+      var user = await _userManager.FindByNameAsync(username);
 
       role = UserRoles.Validate(role) ? role : UserRoles.Client;
       this._userManager.AddToRoleAsync(user, role);
