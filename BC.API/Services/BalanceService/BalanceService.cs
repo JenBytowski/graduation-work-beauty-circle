@@ -19,7 +19,7 @@ namespace BC.API.Services.BalanceService
       _eventBus = eventBus;
     }
 
-    public async Task OnUserCreated(UserCreatedEvent @event)
+    public async Task OnUserAssignedToRole(UserAssignedToRoleEvent @event)
     {
       if (@event.Role != UserRoles.Master)
       {

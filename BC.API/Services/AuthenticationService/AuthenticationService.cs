@@ -62,8 +62,10 @@ namespace BC.API.Services.AuthenticationService
           JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
 
         var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
-                   await CreateUserByVK(parsedResponse, role);
+                   await CreateUserByVK(parsedResponse);
 
+        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
@@ -208,6 +210,23 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
+    private async Task AddToRoleIfNotYet(User user, string role)
+    {
+      if (await this._userManager.IsInRoleAsync(user, role))
+      {
+        return;
+      }
+
+      var addRoleResult = await this._userManager.AddToRoleAsync(user, role);
+
+      if (!addRoleResult.Succeeded)
+      {
+        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+      }
+      
+      this._eventBus.Publish(new UserAssignedToRoleEvent { UserId = user.Id, UserName = user.UserName, Role = role});
+    }
+
     private async Task SendSMS(string phone, string text)
     {
       try
@@ -222,7 +241,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    private async Task<User> CreateUserByVK(VKTokenResponse response, string role)
+    private async Task<User> CreateUserByVK(VKTokenResponse response)
     {
       var username = Guid.NewGuid().ToString();
       var createUserResult = await _userManager.CreateAsync(new User
@@ -236,13 +255,6 @@ namespace BC.API.Services.AuthenticationService
       }
 
       var user = await _userManager.FindByNameAsync(username);
-      
-      var addRoleResult = await _userManager.AddToRoleAsync(user, role);
-      
-      if (!addRoleResult.Succeeded)
-      {
-        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
-      }
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
         new UserLoginInfo("vk", response.UserId.ToString(), "vk"));
@@ -252,7 +264,7 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
       
-      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = role});
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
     }
