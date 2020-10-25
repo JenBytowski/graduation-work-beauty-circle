@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BC.API.Domain;
 using BC.API.Events;
 using BC.API.Infrastructure.Interfaces;
 using BC.API.Services.AuthenticationService.Data;
@@ -34,7 +35,7 @@ namespace BC.API.Services.AuthenticationService
       _eventBus = eventBus;
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyVK(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByVK(string authCode, string redirectUrl, string role)
     {
       var client = new HttpClient();
       var authCredentials = _configuration.GetSection("VKCredentials").Get<SocialMediaAuthCredentials>();
@@ -59,8 +60,12 @@ namespace BC.API.Services.AuthenticationService
       {
         var parsedResponse =
           JsonSerializer.Deserialize<VKTokenResponse>(await response.Content.ReadAsStringAsync());
+
         var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
-                   await CreateUserbyVK(parsedResponse);
+                   await CreateUserByVK(parsedResponse);
+
+        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
@@ -75,7 +80,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyGoogle(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByGoogle(string authCode, string redirectUrl, string role)
     {
       var client = new HttpClient();
       var googleCredentials = _configuration.GetSection("GoogleCredentials").Get<SocialMediaAuthCredentials>();
@@ -108,7 +113,9 @@ namespace BC.API.Services.AuthenticationService
 
         var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
         var user = await _userManager.FindByLoginAsync("google", userid) ??
-                   await CreateUserbyGoogle(encodedToken);
+                   await CreateUserByGoogle(encodedToken);
+        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
@@ -123,7 +130,7 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyInstagram(string authCode, string redirectUrl)
+    public async Task<AuthenticationResponse> AuthenticateByInstagram(string authCode, string redirectUrl, string role)
     {
       var httpClient = new HttpClient();
       var credentials = _configuration.GetSection("InstagramCredentials").Get<SocialMediaAuthCredentials>();
@@ -158,7 +165,8 @@ namespace BC.API.Services.AuthenticationService
           JsonSerializer.Deserialize<InstagramTokenResponse>(await response.Content.ReadAsStringAsync());
 
         var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
-                   await CreateUserbyInstagram(parsedResponse);
+                   await CreateUserByInstagram(parsedResponse);
+        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
@@ -172,21 +180,22 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    public async Task SendSMSAuthenticationCode(string phone)
+    public async Task AuthenticateByPhoneStep1(string phone, string role)
     {
-      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserbyPhone(phone);
+      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserByPhone(phone);
+      await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
 
       var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 
       await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
     }
 
-    public async Task<AuthenticationResponse> AuthenticatebyPhone(SMSCodeAuthenticationResponse model)
+    public async Task<AuthenticationResponse> AuthenticateByPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
       try
       {
-        var user = await _userManager.FindByLoginAsync("phone", model.Phone);
-        var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", model.Code);
+        var user = await _userManager.FindByLoginAsync("phone", req.Phone);
+        var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
 
         if (!checkCodeResult)
         {
@@ -205,6 +214,23 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
+    private async Task AddToRoleIfNotYet(User user, string role)
+    {
+      if (await this._userManager.IsInRoleAsync(user, role))
+      {
+        return;
+      }
+
+      var addRoleResult = await _userManager.AddToRoleAsync(user, role);
+
+      if (!addRoleResult.Succeeded)
+      {
+        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+      }
+      
+      this._eventBus.Publish(new UserAssignedToRoleEvent { UserId = user.Id, UserName = user.UserName, Role = role});
+    }
+
     private async Task SendSMS(string phone, string text)
     {
       try
@@ -219,11 +245,12 @@ namespace BC.API.Services.AuthenticationService
       }
     }
 
-    private async Task<User> CreateUserbyVK(VKTokenResponse response)
+    private async Task<User> CreateUserByVK(VKTokenResponse response)
     {
+      var username = Guid.NewGuid().ToString();
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = response.UserId.ToString(), Email = response.Email, EmailConfirmed = true
+        UserName = username, Email = response.Email, EmailConfirmed = true
       });
 
       if (!createUserResult.Succeeded)
@@ -231,27 +258,32 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+      var user = await _userManager.FindByNameAsync(username);
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("vk", user.UserName, "vk"));
+        new UserLoginInfo("vk", response.UserId.ToString(), "vk"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
     }
 
-    private async Task<User> CreateUserbyGoogle(JwtSecurityToken userInfo)
+    private async Task<User> CreateUserByGoogle(JwtSecurityToken userInfo)
     {
+      var username = Guid.NewGuid().ToString();
       var userId = userInfo.Claims.First(clm => clm.Type == "sub").Value;
       var userEmail = userInfo.Claims.First(clm => clm.Type == "email").Value;
 
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = userId, Email = userEmail, EmailConfirmed = true
+        UserName = username,
+        Email = userEmail,
+        EmailConfirmed = true
       });
 
       if (!createUserResult.Succeeded)
@@ -259,54 +291,58 @@ namespace BC.API.Services.AuthenticationService
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(userId);
-
+      var user = await _userManager.FindByNameAsync(username);
+      
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("google", user.UserName, "google"));
+        new UserLoginInfo("google", userId, "google"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
     }
 
-    private async Task<User> CreateUserbyInstagram(InstagramTokenResponse response)
+    private async Task<User> CreateUserByInstagram(InstagramTokenResponse response)
     {
-      var createUserResult = await _userManager.CreateAsync(new User {UserName = response.UserId.ToString(),});
+      var username = Guid.NewGuid().ToString();
+      var createUserResult = await _userManager.CreateAsync(new User {UserName = username});
 
       if (!createUserResult.Succeeded)
       {
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(response.UserId.ToString());
+      var user = await _userManager.FindByNameAsync(username);
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("instagram", user.UserName, "instagram"));
+        new UserLoginInfo("instagram", response.UserId.ToString(), "instagram"));
 
       if (!addLoginResult.Succeeded)
       {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
+        throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
     }
 
-    private async Task<User> CreateUserbyPhone(string phone)
+    private async Task<User> CreateUserByPhone(string phone)
     {
+      var username = Guid.NewGuid().ToString();
       var createUserResult =
-        await _userManager.CreateAsync(new User {UserName = phone, PhoneNumber = phone, PhoneNumberConfirmed = true});
+        await _userManager.CreateAsync(new User {UserName = username, PhoneNumber = phone, PhoneNumberConfirmed = true});
 
       if (!createUserResult.Succeeded)
       {
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
 
-      var user = await _userManager.FindByNameAsync(phone);
-
-      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName, Role = "Master"});
+      var user = await _userManager.FindByNameAsync(username);
 
       var addLoginResult = await _userManager.AddLoginAsync(user,
         new UserLoginInfo("phone", user.UserName, "phone"));
@@ -315,6 +351,8 @@ namespace BC.API.Services.AuthenticationService
       {
         throw new CantCreateUserException(createUserResult.Errors.First().Description);
       }
+      
+      this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
     }

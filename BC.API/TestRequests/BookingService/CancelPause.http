@@ -1,0 +1,7 @@
+﻿POST http://localhost:5210/api/booking/cancel-pause
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"PauseId": ""
+}

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime;
 using System.Threading.Tasks;
 using BC.API.Events;
-using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BC.API.Services.MastersListService
@@ -43,10 +41,6 @@ namespace BC.API.Services.MastersListService
       return null;
     }
 
-    public void UpdateMasterInfo(UpdateMasterReq req)
-    {
-    }
-
     public async void UploadAvatar(Guid masterId, Stream stream)
     {
       var formData = new MultipartFormDataContent();
@@ -54,8 +48,12 @@ namespace BC.API.Services.MastersListService
       var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
       var fileName = await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
       
-      var master =  this._context.Masters.Single(m => m.Id == masterId);
+      var master =   this._context.Masters.Single(m => m.Id == masterId);
       master.AvatarUrl = fileName;
+    }
+
+    public void UpdateMasterInfo(UpdateMasterReq req)
+    {
     }
 
     public void Publish(Guid masterId)

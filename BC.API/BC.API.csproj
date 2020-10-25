@@ -34,7 +34,7 @@
       <Compile Update="Services\AuthenticationService\InstagramTokenResponse.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\AuthenticationService\SMSCodeAuthenticationResponse.cs">
+      <Compile Update="Services\AuthenticationService\AuthenticatebyPhoneStep2Req.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
       <Compile Update="Services\AuthenticationService\SocialMediaAuthCredentials.cs">
@@ -93,6 +93,7 @@
     <ItemGroup>
       <Folder Include="Data" />
       <Folder Include="Services\AuthenticationService\Data\Migrations" />
+      <Folder Include="Services\BookingService\Data\Migrations" />
       <Folder Include="Services\BookingService\Handlers" />
       <Folder Include="Services\ImagesProcessorService\Controllers" />
       <Folder Include="Services\ImagesProcessorService\Handlers" />

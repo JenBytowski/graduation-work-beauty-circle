@@ -1,0 +1,8 @@
+﻿POST http://localhost:5210/api/authentication/authenticate-by-instagram
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"Code": "",
+"RedirectUrl": ""
+}
