@@ -26,7 +26,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param body (optional) 
      * @return Success
      */
     authenticateByVk(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -82,7 +82,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param body (optional) 
      * @return Success
      */
     authenticateByInstagram(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -138,7 +138,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param body (optional) 
      * @return Success
      */
     authenticateByGoogle(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -194,7 +194,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param body (optional) 
      * @return Success
      */
     getSmsAuthenticationCode(body: AuthenticationPhoneRequest | undefined): Observable<void> {
@@ -246,7 +246,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional)
+     * @param body (optional) 
      * @return Success
      */
     authenticateByPhone(body: SMSCodeAuthenticationResponse | undefined): Observable<AuthenticationResponse> {
@@ -302,234 +302,6 @@ export class AuthenticationClient {
     }
 }
 
-@Injectable()
-export class FilesClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    filesGet(name: string | null): Observable<void> {
-        let url_ = this.baseUrl + "/files/{name}";
-        if (name === undefined || name === null)
-            throw new Error("The parameter 'name' must be defined.");
-        url_ = url_.replace("{name}", encodeURIComponent("" + name));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processFilesGet(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processFilesGet(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processFilesGet(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    filesDelete(name: string | null): Observable<void> {
-        let url_ = this.baseUrl + "/files/{name}";
-        if (name === undefined || name === null)
-            throw new Error("The parameter 'name' must be defined.");
-        url_ = url_.replace("{name}", encodeURIComponent("" + name));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processFilesDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processFilesDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processFilesDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @param isTemporary (optional)
-     * @return Success
-     */
-    filesPost(isTemporary: boolean | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/files?";
-        if (isTemporary === null)
-            throw new Error("The parameter 'isTemporary' cannot be null.");
-        else if (isTemporary !== undefined)
-            url_ += "isTemporary=" + encodeURIComponent("" + isTemporary) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processFilesPost(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processFilesPost(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processFilesPost(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
-@Injectable()
-export class PreClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @param isTemporary (optional)
-     * @return Success
-     */
-    pre(isTemporary: boolean | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/pre?";
-        if (isTemporary === null)
-            throw new Error("The parameter 'isTemporary' cannot be null.");
-        else if (isTemporary !== undefined)
-            url_ += "isTemporary=" + encodeURIComponent("" + isTemporary) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPre(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPre(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processPre(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-}
-
 export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
     code?: string | undefined;
     redirectUrl?: string | undefined;
@@ -561,7 +333,7 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["redirectUrl"] = this.redirectUrl;
-        return data;
+        return data; 
     }
 }
 
@@ -603,7 +375,7 @@ export class AuthenticationResponse implements IAuthenticationResponse {
         data = typeof data === 'object' ? data : {};
         data["token"] = this.token;
         data["username"] = this.username;
-        return data;
+        return data; 
     }
 }
 
@@ -642,7 +414,7 @@ export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["phone"] = this.phone;
-        return data;
+        return data; 
     }
 }
 
@@ -681,7 +453,7 @@ export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResp
         data = typeof data === 'object' ? data : {};
         data["phone"] = this.phone;
         data["code"] = this.code;
-        return data;
+        return data; 
     }
 }
 
