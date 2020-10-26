@@ -1,6 +1,8 @@
 ﻿import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
+import {DayComponent} from "./calendar/day/day.component";
+import {WeekComponent} from "./calendar/week/week.component";
 
 const routes: Routes = [
   {
@@ -11,6 +13,16 @@ const routes: Routes = [
   {
     path: 'authentication',
     component: AuthenticationComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'calendar-day',
+    component: DayComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'calendar-week',
+    component: WeekComponent,
     pathMatch: 'full'
   }
 ];
