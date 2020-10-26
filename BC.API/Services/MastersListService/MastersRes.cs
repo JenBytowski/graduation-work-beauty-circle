@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BC.API.Services.MastersListService.Data;
-using ListItem = BC.API.Services.MastersListService.Data.PriceListItem;
-using Day = BC.API.Services.MastersListService.Data.ScheduleDay;
 
 namespace BC.API.Services.MastersListService
 {
@@ -31,9 +29,9 @@ namespace BC.API.Services.MastersListService
 
     public string Speciality { get; set; }
 
-    public IEnumerable<PriceListItem> PriceList { get; set; }
+    public IEnumerable<PriceListItemRes> PriceList { get; set; }
 
-    public IEnumerable<ScheduleDay> Schedule { get; set; }
+    public IEnumerable<ScheduleDayRes> Schedule { get; set; }
 
     public double AverageRating { get; set; }
 
@@ -52,14 +50,14 @@ namespace BC.API.Services.MastersListService
         Viber = master.Viber,
         Skype = master.Skype,
         Speciality = master.Speciality.Name,
-        PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItem.ParseFromPriseListItem(itm)),
-        Schedule = master.Schedule?.Days.Select(day => ScheduleDay.ParseFromScheduleDay(day)),
+        PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItemRes.ParseFromPriseListItem(itm)),
+        Schedule = master.Schedule?.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day)),
         AverageRating = master.Stars / master.ReviewsCount
       };
     }
   }
 
-  public class ScheduleDay
+  public class ScheduleDayRes
   {
     public DayOfWeek DayOfWeek { get; set; }
 
@@ -73,9 +71,9 @@ namespace BC.API.Services.MastersListService
     
     public IEnumerable<Window> Windows { get; set; }
 
-    public static ScheduleDay ParseFromScheduleDay(Day scheduleDay)
+    public static ScheduleDayRes ParseFromScheduleDay(ScheduleDay scheduleDay)
     {
-      return new ScheduleDay
+      return new ScheduleDayRes
       {
         DayOfWeek = scheduleDay.DayOfWeek,
         StartTime = scheduleDay.StartTime,
@@ -134,9 +132,13 @@ namespace BC.API.Services.MastersListService
   //   }
   // }
 
-  public class PriceListItem
+  public class PriceListItemRes
   {
+    public Guid Id { get; set; }
+    
     public string Name { get; set; }
+
+    public ServiceTypeRes ServiceType { get; set; }
 
     public int PriceMin { get; set; }
 
@@ -144,14 +146,32 @@ namespace BC.API.Services.MastersListService
 
     public int DurationInMinutesMax { get; set; }
 
-    public static PriceListItem ParseFromPriseListItem(ListItem priceListItem)
+    public static PriceListItemRes ParseFromPriseListItem(PriceListItem priceListItem)
     {
-      return new PriceListItem
+      return new PriceListItemRes
       {
+        Id = priceListItem.Id,
         Name = priceListItem.ServiceType.Name,
+        ServiceType = ServiceTypeRes.ParseFromServiceType(priceListItem.ServiceType),
         PriceMin = priceListItem.PriceMin,
         PriceMax = priceListItem.PriceMax,
         DurationInMinutesMax = priceListItem.DurationInMinutesMax
+      };
+    }
+  }
+  
+  public class ServiceTypeRes
+  {
+    public string Name { get; set; }
+    
+    public Guid ServiceTypeSubGroupId { get; set; }
+    
+    public static ServiceTypeRes ParseFromServiceType(ServiceType serviceType)
+    {
+      return new ServiceTypeRes
+      {
+        Name = serviceType.Name,
+        ServiceTypeSubGroupId = serviceType.ServiceTypeSubGroupId
       };
     }
   }

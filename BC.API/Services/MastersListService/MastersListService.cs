@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BC.API.Events;
+using BC.API.Services.MastersListService.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace BC.API.Services.MastersListService
@@ -38,7 +39,23 @@ namespace BC.API.Services.MastersListService
 
     public MasterRes GetMasterById(Guid masterId)
     {
-      return null;
+      var master = _context.Masters.SingleOrDefault(mstr => mstr.Id == masterId);
+
+      if (master == null)
+      {
+        throw new CantFindMasterException($"Cant find master by id: {masterId}");
+      }
+        
+      master = _context.Masters.Include(mstr => mstr.PriceList)
+        .ThenInclude(mstr => mstr.PriceListItems)
+        .Include(mstr => mstr.Speciality)
+        .Include(mstr => mstr.Schedule)
+        .ThenInclude(mstr => mstr.Days)
+        .ThenInclude(mstr => mstr.Items)
+        .ThenInclude(mstr => mstr.ScheduleDay)
+        .ThenInclude(mstr => mstr.Items).Single(mstr => mstr.Id == masterId);
+
+        return MasterRes.ParseFromMaster(master);
     }
 
     public async void UploadAvatar(Guid masterId, Stream stream)
@@ -54,6 +71,15 @@ namespace BC.API.Services.MastersListService
 
     public void UpdateMasterInfo(UpdateMasterReq req)
     {
+      var master = _context.Masters.Include(mstr => mstr.PriceList)
+        .ThenInclude(mstr => mstr.PriceListItems).SingleOrDefault(mstr => mstr.Id == req.MasterId);
+
+      if (master == null)
+      {
+        throw new CantFindMasterException($"Cant find master by id: {req.MasterId}");
+      }
+      
+      
     }
 
     public void Publish(Guid masterId)
