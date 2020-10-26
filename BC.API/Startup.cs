@@ -1,8 +1,10 @@
 ﻿using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using BC.API.Events;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
+using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.Data;
 using BC.API.Services.BalanceService;
 using BC.API.Services.BalanceService.Data;
@@ -24,7 +26,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
-using AuthenticationService = BC.API.Services.AuthenticationService;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
 
 namespace BC.API
@@ -72,7 +73,7 @@ namespace BC.API
       );
       
       services.AddTransient<BalanceService>();
-      services.AddTransient<AuthenticationService.AuthenticationService>();
+      services.AddTransient<AuthenticationService>();
       services.AddTransient<MastersListService>();
       services.AddTransient<BookingService>();
     }
@@ -177,7 +178,7 @@ namespace BC.API
       services.AddCors();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AuthenticationService authenticationService)
     {
       if (env.IsDevelopment() || env.IsEnvironment("Local-01") || env.IsEnvironment("Local-02"))
       {
@@ -207,6 +208,8 @@ namespace BC.API
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+      authenticationService.EnsureDataInitialized().Wait();
     }
   }
 }

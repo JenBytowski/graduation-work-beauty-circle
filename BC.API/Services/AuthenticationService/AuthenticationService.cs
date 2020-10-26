@@ -22,17 +22,30 @@ namespace BC.API.Services.AuthenticationService
   public class AuthenticationService
   {
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<Role> _rolesManager;
     private readonly IConfiguration _configuration;
     private readonly ISMSClient _smsClient;
     private readonly IEventBus _eventBus;
 
     public AuthenticationService(UserManager<User> userManager, ISMSClient smsClient,
-      IConfiguration configuration, IEventBus eventBus)
+      IConfiguration configuration, IEventBus eventBus, RoleManager<Role> rolesManager)
     {
       _userManager = userManager;
       _smsClient = smsClient;
       _configuration = configuration;
       _eventBus = eventBus;
+      _rolesManager = rolesManager;
+    }
+
+    public async Task EnsureDataInitialized()
+    {
+      foreach (var role in UserRoles.AllRoles)
+      {
+        if (! await this._rolesManager.RoleExistsAsync(role))
+        {
+          await this._rolesManager.CreateAsync(new Role { Name = role} );
+        }
+      }
     }
 
     public async Task<AuthenticationResponse> AuthenticateByVK(string authCode, string redirectUrl, string role)

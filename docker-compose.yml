@@ -18,6 +18,9 @@ services:
       - ASPNETCORE_URLS=http://+:80
     volumes:
       - "./volumes/bc-api/Data:/app/Data"
+    depends_on:
+      - sql-server
+      - rabbitmq
   sql-server:
     image: "mcr.microsoft.com/mssql/server"
     environment:
