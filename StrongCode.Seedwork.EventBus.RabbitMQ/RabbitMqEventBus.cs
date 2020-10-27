@@ -190,7 +190,7 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
 
     public void Dispose()
     {
-      foreach (var subscription in this._subscriptions)
+      foreach (var subscription in this._subscriptions.ToList())
       {
         this.Unsubscribe(subscription);
       }
