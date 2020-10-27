@@ -19,12 +19,10 @@ export class AuthenticationComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.redirectUrl)
+    //console.log(this.redirectUrl)
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
-      const role = queryParam['role'];
-      console.log(role);
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
