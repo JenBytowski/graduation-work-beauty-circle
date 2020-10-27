@@ -42,7 +42,8 @@ namespace BC.API
     private void AddEventBus(IServiceCollection services)
     {
       services.AddTransient<ScheduleDayChangedEventHandler>();
-      services.AddTransient<UserAssignedToRoleHandler>();
+      services.AddTransient<BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
+      services.AddTransient<BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
 
       var eb = this.Configuration.GetSection("RabbitMQEventBus");
       services.AddSingleton<IEventBus>(provider =>
@@ -57,7 +58,8 @@ namespace BC.API
           provider
         );
 
-        bus.Subscribe<UserAssignedToRoleEvent, UserAssignedToRoleHandler>();
+        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
+        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
         bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
 
         return bus;

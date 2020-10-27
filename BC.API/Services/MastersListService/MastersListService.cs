@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BC.API.Domain;
 using BC.API.Events;
+using BC.API.Services.MastersListService.Data;
 using BC.API.Services.MastersListService.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +14,11 @@ namespace BC.API.Services.MastersListService
 {
   public class MastersListService
   {
-    readonly Data.MastersContext _context;
+    private readonly MastersContext _context;
     private readonly MastersListServiceConfig _config;
     private readonly HttpClient _httpClient;
 
-    public MastersListService(Data.MastersContext context, MastersListServiceConfig config, HttpClient httpClient)
+    public MastersListService(MastersContext context, MastersListServiceConfig config, HttpClient httpClient)
     {
       _context = context;
       _config = config;
@@ -41,23 +43,23 @@ namespace BC.API.Services.MastersListService
 
     public MasterRes GetMasterById(Guid masterId)
     {
-      var master = _context.Masters.SingleOrDefault(mstr => mstr.Id == masterId);
+      try
+      {
+        var master = _context.Masters.Include(mstr => mstr.PriceList)
+          .ThenInclude(mstr => mstr.PriceListItems)
+          .Include(mstr => mstr.Speciality)
+          .Include(mstr => mstr.Schedule)
+          .ThenInclude(mstr => mstr.Days)
+          .ThenInclude(mstr => mstr.Items)
+          .ThenInclude(mstr => mstr.ScheduleDay)
+          .ThenInclude(mstr => mstr.Items).Single(mstr => mstr.Id == masterId);
 
-      if (master == null)
+        return MasterRes.ParseFromMaster(master);
+      }
+      catch (Exception e)
       {
         throw new CantFindMasterException($"Cant find master by id: {masterId}");
       }
-        
-      master = _context.Masters.Include(mstr => mstr.PriceList)
-        .ThenInclude(mstr => mstr.PriceListItems)
-        .Include(mstr => mstr.Speciality)
-        .Include(mstr => mstr.Schedule)
-        .ThenInclude(mstr => mstr.Days)
-        .ThenInclude(mstr => mstr.Items)
-        .ThenInclude(mstr => mstr.ScheduleDay)
-        .ThenInclude(mstr => mstr.Items).Single(mstr => mstr.Id == masterId);
-
-        return MasterRes.ParseFromMaster(master);
     }
 
     public async void UploadAvatar(Guid masterId, Stream stream)
@@ -80,8 +82,6 @@ namespace BC.API.Services.MastersListService
       {
         throw new CantFindMasterException($"Cant find master by id: {req.MasterId}");
       }
-      
-      
     }
 
     public void Publish(Guid masterId)
@@ -94,6 +94,29 @@ namespace BC.API.Services.MastersListService
 
     public void OnUserCreated()
     {
+    }
+
+    public async Task OnUserAssignedToRole(UserAssignedToRoleEvent @event)
+    {
+      if (@event.Role != UserRoles.Master)
+      {
+        return;
+      }
+
+      var master = await this._context.Masters.SingleOrDefaultAsync(m => m.Id == @event.UserId);
+
+      if (master != null)
+      {
+        return;
+      }
+
+      this._context.Masters.Add(new Master
+      {
+        Id = @event.Id,
+        Name = "No name",
+      });
+
+      await this._context.SaveChangesAsync();
     }
 
     public void OnUserDeleted()

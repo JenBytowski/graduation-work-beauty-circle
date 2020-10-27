@@ -1,27 +1,84 @@
 ﻿{
   "Routes": [
     {
-      "DownstreamPathTemplate": "/authentication",
-      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/authentication/{xxx}",
+      "DownstreamPathTemplate": "/authentication/{xxx}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5207
+          "Host": "host.docker.internal",
+          "Port": 5222
         }
-      ],
-      "UpstreamPathTemplate": "/api/auth",
-      "UpstreamHttpMethod": ["Get"]
+      ]
     },
     {
-      "DownstreamPathTemplate": "/masters-list",
+      "UpstreamPathTemplate": "/api/masters-list/{xxx}",
+      "DownstreamPathTemplate": "/masters-list/{xxx}",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "localhost",
-          "Port": 5207
+          "Host": "host.docker.internal",
+          "Port": 5222
         }
-      ],
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/api/masters-list",
-      "UpstreamHttpMethod": ["Get"]
+      "DownstreamPathTemplate": "/masters-list",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 5222
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/booking/{xxx}",
+      "DownstreamPathTemplate": "/booking/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 5222
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files/{xxx}",
+      "DownstreamPathTemplate": "/files/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 5222
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files",
+      "DownstreamPathTemplate": "/files",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 5222
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/localhost-tip",
+      "DownstreamPathTemplate": "/localhost-tip",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "host.docker.internal",
+          "Port": 5222
+        }
+      ]
     }
-  ]
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5100"
+  }
 }
