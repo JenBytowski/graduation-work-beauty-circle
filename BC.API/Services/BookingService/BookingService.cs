@@ -79,11 +79,11 @@ namespace BC.API.Services.BookingService
       if (req.MondayDateOfPausesDonorWeek != null)
       {
         var donorWeekMonday =
-          schedule.Days.First(day => day.StartTime.Date == req.MondayDateOfPausesDonorWeek.Value.Date);
+          schedule.Days.First(day => day.Date == req.MondayDateOfPausesDonorWeek.Value.Date);
         var donorWeek = schedule.Days.Where(day =>
-          day.StartTime.Date >= donorWeekMonday.StartTime.Date &&
-          day.StartTime.Date < donorWeekMonday.StartTime.AddDays(6).Date).OrderBy(
-          day => day.StartTime.Date);
+          day.Date >= donorWeekMonday.Date &&
+          day.Date < donorWeekMonday.Date.AddDays(6).Date).OrderBy(
+          day => day.Date);
 
         newWeek = donorWeek.Select((day, i) =>
         {
@@ -91,11 +91,7 @@ namespace BC.API.Services.BookingService
           return new ScheduleDay
           {
             ScheduleId = day.ScheduleId,
-            StartTime =
-              new DateTime(newDate.Year, newDate.Month, newDate.Day, day.StartTime.Hour, day.StartTime.Minute,
-                day.StartTime.Millisecond),
-            EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, day.EndTime.Hour, day.EndTime.Minute,
-              day.EndTime.Millisecond),
+            Date = new DateTime(newDate.Year, newDate.Month, newDate.Day),
             Items = day.Items
           };
         }).ToList();
@@ -111,8 +107,7 @@ namespace BC.API.Services.BookingService
           newWeek.Add(new ScheduleDay
           {
             ScheduleId = schedule.Id,
-            StartTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 0, 0, 0),
-            EndTime = new DateTime(newDate.Year, newDate.Month, newDate.Day, 23, 59, 59),
+            Date = new DateTime(newDate.Year, newDate.Month, newDate.Day),
             Items = new List<ScheduleDayItem>
             {
               new Window
@@ -141,7 +136,7 @@ namespace BC.API.Services.BookingService
         throw new Exception("Dont found schedule for this master.");
       }
 
-      var scheduleDay = schedule.Days.First(day => day.StartTime.Date == req.StartTime.Date);
+      var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
       var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
         windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
@@ -210,7 +205,7 @@ namespace BC.API.Services.BookingService
         throw new Exception("Dont found schedule for this master.");
       }
 
-      var scheduleDay = schedule.Days.First(day => day.StartTime.Date == req.StartTime.Date);
+      var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
       var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
         windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);

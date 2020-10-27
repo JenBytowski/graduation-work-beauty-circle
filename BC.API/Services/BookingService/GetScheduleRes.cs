@@ -16,9 +16,7 @@ namespace BC.API.Services.BookingService
 
     public Guid ScheduleId { get; set; }
 
-    public DateTime StartTime { get; set; }
-
-    public DateTime EndTime { get; set; }
+    public DateTime Date { get; set; }
 
     public IEnumerable<ScheduleDayItemRes> Items { get; set; }
 
@@ -28,8 +26,7 @@ namespace BC.API.Services.BookingService
       {
         Id = scheduleDay.Id,
         ScheduleId = scheduleDay.Id,
-        StartTime = scheduleDay.StartTime,
-        EndTime = scheduleDay.EndTime,
+        Date = scheduleDay.Date,
         Items = scheduleDay.Items.Select(itm => ScheduleDayItemRes.ParseFromScheduleDayItem(itm))
       };
     }
@@ -39,13 +36,11 @@ namespace BC.API.Services.BookingService
   {
     public Guid Id { get; set; }
 
-    public Guid ScheduleDayId { get; set; }
-
-    public ScheduleDayRes ScheduleDayRes { get; set; }
-
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
+    
+    public string ItemType { get; set; }
 
     public static ScheduleDayItemRes ParseFromScheduleDayItem(ScheduleDayItem scheduleDayItem)
     {
@@ -72,9 +67,9 @@ namespace BC.API.Services.BookingService
       return new PauseRes
       {
         Id = pause.Id,
-        ScheduleDayId = pause.ScheduleDayId,
         StartTime = pause.StartTime,
         EndTime = pause.EndTime,
+        ItemType = nameof(Pause),
         Description = pause.Description,
       };
     }
@@ -101,10 +96,10 @@ namespace BC.API.Services.BookingService
       return new BookingRes
       {
         Id = booking.Id,
-        ScheduleDayId = booking.ScheduleDayId,
         ClientId = booking.ClientId,
         StartTime = booking.StartTime,
         EndTime = booking.EndTime,
+        ItemType = nameof(Booking),
         ServiceTypeId = booking.ServiceTypeId,
         ServiceTypeName = booking.ServiceTypeName,
         DurationInMinutesMax = booking.DurationInMinutesMax,
@@ -121,7 +116,10 @@ namespace BC.API.Services.BookingService
     {
       return new WindowRes
       {
-        Id = window.Id, ScheduleDayId = window.ScheduleDayId, StartTime = window.StartTime, EndTime = window.EndTime
+        Id = window.Id, 
+        StartTime = window.StartTime,
+        EndTime = window.EndTime,
+        ItemType = nameof(Window)
       };
     }
   }

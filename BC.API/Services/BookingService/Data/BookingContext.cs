@@ -47,9 +47,7 @@ namespace BC.API.Services.BookingService.Data
 
     public Guid ScheduleId { get; set; }
 
-    public DateTime StartTime { get; set; }
-
-    public DateTime EndTime { get; set; }
+    public DateTime Date { get; set; }
 
     public IList<ScheduleDayItem> Items { get; set; }
   }

@@ -10,8 +10,7 @@ namespace BC.API.Services.AuthenticationService.Data
       var optionsBuilder = new DbContextOptionsBuilder<AuthenticationContext>();
       optionsBuilder
         // .UseSqlServer("Server=.;Database=BC;Trusted_Connection=True;MultipleActiveResultSets=true")
-        .UseSqlServer("Server=.,5230;Database=BC;User Id=sa;Password=Password123;")
-      ;
+        .UseSqlServer("Server=.,5230;Database=BC;User Id=sa;Password=Password123;");
 
       return new AuthenticationContext(optionsBuilder.Options);
     }
