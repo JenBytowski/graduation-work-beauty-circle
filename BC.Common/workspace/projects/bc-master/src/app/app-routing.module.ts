@@ -16,7 +16,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'calendar-day',
+    path: 'calendar-day/:id',
     component: DayComponent,
     pathMatch: 'full'
   },

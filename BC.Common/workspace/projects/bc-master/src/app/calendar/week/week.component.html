@@ -11,13 +11,14 @@
 
   <ion-content>
     <ion-card *ngFor="let day of vm.schedule?.days">
-<!--      <ion-item>{{day.id}}</ion-item>-->
-<!--      <ion-item>{{day.scheduleId}}</ion-item>-->
       <ion-item>Time: {{day.startTime}} - {{day.endTime}}</ion-item>
-      <ion-item>Items</ion-item>
-      <ion-card *ngFor="let item of day?.items">
-        <ion-item>Time: {{item.startTime.toLocaleString()}} - {{item.endTime.toLocaleString()}}</ion-item>
-      </ion-card>
+      <ion-item>
+        Items
+        <ion-button [routerLink]="['../calendar-day', day.id]" color="medium" fill="outline" slot="end">View</ion-button>
+      </ion-item>
+<!--      <ion-card *ngFor="let item of day?.items">-->
+<!--        <ion-item>Time: {{item.startTime.toLocaleString()}} - {{item.endTime.toLocaleString()}}</ion-item>-->
+<!--      </ion-card>-->
     </ion-card>
   </ion-content>
 
