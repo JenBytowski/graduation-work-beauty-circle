@@ -1,0 +1,16 @@
+PUT http://localhost:5210/api/masters-list/4E1F48B9-1BBF-42C9-A17D-FD09CAEBAB2B
+Content-Type: application/json
+
+{
+"Name": "John KEK",
+"AvatarUrl": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.reddit.com%2Fr%2Fforsen%2Fcomments%2F4eizkt%2Fdungeon_master_if_you_upvote_this_this_will%2F&psig=AOvVaw0HjC5DZPYb5oKMQWmM44MF&ust=1604004184682000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCIDsjLmT2OwCFQAAAAAdAAAAABAD",
+"About": null,
+"Address": null,
+"Phone": "",
+"InstagramProfile": null,
+"VkProfile": null,
+"Viber": null,
+"Skype": null,
+"SpecialityId": null,
+"PriceListItems": []
+}

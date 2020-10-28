@@ -1,0 +1,8 @@
+POST http://localhost:5210/api/masters-list/on-user-assigned-to-role
+Content-Type: application/json
+
+{
+"UserId": "339B04A3-39CE-4E5F-C665-08D87B74EBB7",
+"UserName": "Noname",
+"Role": "Master"
+}
