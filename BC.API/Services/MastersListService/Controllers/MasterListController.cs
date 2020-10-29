@@ -39,12 +39,5 @@ namespace BC.API.Services.MastersListService.Controllers
       this._mastersListerService.UploadAvatar(id, file.OpenReadStream());
       return Ok();
     }
-    
-    [HttpPost]
-    [Route("on-user-assigned-to-role")]
-    public async Task OnUserAssignedToRole(UserAssignedToRoleEvent @event)
-    {
-      await _mastersListerService.OnUserAssignedToRole(@event);
-    }
   }
 }
