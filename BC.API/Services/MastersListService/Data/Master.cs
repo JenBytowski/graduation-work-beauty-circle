@@ -42,6 +42,10 @@ namespace BC.API.Services.MastersListService.Data
     public double Stars { get; set; }
 
     public int ReviewsCount { get; set; }
+    
+    public bool IsValidProfile { get; set; }
+    
+    public bool IsPublish { get; set; }
   }
 
   public class City

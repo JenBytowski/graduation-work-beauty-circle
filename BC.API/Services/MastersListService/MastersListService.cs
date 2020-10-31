@@ -79,42 +79,59 @@ namespace BC.API.Services.MastersListService
     //TODO отрефакторить логику и сделать валидацию
     public async Task UpdateMasterInfo(Guid masterId, UpdateMasterReq req)
     {
+      try
+      {
+        var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
+          .ThenInclude(mstr => mstr.PriceListItems).SingleOrDefault(mstr => mstr.Id == masterId);
+
+        if (master == null)
+        {
+          throw new CantFindMasterException($"Cant find master by id: {masterId}");
+        }
+
+        master.Name = req.Name ?? master.Name;
+        master.AvatarUrl = req.AvatarUrl ?? master.AvatarUrl;
+        master.About = req.About ?? master.About;
+        master.Address = req.Address ?? master.Address;
+        master.Phone = req.Phone ?? master.Phone;
+        master.InstagramProfile = req.InstagramProfile ?? master.InstagramProfile;
+        master.VkProfile = req.VkProfile ?? master.VkProfile;
+        master.Viber = req.Viber ?? master.Viber;
+        master.Skype = req.Skype ?? master.Skype;
+        master.SpecialityId = req.SpecialityId ?? master.SpecialityId;
+
+        var newPriceListItems = req.PriceListItems.Where(rItm =>
+          master.PriceList.PriceListItems.SingleOrDefault(itm => itm.Id != rItm.Id) != null);
+
+        master.PriceList.PriceListItems.AddRange(newPriceListItems.Select(itm =>
+          new PriceListItem
+          {
+            ServiceTypeId = itm.ServiceType.Id,
+            PriceMax = itm.PriceMax,
+            PriceMin = itm.PriceMin,
+            DurationInMinutesMax = itm.DurationInMinutesMax
+          }));
+
+        await _mastersContext.SaveChangesAsync();
+      }
+      catch (Exception ex)
+      {
+        throw new CantUpdateMasterException($"Cant update master by id: {masterId}", ex);
+      }
+    }
+
+    public void Publish(Guid masterId)
+    {
       var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
-        .ThenInclude(mstr => mstr.PriceListItems).SingleOrDefault(mstr => mstr.Id == masterId);
+        .SingleOrDefault(mstr => mstr.Id == masterId);
 
       if (master == null)
       {
         throw new CantFindMasterException($"Cant find master by id: {masterId}");
       }
-
-      master.Name = req.Name ?? master.Name;
-      master.AvatarUrl = req.AvatarUrl ?? master.AvatarUrl;
-      master.About = req.About ?? master.About;
-      master.Address = req.Address ?? master.Address;
-      master.Phone = req.Phone ?? master.Phone;
-      master.InstagramProfile = req.InstagramProfile ?? master.InstagramProfile;
-      master.VkProfile = req.VkProfile ?? master.VkProfile;
-      master.Viber = req.Viber ?? master.Viber;
-      master.Skype = req.Skype ?? master.Skype;
-      master.SpecialityId = req.SpecialityId ?? master.SpecialityId;
       
-      var newPriceListItems = req.PriceListItems.Where(rItm =>
-        master.PriceList.PriceListItems.SingleOrDefault(itm => itm.Id != rItm.Id) != null);
-
-      master.PriceList.PriceListItems.AddRange(newPriceListItems.Select(itm =>
-        new PriceListItem
-        {
-          ServiceTypeId = itm.ServiceType.Id,
-          PriceMax = itm.PriceMax,
-          PriceMin = itm.PriceMin,
-          DurationInMinutesMax = itm.DurationInMinutesMax
-        }));
-
-      await _mastersContext.SaveChangesAsync();
-    }
-
-    public void Publish(Guid masterId)
-    {
+      
+      
     }
 
     public void UnPublish(Guid masterId)
@@ -165,6 +182,31 @@ namespace BC.API.Services.MastersListService
     public void OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
     {
       throw new NotImplementedException();
+    }
+
+    private void ValidateMastersProfile(Master master)
+    {
+      if (string.IsNullOrEmpty(master.Name))
+      {
+        throw new ValidateMasterException($"Master {master.Id} name is null or empty");
+      }
+
+      if (string.IsNullOrEmpty(master.AvatarUrl))
+      {
+        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+      }
+      
+      if (string.IsNullOrEmpty(master.Address))
+      {
+        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+      }
+      
+      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) && string.IsNullOrEmpty(master.InstagramProfile) && string.IsNullOrEmpty(master.Viber))
+      {
+        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+      }
+      
+      
     }
   }
 
