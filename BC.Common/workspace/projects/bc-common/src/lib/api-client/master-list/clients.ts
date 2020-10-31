@@ -30,9 +30,11 @@ export class MasterListClient {
      * @param serviceTypeIds (optional)
      * @param startHour (optional)
      * @param endHour (optional)
+     * @param skip (optional)
+     * @param take (optional)
      * @return Success
      */
-    mastersListGet(cityId: string | null | undefined, serviceTypeIds: string[] | null | undefined, startHour: number | null | undefined, endHour: number | null | undefined): Observable<MasterRes[]> {
+    mastersListGet(cityId: string | null | undefined, serviceTypeIds: string[] | null | undefined, startHour: number | null | undefined, endHour: number | null | undefined, skip: number | undefined, take: number | undefined): Observable<MasterRes[]> {
         let url_ = this.baseUrl + "/masters-list?";
         if (cityId !== undefined && cityId !== null)
             url_ += "CityId=" + encodeURIComponent("" + cityId) + "&";
@@ -42,6 +44,14 @@ export class MasterListClient {
             url_ += "StartHour=" + encodeURIComponent("" + startHour) + "&";
         if (endHour !== undefined && endHour !== null)
             url_ += "EndHour=" + encodeURIComponent("" + endHour) + "&";
+        if (skip === null)
+            throw new Error("The parameter 'skip' cannot be null.");
+        else if (skip !== undefined)
+            url_ += "Skip=" + encodeURIComponent("" + skip) + "&";
+        if (take === null)
+            throw new Error("The parameter 'take' cannot be null.");
+        else if (take !== undefined)
+            url_ += "Take=" + encodeURIComponent("" + take) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -67,11 +77,47 @@ export class MasterListClient {
     }
 
     /**
+     * @param body (optional)
+     * @return Success
+     */
+    mastersListPut(id: string, body: UpdateMasterReq | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/masters-list/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMastersListPut(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMastersListPut(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    /**
      * @param file (optional)
      * @return Success
      */
-    avatar(id: string, file: FileParameter | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/masters-list/{id}/avatar";
+    mastersListPost(id: string, file: FileParameter | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/masters-list/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -90,42 +136,11 @@ export class MasterListClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAvatar(response_);
+            return this.processMastersListPost(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processAvatar(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
-     * @return Success
-     */
-    mastersListPut(id: string): Observable<void> {
-        let url_ = this.baseUrl + "/masters-list/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMastersListPut(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMastersListPut(<any>response_);
+                    return this.processMastersListPost(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -179,7 +194,7 @@ export class MasterListClient {
         return _observableOf<MasterRes[]>(<any>null);
     }
 
-    protected processAvatar(response: HttpResponseBase): Observable<void> {
+    protected processMastersListPost(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -199,13 +214,11 @@ export class MasterListClient {
     }
 }
 
-export class PriceListItem implements IPriceListItem {
+export class ServiceTypeRes implements IServiceTypeRes {
     name?: string | undefined;
-    priceMin?: number;
-    priceMax?: number;
-    durationInMinutesMax?: number;
+    serviceTypeSubGroupId?: string;
 
-    constructor(data?: IPriceListItem) {
+    constructor(data?: IServiceTypeRes) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -214,25 +227,73 @@ export class PriceListItem implements IPriceListItem {
         }
     }
 
+    static fromJS(data: any): ServiceTypeRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceTypeRes();
+        result.init(data);
+        return result;
+    }
+
     init(_data?: any) {
         if (_data) {
             this.name = _data["name"];
+            this.serviceTypeSubGroupId = _data["serviceTypeSubGroupId"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["serviceTypeSubGroupId"] = this.serviceTypeSubGroupId;
+        return data;
+    }
+}
+
+export interface IServiceTypeRes {
+    name?: string | undefined;
+    serviceTypeSubGroupId?: string;
+}
+
+export class PriceListItemRes implements IPriceListItemRes {
+    id?: string;
+    name?: string | undefined;
+    serviceType?: ServiceTypeRes;
+    priceMin?: number;
+    priceMax?: number;
+    durationInMinutesMax?: number;
+
+    constructor(data?: IPriceListItemRes) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): PriceListItemRes {
+        data = typeof data === 'object' ? data : {};
+        let result = new PriceListItemRes();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.serviceType = _data["serviceType"] ? ServiceTypeRes.fromJS(_data["serviceType"]) : <any>undefined;
             this.priceMin = _data["priceMin"];
             this.priceMax = _data["priceMax"];
             this.durationInMinutesMax = _data["durationInMinutesMax"];
         }
     }
 
-    static fromJS(data: any): PriceListItem {
-        data = typeof data === 'object' ? data : {};
-        let result = new PriceListItem();
-        result.init(data);
-        return result;
-    }
-
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
+        data["serviceType"] = this.serviceType ? this.serviceType.toJSON() : <any>undefined;
         data["priceMin"] = this.priceMin;
         data["priceMax"] = this.priceMax;
         data["durationInMinutesMax"] = this.durationInMinutesMax;
@@ -240,8 +301,10 @@ export class PriceListItem implements IPriceListItem {
     }
 }
 
-export interface IPriceListItem {
+export interface IPriceListItemRes {
+    id?: string;
     name?: string | undefined;
+    serviceType?: ServiceTypeRes;
     priceMin?: number;
     priceMax?: number;
     durationInMinutesMax?: number;
@@ -297,13 +360,13 @@ export interface IWindow {
     endTime?: Date;
 }
 
-export class ScheduleDay implements IScheduleDay {
+export class ScheduleDayRes implements IScheduleDayRes {
     dayOfWeek?: DayOfWeek;
     startTime?: Date;
     endTime?: Date;
     windows?: Window[] | undefined;
 
-    constructor(data?: IScheduleDay) {
+    constructor(data?: IScheduleDayRes) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -325,9 +388,9 @@ export class ScheduleDay implements IScheduleDay {
         }
     }
 
-    static fromJS(data: any): ScheduleDay {
+    static fromJS(data: any): ScheduleDayRes {
         data = typeof data === 'object' ? data : {};
-        let result = new ScheduleDay();
+        let result = new ScheduleDayRes();
         result.init(data);
         return result;
     }
@@ -346,7 +409,7 @@ export class ScheduleDay implements IScheduleDay {
     }
 }
 
-export interface IScheduleDay {
+export interface IScheduleDayRes {
     dayOfWeek?: DayOfWeek;
     startTime?: Date;
     endTime?: Date;
@@ -365,8 +428,8 @@ export class MasterRes implements IMasterRes {
     viber?: string | undefined;
     skype?: string | undefined;
     speciality?: string | undefined;
-    priceList?: PriceListItem[] | undefined;
-    schedule?: ScheduleDay[] | undefined;
+    priceList?: PriceListItemRes[] | undefined;
+    schedule?: ScheduleDayRes[] | undefined;
     averageRating?: number;
 
     constructor(data?: IMasterRes) {
@@ -394,12 +457,12 @@ export class MasterRes implements IMasterRes {
             if (Array.isArray(_data["priceList"])) {
                 this.priceList = [] as any;
                 for (let item of _data["priceList"])
-                    this.priceList!.push(PriceListItem.fromJS(item));
+                    this.priceList!.push(PriceListItemRes.fromJS(item));
             }
             if (Array.isArray(_data["schedule"])) {
                 this.schedule = [] as any;
                 for (let item of _data["schedule"])
-                    this.schedule!.push(ScheduleDay.fromJS(item));
+                    this.schedule!.push(ScheduleDayRes.fromJS(item));
             }
             this.averageRating = _data["averageRating"];
         }
@@ -452,9 +515,185 @@ export interface IMasterRes {
     viber?: string | undefined;
     skype?: string | undefined;
     speciality?: string | undefined;
-    priceList?: PriceListItem[] | undefined;
-    schedule?: ScheduleDay[] | undefined;
+    priceList?: PriceListItemRes[] | undefined;
+    schedule?: ScheduleDayRes[] | undefined;
     averageRating?: number;
+}
+
+export class ServiceTypeReq implements IServiceTypeReq {
+    id?: string;
+    serviceTypeSubGroupId?: string;
+
+    constructor(data?: IServiceTypeReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): ServiceTypeReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceTypeReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.serviceTypeSubGroupId = _data["serviceTypeSubGroupId"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["serviceTypeSubGroupId"] = this.serviceTypeSubGroupId;
+        return data;
+    }
+}
+
+export interface IServiceTypeReq {
+    id?: string;
+    serviceTypeSubGroupId?: string;
+}
+
+export class PriceListItemReq implements IPriceListItemReq {
+    id?: string;
+    serviceType?: ServiceTypeReq;
+    priceMin?: number;
+    priceMax?: number;
+    durationInMinutesMax?: number;
+
+    constructor(data?: IPriceListItemReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): PriceListItemReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new PriceListItemReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.serviceType = _data["serviceType"] ? ServiceTypeReq.fromJS(_data["serviceType"]) : <any>undefined;
+            this.priceMin = _data["priceMin"];
+            this.priceMax = _data["priceMax"];
+            this.durationInMinutesMax = _data["durationInMinutesMax"];
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["serviceType"] = this.serviceType ? this.serviceType.toJSON() : <any>undefined;
+        data["priceMin"] = this.priceMin;
+        data["priceMax"] = this.priceMax;
+        data["durationInMinutesMax"] = this.durationInMinutesMax;
+        return data;
+    }
+}
+
+export interface IPriceListItemReq {
+    id?: string;
+    serviceType?: ServiceTypeReq;
+    priceMin?: number;
+    priceMax?: number;
+    durationInMinutesMax?: number;
+}
+
+export class UpdateMasterReq implements IUpdateMasterReq {
+    name?: string | undefined;
+    avatarUrl?: string | undefined;
+    about?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    instagramProfile?: string | undefined;
+    vkProfile?: string | undefined;
+    viber?: string | undefined;
+    skype?: string | undefined;
+    specialityId?: string | undefined;
+    priceListItems?: PriceListItemReq[] | undefined;
+
+    constructor(data?: IUpdateMasterReq) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateMasterReq {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateMasterReq();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.avatarUrl = _data["avatarUrl"];
+            this.about = _data["about"];
+            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.instagramProfile = _data["instagramProfile"];
+            this.vkProfile = _data["vkProfile"];
+            this.viber = _data["viber"];
+            this.skype = _data["skype"];
+            this.specialityId = _data["specialityId"];
+            if (Array.isArray(_data["priceListItems"])) {
+                this.priceListItems = [] as any;
+                for (let item of _data["priceListItems"])
+                    this.priceListItems!.push(PriceListItemReq.fromJS(item));
+            }
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["avatarUrl"] = this.avatarUrl;
+        data["about"] = this.about;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["instagramProfile"] = this.instagramProfile;
+        data["vkProfile"] = this.vkProfile;
+        data["viber"] = this.viber;
+        data["skype"] = this.skype;
+        data["specialityId"] = this.specialityId;
+        if (Array.isArray(this.priceListItems)) {
+            data["priceListItems"] = [];
+            for (let item of this.priceListItems)
+                data["priceListItems"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IUpdateMasterReq {
+    name?: string | undefined;
+    avatarUrl?: string | undefined;
+    about?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    instagramProfile?: string | undefined;
+    vkProfile?: string | undefined;
+    viber?: string | undefined;
+    skype?: string | undefined;
+    specialityId?: string | undefined;
+    priceListItems?: PriceListItemReq[] | undefined;
 }
 
 export interface FileParameter {

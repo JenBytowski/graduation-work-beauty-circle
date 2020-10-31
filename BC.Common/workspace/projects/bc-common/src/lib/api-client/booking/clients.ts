@@ -344,10 +344,15 @@ export class BookingClient {
 
 export class ScheduleDayItemRes implements IScheduleDayItemRes {
     id?: string;
-    scheduleDayId?: string;
-    scheduleDayRes?: ScheduleDayRes;
     startTime?: Date;
     endTime?: Date;
+    itemType?: string | undefined;
+    clientId?: string | undefined;
+    serviceTypeId?: string | undefined;
+    description?: string | undefined;
+    priceMin?: number | undefined;
+    priceMax?: number | undefined;
+    durationInMinutesMax?: number | undefined;
 
     constructor(data?: IScheduleDayItemRes) {
         if (data) {
@@ -361,10 +366,15 @@ export class ScheduleDayItemRes implements IScheduleDayItemRes {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.scheduleDayId = _data["scheduleDayId"];
-            this.scheduleDayRes = _data["scheduleDayRes"] ? ScheduleDayRes.fromJS(_data["scheduleDayRes"]) : <any>undefined;
             this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
             this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+            this.itemType = _data["itemType"];
+            this.clientId = _data["clientId"];
+            this.serviceTypeId = _data["serviceTypeId"];
+            this.description = _data["description"];
+            this.priceMin = _data["priceMin"];
+            this.priceMax = _data["priceMax"];
+            this.durationInMinutesMax = _data["durationInMinutesMax"];
         }
     }
 
@@ -378,27 +388,36 @@ export class ScheduleDayItemRes implements IScheduleDayItemRes {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["scheduleDayId"] = this.scheduleDayId;
-        data["scheduleDayRes"] = this.scheduleDayRes ? this.scheduleDayRes.toJSON() : <any>undefined;
         data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
         data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        data["itemType"] = this.itemType;
+        data["clientId"] = this.clientId;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["description"] = this.description;
+        data["priceMin"] = this.priceMin;
+        data["priceMax"] = this.priceMax;
+        data["durationInMinutesMax"] = this.durationInMinutesMax;
         return data; 
     }
 }
 
 export interface IScheduleDayItemRes {
     id?: string;
-    scheduleDayId?: string;
-    scheduleDayRes?: ScheduleDayRes;
     startTime?: Date;
     endTime?: Date;
+    itemType?: string | undefined;
+    clientId?: string | undefined;
+    serviceTypeId?: string | undefined;
+    description?: string | undefined;
+    priceMin?: number | undefined;
+    priceMax?: number | undefined;
+    durationInMinutesMax?: number | undefined;
 }
 
 export class ScheduleDayRes implements IScheduleDayRes {
     id?: string;
     scheduleId?: string;
-    startTime?: Date;
-    endTime?: Date;
+    date?: Date;
     items?: ScheduleDayItemRes[] | undefined;
 
     constructor(data?: IScheduleDayRes) {
@@ -414,8 +433,7 @@ export class ScheduleDayRes implements IScheduleDayRes {
         if (_data) {
             this.id = _data["id"];
             this.scheduleId = _data["scheduleId"];
-            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
-            this.endTime = _data["endTime"] ? new Date(_data["endTime"].toString()) : <any>undefined;
+            this.date = _data["date"] ? new Date(_data["date"].toString()) : <any>undefined;
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
@@ -435,8 +453,7 @@ export class ScheduleDayRes implements IScheduleDayRes {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["scheduleId"] = this.scheduleId;
-        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
-        data["endTime"] = this.endTime ? this.endTime.toISOString() : <any>undefined;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         if (Array.isArray(this.items)) {
             data["items"] = [];
             for (let item of this.items)
@@ -449,8 +466,7 @@ export class ScheduleDayRes implements IScheduleDayRes {
 export interface IScheduleDayRes {
     id?: string;
     scheduleId?: string;
-    startTime?: Date;
-    endTime?: Date;
+    date?: Date;
     items?: ScheduleDayItemRes[] | undefined;
 }
 

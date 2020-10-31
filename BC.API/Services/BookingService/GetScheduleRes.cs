@@ -16,9 +16,7 @@ namespace BC.API.Services.BookingService
 
     public Guid ScheduleId { get; set; }
 
-    public DateTime StartTime { get; set; }
-
-    public DateTime EndTime { get; set; }
+    public DateTime Date { get; set; }
 
     public IEnumerable<ScheduleDayItemRes> Items { get; set; }
 
@@ -28,8 +26,7 @@ namespace BC.API.Services.BookingService
       {
         Id = scheduleDay.Id,
         ScheduleId = scheduleDay.Id,
-        StartTime = scheduleDay.StartTime,
-        EndTime = scheduleDay.EndTime,
+        Date = scheduleDay.Date,
         Items = scheduleDay.Items.Select(itm => ScheduleDayItemRes.ParseFromScheduleDayItem(itm))
       };
     }
@@ -39,90 +36,67 @@ namespace BC.API.Services.BookingService
   {
     public Guid Id { get; set; }
 
-    public Guid ScheduleDayId { get; set; }
-
-    public ScheduleDayRes ScheduleDayRes { get; set; }
-
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
+    
+    public string ItemType { get; set; }
+
+    public Guid? ClientId { get; set; }
+
+    public Guid? ServiceTypeId { get; set; }
+
+    public string Description { get; set; }
+
+    public int? PriceMin { get; set; }
+
+    public int? PriceMax { get; set; }
+
+    public int? DurationInMinutesMax { get; set; }
 
     public static ScheduleDayItemRes ParseFromScheduleDayItem(ScheduleDayItem scheduleDayItem)
     {
       if (scheduleDayItem is Booking)
       {
-        return BookingRes.ParseFromBooking(scheduleDayItem as Booking);
+        var booking = scheduleDayItem as Booking;
+        
+        return new ScheduleDayItemRes
+        {
+          Id = booking.Id,
+          StartTime = booking.StartTime,
+          EndTime = booking.StartTime,
+          ItemType = nameof(Booking),
+          ClientId = booking.ClientId,
+          Description = booking.Description,
+          ServiceTypeId = booking.ServiceTypeId,
+          PriceMax = booking.PriceMax,
+          PriceMin = booking.PriceMin,
+          DurationInMinutesMax = booking.DurationInMinutesMax
+        };
       }
 
       if (scheduleDayItem is Pause)
       {
-        return PauseRes.ParseFromPause(scheduleDayItem as Pause);
+        var pause = scheduleDayItem as Pause;
+
+        return new ScheduleDayItemRes
+        {
+          Id = pause.Id,
+          StartTime = pause.StartTime,
+          EndTime = pause.EndTime,
+          ItemType = nameof(Pause),
+          Description = pause.Description,
+        };
       }
 
-      return WindowRes.ParseFromWindow(scheduleDayItem as Window);
-    }
-  }
-
-  public class PauseRes : ScheduleDayItemRes
-  {
-    public string Description { get; set; }
-
-    public static PauseRes ParseFromPause(Pause pause)
-    {
-      return new PauseRes
+      return new ScheduleDayItemRes
       {
-        Id = pause.Id,
-        ScheduleDayId = pause.ScheduleDayId,
-        StartTime = pause.StartTime,
-        EndTime = pause.EndTime,
-        Description = pause.Description,
+        Id = scheduleDayItem.Id,
+        StartTime = scheduleDayItem.StartTime,
+        EndTime = scheduleDayItem.EndTime,
+        ItemType = nameof(Window),
       };
     }
   }
-
-  public class BookingRes : ScheduleDayItemRes
-  {
-    public Guid ClientId { get; set; }
-
-    public Guid ServiceTypeId { get; set; }
-
-    public string ServiceTypeName { get; set; }
-
-    public string Description { get; set; }
-
-    public int PriceMin { get; set; }
-
-    public int PriceMax { get; set; }
-
-    public int DurationInMinutesMax { get; set; }
-
-    public static BookingRes ParseFromBooking(Booking booking)
-    {
-      return new BookingRes
-      {
-        Id = booking.Id,
-        ScheduleDayId = booking.ScheduleDayId,
-        ClientId = booking.ClientId,
-        StartTime = booking.StartTime,
-        EndTime = booking.EndTime,
-        ServiceTypeId = booking.ServiceTypeId,
-        ServiceTypeName = booking.ServiceTypeName,
-        DurationInMinutesMax = booking.DurationInMinutesMax,
-        PriceMax = booking.PriceMax,
-        PriceMin = booking.PriceMin,
-        Description = booking.Description
-      };
-    }
-  }
-
-  public class WindowRes : ScheduleDayItemRes
-  {
-    public static WindowRes ParseFromWindow(Window window)
-    {
-      return new WindowRes
-      {
-        Id = window.Id, ScheduleDayId = window.ScheduleDayId, StartTime = window.StartTime, EndTime = window.EndTime
-      };
-    }
-  }
+  
 }
