@@ -62,8 +62,8 @@
     <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
 <!--        <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />-->
-        <Exec WorkingDirectory="$(WorkspaceRoot)" Command="npm install" />
-        <Exec WorkingDirectory="$(WorkspaceRoot)projects\bc-common" Command="npm install" />
+        <Exec WorkingDirectory="$(WorkspaceRoot)" Command="npm ci" />
+        <Exec WorkingDirectory="$(WorkspaceRoot)projects\bc-common" Command="npm ci" />
         <Exec WorkingDirectory="$(WorkspaceRoot)" Command="npm run ng run bc-common:build" />
         <Exec WorkingDirectory="$(WorkspaceRoot)" Command="npm run ng run $(NG_PROJ):build:$(NG_ENV)" />
 <!--        <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr &#45;&#45; &#45;&#45;prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />-->
