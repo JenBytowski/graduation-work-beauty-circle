@@ -17,7 +17,7 @@ export class MasterProfileComponent implements OnInit {
   ngOnInit(): void {
     this.vm.Master = new Master();
     const id = +this.route.snapshot.paramMap.get('id');
-    this.masterList.mastersListGet(null, null, null, null).subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.id == id));
+    this.masterList.mastersListGet(null, null, null, null, 0, 10).subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.id == id));
   }
 
   public initMasters(masters: any): Vm {

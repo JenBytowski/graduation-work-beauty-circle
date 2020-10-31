@@ -26,7 +26,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     authenticateByVk(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -82,7 +82,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     authenticateByInstagram(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -138,7 +138,7 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
     authenticateByGoogle(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
@@ -194,11 +194,11 @@ export class AuthenticationClient {
     }
 
     /**
-     * @param body (optional) 
+     * @param body (optional)
      * @return Success
      */
-    getSmsAuthenticationCode(body: AuthenticationPhoneRequest | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/authentication/get-sms-authentication-code";
+    authenticateByPhoneStep1(body: AuthenticationPhoneRequest | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/authentication/authenticate-by-phone-step-1";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -213,11 +213,11 @@ export class AuthenticationClient {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSmsAuthenticationCode(response_);
+            return this.processAuthenticateByPhoneStep1(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSmsAuthenticationCode(<any>response_);
+                    return this.processAuthenticateByPhoneStep1(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -226,7 +226,41 @@ export class AuthenticationClient {
         }));
     }
 
-    protected processGetSmsAuthenticationCode(response: HttpResponseBase): Observable<void> {
+    /**
+     * @param body (optional)
+     * @return Success
+     */
+    authenticateByPhoneStep2(body: AuthenticatebyPhoneStep2Req | undefined): Observable<AuthenticationResponse> {
+        let url_ = this.baseUrl + "/authentication/authenticate-by-phone-step-2";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAuthenticateByPhoneStep2(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuthenticateByPhoneStep2(<any>response_);
+                } catch (e) {
+                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuthenticateByPhoneStep1(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -245,41 +279,7 @@ export class AuthenticationClient {
         return _observableOf<void>(<any>null);
     }
 
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    authenticateByPhone(body: SMSCodeAuthenticationResponse | undefined): Observable<AuthenticationResponse> {
-        let url_ = this.baseUrl + "/authentication/authenticate-by-phone";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAuthenticateByPhone(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAuthenticateByPhone(<any>response_);
-                } catch (e) {
-                    return <Observable<AuthenticationResponse>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processAuthenticateByPhone(response: HttpResponseBase): Observable<AuthenticationResponse> {
+    protected processAuthenticateByPhoneStep2(response: HttpResponseBase): Observable<AuthenticationResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -305,6 +305,7 @@ export class AuthenticationClient {
 export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
     code?: string | undefined;
     redirectUrl?: string | undefined;
+    role?: string | undefined;
 
     constructor(data?: IAuthenticationCodeRequest) {
         if (data) {
@@ -319,6 +320,7 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
         if (_data) {
             this.code = _data["code"];
             this.redirectUrl = _data["redirectUrl"];
+            this.role = _data["role"];
         }
     }
 
@@ -333,13 +335,15 @@ export class AuthenticationCodeRequest implements IAuthenticationCodeRequest {
         data = typeof data === 'object' ? data : {};
         data["code"] = this.code;
         data["redirectUrl"] = this.redirectUrl;
-        return data; 
+        data["role"] = this.role;
+        return data;
     }
 }
 
 export interface IAuthenticationCodeRequest {
     code?: string | undefined;
     redirectUrl?: string | undefined;
+    role?: string | undefined;
 }
 
 export class AuthenticationResponse implements IAuthenticationResponse {
@@ -375,7 +379,7 @@ export class AuthenticationResponse implements IAuthenticationResponse {
         data = typeof data === 'object' ? data : {};
         data["token"] = this.token;
         data["username"] = this.username;
-        return data; 
+        return data;
     }
 }
 
@@ -388,6 +392,7 @@ export interface IAuthenticationResponse {
 
 export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
     phone?: string | undefined;
+    role?: string | undefined;
 
     constructor(data?: IAuthenticationPhoneRequest) {
         if (data) {
@@ -401,6 +406,7 @@ export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
     init(_data?: any) {
         if (_data) {
             this.phone = _data["phone"];
+            this.role = _data["role"];
         }
     }
 
@@ -414,19 +420,21 @@ export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["phone"] = this.phone;
-        return data; 
+        data["role"] = this.role;
+        return data;
     }
 }
 
 export interface IAuthenticationPhoneRequest {
     phone?: string | undefined;
+    role?: string | undefined;
 }
 
-export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResponse {
+export class AuthenticatebyPhoneStep2Req implements IAuthenticatebyPhoneStep2Req {
     phone?: string | undefined;
     code?: string | undefined;
 
-    constructor(data?: ISMSCodeAuthenticationResponse) {
+    constructor(data?: IAuthenticatebyPhoneStep2Req) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -442,9 +450,9 @@ export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResp
         }
     }
 
-    static fromJS(data: any): SMSCodeAuthenticationResponse {
+    static fromJS(data: any): AuthenticatebyPhoneStep2Req {
         data = typeof data === 'object' ? data : {};
-        let result = new SMSCodeAuthenticationResponse();
+        let result = new AuthenticatebyPhoneStep2Req();
         result.init(data);
         return result;
     }
@@ -453,11 +461,11 @@ export class SMSCodeAuthenticationResponse implements ISMSCodeAuthenticationResp
         data = typeof data === 'object' ? data : {};
         data["phone"] = this.phone;
         data["code"] = this.code;
-        return data; 
+        return data;
     }
 }
 
-export interface ISMSCodeAuthenticationResponse {
+export interface IAuthenticatebyPhoneStep2Req {
     phone?: string | undefined;
     code?: string | undefined;
 }
