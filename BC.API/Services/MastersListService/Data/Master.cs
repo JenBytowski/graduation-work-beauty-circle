@@ -31,19 +31,20 @@ namespace BC.API.Services.MastersListService.Data
     public string Skype { get; set; }
 
     public Guid? SpecialityId { get; set; }
+    
     public Speciality Speciality { get; set; }
 
     public Guid PriceListId { get; set; }
+    
     public PriceList PriceList { get; set; }
 
     public Guid ScheduleId { get; set; }
+    
     public Schedule Schedule { get; set; }
 
     public double Stars { get; set; }
 
     public int ReviewsCount { get; set; }
-    
-    public bool IsValidProfile { get; set; }
     
     public bool IsPublish { get; set; }
   }
@@ -82,6 +83,7 @@ namespace BC.API.Services.MastersListService.Data
   public class ScheduleDayItem
   {
     public Guid Id { get; set; }
+    
     public Guid ScheduleDayId { get; set; }
     public ScheduleDay ScheduleDay { get; set; }
     public DateTime StartTime { get; set; }
@@ -136,6 +138,7 @@ namespace BC.API.Services.MastersListService.Data
     public string Name { get; set; }
 
     public Guid ServiceTypeGroupId { get; set; }
+    
     public ServiceTypeGroup ServiceTypeGroup { get; set; }
   }
 

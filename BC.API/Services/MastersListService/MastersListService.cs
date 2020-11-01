@@ -120,22 +120,63 @@ namespace BC.API.Services.MastersListService
       }
     }
 
-    public void Publish(Guid masterId)
+    public async Task<PublishMasterResult> PublishMaster(Guid masterId)
     {
       var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
         .SingleOrDefault(mstr => mstr.Id == masterId);
+      
+        if (master == null)
+        {
+          throw new CantFindMasterException($"Cant find master by id: {masterId}");
+        }
 
+        if (master.IsPublish)
+        {
+          return new PublishMasterResult
+          {
+            Messages = new List<PublishMasterMessage> {new PublishMasterMessage {Text = "Master has already published"}}
+          };
+        }
+
+        var validateResult = CheckIfMasterCanBePublished(master);
+
+        if (!validateResult.Result)
+        {
+          return new PublishMasterResult
+          {
+            Messages = validateResult.Messages.Select(msg => 
+              new PublishMasterMessage {Text = msg.Text})
+          };
+        }
+
+        master.IsPublish = true;
+        await _mastersContext.SaveChangesAsync();
+        
+        return new PublishMasterResult {Result = true};
+    }
+
+    public async Task<UnpublishMasterResault> UnPublishMaster(Guid masterId)
+    {
+      var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
+        .SingleOrDefault(mstr => mstr.Id == masterId);
+      
       if (master == null)
       {
         throw new CantFindMasterException($"Cant find master by id: {masterId}");
       }
-      
-      
-      
-    }
 
-    public void UnPublish(Guid masterId)
-    {
+      if (!master.IsPublish)
+      {
+        return new UnpublishMasterResault
+        {
+          Messages = new List<UnpublishMasterMessage> {new UnpublishMasterMessage {Text = "Master has already unpublished"}}
+        };
+      }
+      
+      master.IsPublish = default;
+      await _mastersContext.SaveChangesAsync();
+      
+      return new UnpublishMasterResault { Result = true };
     }
 
     public void OnUserCreated()
@@ -184,44 +225,51 @@ namespace BC.API.Services.MastersListService
       throw new NotImplementedException();
     }
 
-    private void ValidateMastersProfile(Master master)
+    private MasterCanBePublishedCheckResult CheckIfMasterCanBePublished(Master master)
     {
+      var result = new MasterCanBePublishedCheckResult
+      {
+        Messages = new List<MasterCanBePublishedCheckMessage>(), 
+        Result = true
+      };
+      
       if (string.IsNullOrEmpty(master.Name))
       {
-        throw new ValidateMasterException($"Master {master.Id} name is null or empty");
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master name is empty"});
       }
 
       if (string.IsNullOrEmpty(master.AvatarUrl))
       {
-        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master avatar is empty"});
       }
       
       if (string.IsNullOrEmpty(master.Address))
       {
-        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master info is empty"});
       }
       
-      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) && string.IsNullOrEmpty(master.InstagramProfile) && string.IsNullOrEmpty(master.Viber))
+      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) && string.IsNullOrEmpty(master.InstagramProfile) 
+          && string.IsNullOrEmpty(master.Viber) && string.IsNullOrEmpty(master.Skype))
       {
-        throw new ValidateMasterException($"Master {master.Id} info is null or empty");
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master contacts is empty"});
       }
       
-      
+      if (master.Speciality == null)
+      {
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master speciality is empty"});
+      }
+
+      if (result.Messages.Count > 0)
+      {
+        result.Result = default;
+      }
+
+      return result;
     }
   }
 
   public class MastersListServiceConfig
   {
     public string FilesServiceUrl { get; set; }
-  }
-
-  public class MastersFilter
-  {
-    public string CityId { get; set; }
-    public Guid[] ServiceTypeIds { get; set; }
-    public int? StartHour { get; set; }
-    public int? EndHour { get; set; }
-    public int Skip { get; set; }
-    public int Take { get; set; }
   }
 }

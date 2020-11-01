@@ -24,7 +24,28 @@ namespace BC.API.Services.MastersListService.Controllers
     {
       return await _mastersListerService.GetMasters(filter);
     }
+    
+    [HttpGet]
+    [Route("{id}")]
+    public MasterRes GetMasterById([FromRoute] Guid id)
+    {
+      return _mastersListerService.GetMasterById(id);
+    }
 
+    [HttpPost]
+    [Route("publish-master/{id}")]
+    public async Task<PublishMasterResult> PublishMaster([FromRoute] Guid id)
+    {
+      return await _mastersListerService.PublishMaster(id);
+    }
+    
+    [HttpPost]
+    [Route("unpublish-master/{id}")]
+    public async Task<UnpublishMasterResault> UnpublishMaster([FromRoute] Guid id)
+    {
+      return await _mastersListerService.UnPublishMaster(id);
+    }
+    
     [HttpPut]
     [Route("{id}")]
     public async Task UpdateMaster([FromRoute] Guid id, UpdateMasterReq req)

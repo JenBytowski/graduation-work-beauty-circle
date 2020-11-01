@@ -58,6 +58,9 @@ namespace BC.API.Services.MastersListService.Data.Migrations
                     b.Property<string>("InstagramProfile")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsPublish")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
