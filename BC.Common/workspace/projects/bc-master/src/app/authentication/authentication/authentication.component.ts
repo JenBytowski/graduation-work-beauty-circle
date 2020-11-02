@@ -64,12 +64,12 @@ export class AuthenticationComponent implements OnInit {
   }
 
   public async authByPhone() {
-    await this.authClient.getSmsAuthenticationCode(AuthenticationClient.AuthenticationPhoneRequest.fromJS({phone: '375299854478'})).toPromise();
+    await this.authClient.authenticateByPhoneStep1(AuthenticationClient.AuthenticationPhoneRequest.fromJS({phone: '375299854478'})).toPromise();
   }
 
   public async sendCode() {
     if ((this.code as any).el.value) {
-      await this.authClient.authenticateByPhone(AuthenticationClient.SMSCodeAuthenticationResponse.fromJS({
+      await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
         code: (this.code as any).el.value
       })).subscribe(data => console.log(data));
