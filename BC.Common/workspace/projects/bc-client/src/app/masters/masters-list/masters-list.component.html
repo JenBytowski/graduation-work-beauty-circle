@@ -23,7 +23,7 @@
       </ion-card-title>
       <div class="card_main_info">
         <ion-avatar>
-          <ion-img [src]="master.avatarUrl" class="avatar_image"></ion-img>
+          <ion-img [src]="master.avatarUrl? master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'" class="avatar_image"></ion-img>
         </ion-avatar>
         <ion-item class="card_text">
           <ion-card-content>{{master.speciality}}

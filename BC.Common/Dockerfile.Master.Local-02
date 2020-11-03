@@ -11,6 +11,7 @@ ENV NG_ENV local-02
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN curl -sL https://deb.nodesource.com/setup_13.x | bash
 RUN apt-get install -y --no-install-recommends nodejs
+RUN apt-get install -y gcc g++ build-essential
 RUN npm i -g npm@latest
 WORKDIR /src
 COPY . .
