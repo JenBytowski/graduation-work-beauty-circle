@@ -4,14 +4,16 @@ using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BC.API.Services.MastersListService.Data.Migrations
 {
     [DbContext(typeof(MastersContext))]
-    partial class MastersContextModelSnapshot : ModelSnapshot
+    [Migration("20201103132259_AvatarFileNameField")]
+    partial class AvatarFileNameField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,9 +62,6 @@ namespace BC.API.Services.MastersListService.Data.Migrations
 
                     b.Property<string>("InstagramProfile")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsPublish")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");

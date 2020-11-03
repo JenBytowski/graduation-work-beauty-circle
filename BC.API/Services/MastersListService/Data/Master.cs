@@ -15,6 +15,8 @@ namespace BC.API.Services.MastersListService.Data
     public string Name { get; set; }
 
     public string AvatarUrl { get; set; }
+    
+    public string AvatarFileName { get; set; }
 
     public string About { get; set; }
 
