@@ -31,17 +31,22 @@ namespace BC.API.Services.MastersListService.Data
     public string Skype { get; set; }
 
     public Guid? SpecialityId { get; set; }
+    
     public Speciality? Speciality { get; set; }
 
     public Guid PriceListId { get; set; }
+    
     public PriceList PriceList { get; set; }
 
     public Guid ScheduleId { get; set; }
+    
     public Schedule Schedule { get; set; }
 
     public double Stars { get; set; }
 
     public int ReviewsCount { get; set; }
+    
+    public bool IsPublish { get; set; }
   }
 
   public class City

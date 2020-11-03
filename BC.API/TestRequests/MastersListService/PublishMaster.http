@@ -1,0 +1,5 @@
+﻿POST http://localhost:5210/api/masters-list/publish-master/634A0DA3-0E06-4714-B7FB-3608EF5B6E27
+Accept: application/json
+Connection: keep-alive
+
+{}

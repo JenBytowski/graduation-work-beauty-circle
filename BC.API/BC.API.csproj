@@ -83,6 +83,18 @@
         <DependentUpon>BookingService.cs</DependentUpon>
       </Compile>
       <Compile Remove="Services\BookingService\GetScheduleReq.cs" />
+      <Compile Update="Services\MastersListService\PublishMasterResult.cs">
+        <DependentUpon>MastersListService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MastersListService\MasterCanBePublishedCheckResult.cs">
+        <DependentUpon>MastersListService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MastersListService\UnpublishMasterResault.cs">
+        <DependentUpon>MastersListService.cs</DependentUpon>
+      </Compile>
+      <Compile Update="Services\MastersListService\MastersFilter.cs">
+        <DependentUpon>MastersListService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
