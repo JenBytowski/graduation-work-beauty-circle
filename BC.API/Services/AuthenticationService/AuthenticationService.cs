@@ -83,13 +83,9 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
       }
-      catch (CantCreateUserException ex)
-      {
-        throw new AuthenticationException("Cant authenticate by vk. Cant create user.", ex);
-      }
       catch (Exception ex)
       {
-        throw new AuthenticationException("Cant authenticate by vk.", ex);
+        throw new AuthenticationException("Cant authenticate by vk", ex);
       }
     }
 
@@ -132,10 +128,6 @@ namespace BC.API.Services.AuthenticationService
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
-      }
-      catch (CantCreateUserException ex)
-      {
-        throw new AuthenticationException("Cant authenticate by google. Cant create user.", ex);
       }
       catch (Exception ex)
       {
@@ -183,10 +175,6 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
-      catch (CantCreateUserException ex)
-      {
-        throw new AuthenticationException("Cant authenticate by instagram. Cant create user.", ex);
-      }
       catch (Exception ex)
       {
         throw new AuthenticationException("Cant authenticate by instagram", ex);
@@ -195,19 +183,25 @@ namespace BC.API.Services.AuthenticationService
 
     public async Task AuthenticateByPhoneStep1(string phone, string role)
     {
-      var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserByPhone(phone);
-      await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
-
-      var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
-
-      await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
+      try
+      {
+        var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ?? await CreateUserByPhone(phone); 
+        await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
+        
+        var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
+        await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
+      }
+      catch (Exception ex)
+      {
+        throw new AuthenticationException("Cant authenticate by instagram", ex);
+      }
     }
 
     public async Task<AuthenticationResponse> AuthenticateByPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
       try
       {
-        var user = await _userManager.FindByLoginAsync("phone", req.Phone);
+        var user = _userManager.Users.Single(usr => usr.PhoneNumber == req.Phone);
         var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
 
         if (!checkCodeResult)
@@ -216,10 +210,6 @@ namespace BC.API.Services.AuthenticationService
         }
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
-      }
-      catch (InvalidAuthenticationCodeException ex)
-      {
-        throw new AuthenticationException("Cant authenticate by phone. Invalid authentication code.", ex);
       }
       catch (Exception ex)
       {
@@ -357,14 +347,6 @@ namespace BC.API.Services.AuthenticationService
 
       var user = await _userManager.FindByNameAsync(username);
 
-      var addLoginResult = await _userManager.AddLoginAsync(user,
-        new UserLoginInfo("phone", user.UserName, "phone"));
-
-      if (!addLoginResult.Succeeded)
-      {
-        throw new CantCreateUserException(createUserResult.Errors.First().Description);
-      }
-      
       this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;

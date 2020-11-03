@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using BC.API.Services.AuthenticationService;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BC.API.Controllers
 {
@@ -18,37 +21,107 @@ namespace BC.API.Controllers
 
     [HttpPost]
     [Route("authenticate-by-vk")]
-    public async Task<AuthenticationResponse> AuthenticatebyVK(AuthenticationCodeRequest request)
+    [SwaggerResponse(200, nameof(AuthenticationResponse), typeof(AuthenticationResponse))]
+    [SwaggerResponse(400, nameof(AuthenticationBadResponse), typeof(AuthenticationBadResponse))]
+    public async Task<IActionResult> AuthenticatebyVK(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticateByVK(request.Code, request.RedirectUrl, request.Role);
+      try
+      {
+        var result = await _authenticationService.AuthenticateByVK(request.Code, request.RedirectUrl, request.Role);
+
+        return Ok(result);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new AuthenticationBadResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
 
     [HttpPost]
     [Route("authenticate-by-instagram")]
-    public async Task<AuthenticationResponse> AuthenticatebyInstagram(AuthenticationCodeRequest request)
+    [SwaggerResponse(200, nameof(AuthenticationResponse), typeof(AuthenticationResponse))]
+    [SwaggerResponse(400, nameof(AuthenticationBadResponse), typeof(AuthenticationBadResponse))]
+    public async Task<IActionResult> AuthenticatebyInstagram(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticateByInstagram(request.Code, request.RedirectUrl, request.Role);
+      try
+      {
+        var result = await _authenticationService.AuthenticateByInstagram(request.Code, request.RedirectUrl, request.Role);
+        
+        return Ok(result);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new AuthenticationBadResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
 
     [HttpPost]
     [Route("authenticate-by-google")]
-    public async Task<AuthenticationResponse> AuthenticatebyGoogle(AuthenticationCodeRequest request)
+    [SwaggerResponse(200, nameof(AuthenticationResponse), typeof(AuthenticationResponse))]
+    [SwaggerResponse(400, nameof(AuthenticationBadResponse), typeof(AuthenticationBadResponse))]
+    public async Task<IActionResult> AuthenticatebyGoogle(AuthenticationCodeRequest request)
     {
-      return await _authenticationService.AuthenticateByGoogle(request.Code, request.RedirectUrl, request.Role);
+      try
+      {
+        var result = await _authenticationService.AuthenticateByGoogle(request.Code, request.RedirectUrl, request.Role);
+        
+        return Ok(result);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new AuthenticationBadResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
 
     [HttpPost]
     [Route("authenticate-by-phone-step-1")]
-    public async Task AuthenticatebyPhoneStep1(AuthenticationPhoneRequest request)
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(AuthenticationBadResponse), typeof(AuthenticationBadResponse))]
+    public async Task<IActionResult> AuthenticatebyPhoneStep1(AuthenticationPhoneRequest request)
     {
-      await _authenticationService.AuthenticateByPhoneStep1(request.Phone, request.Role);
+      try
+      {
+        await _authenticationService.AuthenticateByPhoneStep1(request.Phone, request.Role);
+        
+        return Ok();
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new AuthenticationBadResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
 
     [HttpPost]
     [Route("authenticate-by-phone-step-2")]
-    public async Task<AuthenticationResponse> AuthenticatebyPhoneStep2(AuthenticatebyPhoneStep2Req req)
+    [SwaggerResponse(200, nameof(AuthenticationResponse), typeof(AuthenticationResponse))]
+    [SwaggerResponse(400, nameof(AuthenticationBadResponse), typeof(AuthenticationBadResponse))]
+    public async Task<IActionResult> AuthenticatebyPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
-      return await _authenticationService.AuthenticateByPhoneStep2(req);
+      try
+      {
+        var result = await _authenticationService.AuthenticateByPhoneStep2(req);
+
+        return Ok(result);
+      }
+      catch (Exception ex)
+      {
+        return BadRequest(new AuthenticationBadResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
   }
 }

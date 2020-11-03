@@ -34,9 +34,6 @@
       <Compile Update="Services\AuthenticationService\InstagramTokenResponse.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
-      <Compile Update="Services\AuthenticationService\AuthenticatebyPhoneStep2Req.cs">
-        <DependentUpon>AuthenticationService.cs</DependentUpon>
-      </Compile>
       <Compile Update="Services\AuthenticationService\SocialMediaAuthCredentials.cs">
         <DependentUpon>AuthenticationService.cs</DependentUpon>
       </Compile>
