@@ -3,5 +3,6 @@ Content-Type: application/json
 Connection: keep-alive
 
 {
-"Phone": "375298434614"
+"Phone": "375298434614",
+"Role": "Master"
 }
