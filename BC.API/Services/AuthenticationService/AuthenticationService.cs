@@ -77,7 +77,7 @@ namespace BC.API.Services.AuthenticationService
         var user = await _userManager.FindByLoginAsync("vk", parsedResponse.UserId.ToString()) ??
                    await CreateUserByVK(parsedResponse);
 
-        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
         
         var jwToken = await GenerateJWToken(user);
 
@@ -127,7 +127,7 @@ namespace BC.API.Services.AuthenticationService
         var userid = encodedToken.Claims.First(clm => clm.Type == "sub").Value;
         var user = await _userManager.FindByLoginAsync("google", userid) ??
                    await CreateUserByGoogle(encodedToken);
-        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
         
         var jwToken = await GenerateJWToken(user);
 
@@ -179,7 +179,7 @@ namespace BC.API.Services.AuthenticationService
 
         var user = await _userManager.FindByLoginAsync("instagram", parsedResponse.UserId.ToString()) ??
                    await CreateUserByInstagram(parsedResponse);
-        await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+        await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
@@ -196,7 +196,7 @@ namespace BC.API.Services.AuthenticationService
     public async Task AuthenticateByPhoneStep1(string phone, string role)
     {
       var user = await _userManager.FindByLoginAsync("phone", phone) ?? await CreateUserByPhone(phone);
-      await this.AddToRoleIfNotYet(user, UserRoles.Validate(role) ? role : UserRoles.Client);
+      await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
 
       var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
 

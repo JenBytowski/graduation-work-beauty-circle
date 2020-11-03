@@ -18,5 +18,10 @@ namespace BC.API.Domain
     {
       return UserRoles.AllRoles.Any(r => r == role);
     }
+
+    public static string ReturnIfValidOrDefault(string role)
+    {
+      return UserRoles.Validate(role) ? role : UserRoles.Client;
+    }
   }
 }
