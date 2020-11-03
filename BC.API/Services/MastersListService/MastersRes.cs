@@ -9,7 +9,7 @@ namespace BC.API.Services.MastersListService
   {
     public string Name { get; set; }
 
-    public string CityId { get; set; }
+    public Guid? CityId { get; set; }
 
     public string AvatarUrl { get; set; }
 
@@ -33,14 +33,14 @@ namespace BC.API.Services.MastersListService
 
     public IEnumerable<ScheduleDayRes> Schedule { get; set; }
 
-    public double AverageRating { get; set; }
+    public double? AverageRating { get; set; }
 
     public static MasterRes ParseFromMaster(Master master)
     {
       return new MasterRes
       {
         Name = master.Name,
-        CityId = master.CityId.ToString(),
+        CityId = master.CityId,
         AvatarUrl = master.AvatarUrl,
         About = master.About,
         Address = master.Address,
@@ -49,10 +49,10 @@ namespace BC.API.Services.MastersListService
         VkProfile = master.VkProfile,
         Viber = master.Viber,
         Skype = master.Skype,
-        Speciality = master.Speciality.Name,
+        Speciality = master.Speciality?.Name,
         PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItemRes.ParseFromPriseListItem(itm)),
         Schedule = master.Schedule?.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day)),
-        AverageRating = master.Stars / master.ReviewsCount
+        AverageRating = master.ReviewsCount > 0 ? (master.Stars / (double?)master.ReviewsCount) : null
       };
     }
   }

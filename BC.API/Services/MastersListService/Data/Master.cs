@@ -31,7 +31,7 @@ namespace BC.API.Services.MastersListService.Data
     public string Skype { get; set; }
 
     public Guid? SpecialityId { get; set; }
-    public Speciality Speciality { get; set; }
+    public Speciality? Speciality { get; set; }
 
     public Guid PriceListId { get; set; }
     public PriceList PriceList { get; set; }
