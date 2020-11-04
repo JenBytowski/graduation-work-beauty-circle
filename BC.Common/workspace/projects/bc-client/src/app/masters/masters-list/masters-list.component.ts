@@ -24,7 +24,7 @@ export class MastersListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.masterList.mastersListGet(null, null, null, null, 0, 10).subscribe(data => {
+    this.masterList.mastersList(null, null, null, null, 0, 10).subscribe(data => {
       data.forEach(item => (item as any).starRating = this.countStarRating(item.averageRating));
       this.vm.Masters = data;
     });

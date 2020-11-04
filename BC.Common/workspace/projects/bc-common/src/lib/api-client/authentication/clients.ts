@@ -27,7 +27,7 @@ export class AuthenticationClient {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return AuthenticationResponse
      */
     authenticateByVk(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
         let url_ = this.baseUrl + "/authentication/authenticate-by-vk";
@@ -59,31 +59,9 @@ export class AuthenticationClient {
         }));
     }
 
-    protected processAuthenticateByVk(response: HttpResponseBase): Observable<AuthenticationResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AuthenticationResponse>(<any>null);
-    }
-
     /**
      * @param body (optional)
-     * @return Success
+     * @return AuthenticationResponse
      */
     authenticateByInstagram(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
         let url_ = this.baseUrl + "/authentication/authenticate-by-instagram";
@@ -115,31 +93,9 @@ export class AuthenticationClient {
         }));
     }
 
-    protected processAuthenticateByInstagram(response: HttpResponseBase): Observable<AuthenticationResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AuthenticationResponse>(<any>null);
-    }
-
     /**
      * @param body (optional)
-     * @return Success
+     * @return AuthenticationResponse
      */
     authenticateByGoogle(body: AuthenticationCodeRequest | undefined): Observable<AuthenticationResponse> {
         let url_ = this.baseUrl + "/authentication/authenticate-by-google";
@@ -169,28 +125,6 @@ export class AuthenticationClient {
             } else
                 return <Observable<AuthenticationResponse>><any>_observableThrow(response_);
         }));
-    }
-
-    protected processAuthenticateByGoogle(response: HttpResponseBase): Observable<AuthenticationResponse> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = AuthenticationResponse.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<AuthenticationResponse>(<any>null);
     }
 
     /**
@@ -228,7 +162,7 @@ export class AuthenticationClient {
 
     /**
      * @param body (optional)
-     * @return Success
+     * @return AuthenticationResponse
      */
     authenticateByPhoneStep2(body: AuthenticatebyPhoneStep2Req | undefined): Observable<AuthenticationResponse> {
         let url_ = this.baseUrl + "/authentication/authenticate-by-phone-step-2";
@@ -260,6 +194,93 @@ export class AuthenticationClient {
         }));
     }
 
+    protected processAuthenticateByVk(response: HttpResponseBase): Observable<AuthenticationResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AuthenticationResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = BadAPIResponse.fromJS(resultData400);
+            return throwException("BadAPIResponse", status, _responseText, _headers, result400);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthenticationResponse>(<any>null);
+    }
+
+    protected processAuthenticateByInstagram(response: HttpResponseBase): Observable<AuthenticationResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AuthenticationResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = BadAPIResponse.fromJS(resultData400);
+            return throwException("BadAPIResponse", status, _responseText, _headers, result400);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthenticationResponse>(<any>null);
+    }
+
+    protected processAuthenticateByGoogle(response: HttpResponseBase): Observable<AuthenticationResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = AuthenticationResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = BadAPIResponse.fromJS(resultData400);
+            return throwException("BadAPIResponse", status, _responseText, _headers, result400);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthenticationResponse>(<any>null);
+    }
+
     protected processAuthenticateByPhoneStep1(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
@@ -270,6 +291,13 @@ export class AuthenticationClient {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return _observableOf<void>(<any>null);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = BadAPIResponse.fromJS(resultData400);
+            return throwException("BadAPIResponse", status, _responseText, _headers, result400);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -292,6 +320,13 @@ export class AuthenticationClient {
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = AuthenticationResponse.fromJS(resultData200);
             return _observableOf(result200);
+            }));
+        } else if (status === 400) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result400: any = null;
+            let resultData400 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result400 = BadAPIResponse.fromJS(resultData400);
+            return throwException("BadAPIResponse", status, _responseText, _headers, result400);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
@@ -388,6 +423,52 @@ export interface IAuthenticationResponse {
     token?: string | undefined;
     /** Unique username */
     username?: string | undefined;
+}
+
+export class BadAPIResponse implements IBadAPIResponse {
+    /** Error messages */
+    messages?: string[] | undefined;
+
+    constructor(data?: IBadAPIResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    static fromJS(data: any): BadAPIResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new BadAPIResponse();
+        result.init(data);
+        return result;
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["messages"])) {
+                this.messages = [] as any;
+                for (let item of _data["messages"])
+                    this.messages!.push(item);
+            }
+        }
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.messages)) {
+            data["messages"] = [];
+            for (let item of this.messages)
+                data["messages"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IBadAPIResponse {
+    /** Error messages */
+    messages?: string[] | undefined;
 }
 
 export class AuthenticationPhoneRequest implements IAuthenticationPhoneRequest {
