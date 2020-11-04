@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BC.API.Services.BookingService.Data;
+using BC.API.Services.BookingService.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using StrongCode.Seedwork.EventBus;
 
@@ -58,7 +59,7 @@ namespace BC.API.Services.BookingService
 
       if (schedule == null)
       {
-        throw new Exception("Dont found schedule for this master.");
+        throw new BookingException("Dont found schedule for this master");
       }
 
       return new GetScheduleRes {Days = schedule.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day))};
@@ -71,7 +72,7 @@ namespace BC.API.Services.BookingService
 
       if (schedule == null)
       {
-        throw new Exception("Dont found schedule for this master.");
+        throw new BookingException("Dont found schedule for this master");
       }
 
       var newWeek = new List<ScheduleDay>();
@@ -133,7 +134,7 @@ namespace BC.API.Services.BookingService
 
       if (schedule == null)
       {
-        throw new Exception("Dont found schedule for this master.");
+        throw new BookingException("Dont found schedule for this master");
       }
 
       var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
@@ -143,7 +144,7 @@ namespace BC.API.Services.BookingService
 
       if (windowtoRemove == null)
       {
-        throw new Exception("Dont found window by this time.");
+        throw new BookingException("Dont found window by this time");
       }
 
       var newBooking = new Booking
@@ -180,7 +181,7 @@ namespace BC.API.Services.BookingService
 
       if (booking == null)
       {
-        throw new Exception($"Dont found booking by id: {req.BookingId}");
+        throw new BookingException($"Dont found booking by id: {req.BookingId}");
       }
 
       var newWindow = new Window
@@ -202,7 +203,7 @@ namespace BC.API.Services.BookingService
 
       if (schedule == null)
       {
-        throw new Exception("Dont found schedule for this master.");
+        throw new BookingException("Dont found schedule for this master");
       }
 
       var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
@@ -212,7 +213,7 @@ namespace BC.API.Services.BookingService
 
       if (windowtoRemove == null)
       {
-        throw new Exception("Dont found window by this time.");
+        throw new BookingException("Dont found window by this time");
       }
 
       var newPause = new Pause
@@ -244,7 +245,7 @@ namespace BC.API.Services.BookingService
 
       if (pause == null)
       {
-        throw new Exception($"Dont found booking by id: {req.PauseId}");
+        throw new BookingException($"Dont found pause by id: {req.PauseId}");
       }
 
       var newWindow = new Window

@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using BC.API.Services.BookingService.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BC.API.Services.BookingService.Controllers
 {
@@ -17,44 +21,155 @@ namespace BC.API.Services.BookingService.Controllers
 
     [HttpGet]
     [Route("get-schedule")]
-    public GetScheduleRes GetSchedule(Guid masterId)
+    [SwaggerResponse(200, nameof(GetScheduleRes), typeof(GetScheduleRes))]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public IActionResult GetSchedule(Guid masterId)
     {
-      return _bookingService.GetSchedule(masterId);
+      try
+      {
+        var schedule = _bookingService.GetSchedule(masterId);
+
+        return Ok(schedule);
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
 
     [HttpPost]
     [Route("add-working-week")]
-    public void AddWorkingWeek(AddWorkingWeekReq request)
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public IActionResult AddWorkingWeek(AddWorkingWeekReq request)
     {
-      _bookingService.AddWorkingWeek(request);
+      try
+      {
+        _bookingService.AddWorkingWeek(request);
+
+        return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse {Messages = new List<string> {ex.Message, ex.InnerException?.Message}});
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
 
     [HttpPost]
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
     [Route("add-booking")]
-    public void AddBooking(AddBookingReq request)
+    public IActionResult AddBooking(AddBookingReq request)
     {
-      _bookingService.AddBooking(request);
+      try
+      {
+        _bookingService.AddBooking(request);
+
+        return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
 
     [HttpPost]
     [Route("cancel-booking")]
-    public void CancelBooking(CancelBookingReq request)
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public IActionResult CancelBooking(CancelBookingReq request)
     {
-      _bookingService.CancelBooking(request);
+      try
+      {
+        _bookingService.CancelBooking(request);
+        
+        return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
 
     [HttpPost]
     [Route("add-pause")]
-    public void AddPause(AddPauseReq request)
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public IActionResult AddPause(AddPauseReq request)
     {
-      _bookingService.AddPause(request);
+      try
+      {
+        _bookingService.AddPause(request);
+
+        return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
 
     [HttpPost]
     [Route("cancel-pause")]
-    public void CancelPause(CancelPauseReq request)
+    [SwaggerResponse(200)]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public IActionResult CancelPause(CancelPauseReq request)
     {
-      _bookingService.CancelPause(request);
+      try
+      {
+        _bookingService.CancelPause(request);
+
+        return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+      catch (Exception ex)
+      {
+        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
+      }
     }
   }
 }
