@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using Swashbuckle.AspNetCore.Annotations;
 
 namespace BC.API.Services.AuthenticationService
 {
@@ -10,11 +9,5 @@ namespace BC.API.Services.AuthenticationService
 
         [SwaggerSchema("Unique username")]
         public string Username { get; set; }
-    }
-
-    public class AuthenticationBadResponse
-    {
-      [SwaggerSchema("Error messages")]
-      public IEnumerable<string> Messages { get; set; }
     }
 }

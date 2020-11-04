@@ -46,15 +46,15 @@ namespace BC.API.Services.MastersListService.Controllers
       return await _mastersListerService.UnPublishMaster(id);
     }
     
-    [HttpPut]
-    [Route("{id}")]
+    [HttpPost]
+    [Route("update-master/{id}")]
     public async Task UpdateMaster([FromRoute] Guid id, UpdateMasterReq req)
     {
       await _mastersListerService.UpdateMasterInfo(id, req);
     }
 
     [HttpPost]
-    [Route("{id}")]
+    [Route("upload-avatar/{id}")]
     public async Task<IActionResult> UploadAvatar([FromRoute] Guid id, IFormFile file)
     {
       this._mastersListerService.UploadAvatar(id, file.OpenReadStream());
