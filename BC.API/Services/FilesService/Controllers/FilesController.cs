@@ -27,7 +27,7 @@ namespace BC.API.Services.FilesService.Controllers
     }
 
     [HttpGet]
-    [Route("{name}")]
+    [Route("{*name}")]
     public IActionResult GetFile([FromRoute] string name)
     {
       var filePath = GenerateFilePatch(name);
@@ -48,9 +48,14 @@ namespace BC.API.Services.FilesService.Controllers
           return BadRequest();
         }
 
-        var fileName = Guid.NewGuid() + Path.GetExtension(Request.Form.Files[0].FileName);
+        var fileName = Request.Form.Files[0].FileName;
         var fullPath = GenerateFilePatch(fileName);
-        Directory.CreateDirectory(_filesFolder);
+        
+        var dir = Path.GetDirectoryName(fullPath);
+        if (!Directory.Exists(dir))
+        {
+          Directory.CreateDirectory(dir);  
+        }
 
         using (var stream = new FileStream(fullPath, FileMode.Create))
         {

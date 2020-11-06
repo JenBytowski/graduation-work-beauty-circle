@@ -57,7 +57,7 @@ namespace BC.API.Services.MastersListService.Controllers
     [Route("upload-avatar/{id}")]
     public async Task<IActionResult> UploadAvatar([FromRoute] Guid id, IFormFile file)
     {
-      this._mastersListerService.UploadAvatar(id, file.OpenReadStream());
+      this._mastersListerService.UploadAvatar(id, file.OpenReadStream(), file.FileName);
       return Ok();
     }
   }

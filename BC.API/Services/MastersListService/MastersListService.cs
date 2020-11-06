@@ -41,7 +41,18 @@ namespace BC.API.Services.MastersListService
         .ThenInclude(mstr => mstr.Items)
         .Skip(filter.Skip)
         .Take(filter.Take)
-        .Select(mstr => MasterRes.ParseFromMaster(mstr)).ToArray();
+        .ToArray()
+        .Select(mstr =>
+        {
+          var masterRes = MasterRes.ParseFromMaster(mstr);
+          
+          if (!string.IsNullOrWhiteSpace(masterRes.AvatarFileName))
+          {
+            masterRes.AvatarUrl = Path.Combine(this._config.FilesServiceUrl, masterRes.AvatarFileName);  
+          }
+          
+          return masterRes;
+        }).ToArray();
     }
 
     public MasterRes GetMasterById(Guid masterId)
@@ -65,15 +76,17 @@ namespace BC.API.Services.MastersListService
       }
     }
 
-    public async void UploadAvatar(Guid masterId, Stream stream)
+    public async void UploadAvatar(Guid masterId, Stream stream, string fileName)
     {
       var formData = new MultipartFormDataContent();
-      formData.Add(new StreamContent(stream), "random_file_name", "random_file_name");
+      var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName));
+      formData.Add(new StreamContent(stream), name, name);
       var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
-      var fileName = await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
+      await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
       
       var master =   this._mastersContext.Masters.Single(m => m.Id == masterId);
-      master.AvatarUrl = fileName;
+      master.AvatarFileName = name;
+      this._mastersContext.SaveChanges();
     }
 
     //TODO отрефакторить логику и сделать валидацию
