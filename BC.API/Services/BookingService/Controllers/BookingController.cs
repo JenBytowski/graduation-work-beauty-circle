@@ -39,10 +39,6 @@ namespace BC.API.Services.BookingService.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
-      }
     }
 
     [HttpPost]
@@ -61,10 +57,6 @@ namespace BC.API.Services.BookingService.Controllers
       catch (BookingException ex)
       {
         return BadRequest(new BadAPIResponse {Messages = new List<string> {ex.Message, ex.InnerException?.Message}});
-      }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
       }
     }
 
@@ -88,10 +80,6 @@ namespace BC.API.Services.BookingService.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
-      }
     }
 
     [HttpPost]
@@ -113,10 +101,6 @@ namespace BC.API.Services.BookingService.Controllers
         {
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
-      }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
       }
     }
 
@@ -140,10 +124,6 @@ namespace BC.API.Services.BookingService.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
-      }
     }
 
     [HttpPost]
@@ -165,10 +145,6 @@ namespace BC.API.Services.BookingService.Controllers
         {
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
-      }
-      catch (Exception ex)
-      {
-        return StatusCode((int)HttpStatusCode.InternalServerError,new BadAPIResponse {Messages = new List<string> {ex.Message}});
       }
     }
   }
