@@ -7,11 +7,15 @@ namespace BC.API.Services.MastersListService
 {
   public class MasterRes
   {
+    public Guid Id { get; set; }
+    
     public string Name { get; set; }
 
     public Guid? CityId { get; set; }
 
     public string AvatarUrl { get; set; }
+    
+    public string AvatarFileName { get; set; }
 
     public string About { get; set; }
 
@@ -39,9 +43,11 @@ namespace BC.API.Services.MastersListService
     {
       return new MasterRes
       {
+        Id = master.Id,
         Name = master.Name,
         CityId = master.CityId,
         AvatarUrl = master.AvatarUrl,
+        AvatarFileName = master.AvatarFileName,
         About = master.About,
         Address = master.Address,
         Phone = master.Phone,
@@ -55,6 +61,7 @@ namespace BC.API.Services.MastersListService
         AverageRating = master.ReviewsCount > 0 ? (master.Stars / (double?)master.ReviewsCount) : null
       };
     }
+
   }
 
   public class ScheduleDayRes

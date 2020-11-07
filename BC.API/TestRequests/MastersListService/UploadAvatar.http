@@ -1,9 +1,9 @@
-﻿POST http://localhost:5210/api/30a9a068-1c46-4a76-9c00-c29d1fb64c9c
+﻿POST http://localhost:5222/masters-list/upload-avatar/dc46d935-b34f-4c89-8aec-828a2119003c
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Connection: keep-alive
 
 --WebAppBoundary
-Content-Disposition: form-data; name="avatar"; filename="avatar.jpg"
+Content-Disposition: form-data; name="file"; filename="file.jpg"
 
 < ./UploadAvatarImage.jpg
 --WebAppBoundary--
