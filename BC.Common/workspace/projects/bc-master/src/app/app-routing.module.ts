@@ -16,12 +16,12 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'calendar-day/:id',
+    path: 'day/:id',
     component: DayComponent,
     pathMatch: 'full'
   },
   {
-    path: 'calendar-week',
+    path: 'week',
     component: WeekComponent,
     pathMatch: 'full'
   }

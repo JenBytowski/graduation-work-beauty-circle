@@ -2,9 +2,23 @@
   <ion-header>
     <ion-item>
       Day works!
-<!--      {{vm.scheduleDay.id}}-->
     </ion-item>
   </ion-header>
-  <ion-content>
+
+  <ion-content *ngIf="vm.scheduleDay?.items.length > 0;else empty">
+    <ion-card *ngFor="let item of vm.scheduleDay?.items">
+      <ion-item>Item: {{item.id}}</ion-item>
+      <ion-item>Start-time: {{item.startTime}}</ion-item>
+      <ion-item>End-time: {{item.endTime}}</ion-item>
+    </ion-card>
   </ion-content>
+
+  <ng-template #empty>
+    <ion-content>
+      <ion-title>
+        Nothing to show
+      </ion-title>
+    </ion-content>
+  </ng-template>
+
 </ion-app>

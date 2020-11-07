@@ -15,7 +15,7 @@ export class WeekComponent implements OnInit {
 
   ngOnInit() {
     //this.masterList.getMasters(null,null,null,null).subscribe(data => console.log(data));
-    this.booking.getSchedule('deff0772-eacb-4935-8623-7700c58b930a').subscribe(sch => {
+    this.booking.getSchedule('D08AC59F-2155-48A5-84A9-59690294591B').subscribe(sch => {
       this.vm.schedule = sch;
       console.log(sch);
     });
@@ -23,6 +23,5 @@ export class WeekComponent implements OnInit {
 }
 
 class Vm {
-  public currentIndex: number;
   public schedule: any;
 }

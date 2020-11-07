@@ -1,11 +1,25 @@
-﻿POST http://localhost:5211/api/booking/add-working-week
+﻿POST http://localhost:5210/api/booking/add-working-week
 Content-Type: application/json
 Connection: keep-alive
 
 {
-"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"MasterId": "D08AC59F-2155-48A5-84A9-59690294591B",
 "MondayDate": "2020-10-19T00:00:00",
-"DaysToWork": [1,2,3],
+"DaysToWork": [1,2,3,4,5],
+"StartTime": "8:30",
+"EndTime": "18:30"
+}
+
+###
+
+POST http://localhost:5211/api/booking/add-working-week
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "D08AC59F-2155-48A5-84A9-59690294591B",
+"MondayDate": "2020-10-19T00:00:00",
+"DaysToWork": [1,2,3,4,5],
 "StartTime": "8:30",
 "EndTime": "18:30"
 }

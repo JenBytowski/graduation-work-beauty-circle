@@ -13,9 +13,9 @@ export class DayComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const id = +this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
     console.log(id);
-    this.booking.getSchedule('deff0772-eacb-4935-8623-7700c58b930a').subscribe(sch => {
+    this.booking.getSchedule('D08AC59F-2155-48A5-84A9-59690294591B').subscribe(sch => {
       this.vm.scheduleDay = sch.days.find(item => item?.id === id.toString());
       console.log(this.vm.scheduleDay);
     });
