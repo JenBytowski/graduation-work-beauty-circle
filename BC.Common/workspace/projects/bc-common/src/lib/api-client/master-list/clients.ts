@@ -579,9 +579,11 @@ export interface IScheduleDayRes {
 }
 
 export class MasterRes implements IMasterRes {
+    id?: string;
     name?: string | undefined;
     cityId?: string | undefined;
     avatarUrl?: string | undefined;
+    avatarFileName?: string | undefined;
     about?: string | undefined;
     address?: string | undefined;
     phone?: string | undefined;
@@ -605,9 +607,11 @@ export class MasterRes implements IMasterRes {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.name = _data["name"];
             this.cityId = _data["cityId"];
             this.avatarUrl = _data["avatarUrl"];
+            this.avatarFileName = _data["avatarFileName"];
             this.about = _data["about"];
             this.address = _data["address"];
             this.phone = _data["phone"];
@@ -639,9 +643,11 @@ export class MasterRes implements IMasterRes {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["name"] = this.name;
         data["cityId"] = this.cityId;
         data["avatarUrl"] = this.avatarUrl;
+        data["avatarFileName"] = this.avatarFileName;
         data["about"] = this.about;
         data["address"] = this.address;
         data["phone"] = this.phone;
@@ -666,9 +672,11 @@ export class MasterRes implements IMasterRes {
 }
 
 export interface IMasterRes {
+    id?: string;
     name?: string | undefined;
     cityId?: string | undefined;
     avatarUrl?: string | undefined;
+    avatarFileName?: string | undefined;
     about?: string | undefined;
     address?: string | undefined;
     phone?: string | undefined;
