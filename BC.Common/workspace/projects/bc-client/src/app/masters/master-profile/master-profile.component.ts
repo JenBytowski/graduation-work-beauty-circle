@@ -15,8 +15,8 @@ export class MasterProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.masterList.getMasterById(id).subscribe(data => {
+    //const id = this.route.snapshot.paramMap.get('id');
+    this.masterList.getMasterById('D08AC59F-2155-48A5-84A9-59690294591B').subscribe(data => {
       (data as any).starRating = this.countStarRating(data.averageRating);
       this.vm.Master = data;
     });

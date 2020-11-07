@@ -27,6 +27,7 @@ export class MastersListComponent implements OnInit {
     this.masterList.getMasters(null, null, null, null, 0, 10).subscribe(data => {
       data.forEach(item => (item as any).starRating = this.countStarRating(item.averageRating));
       this.vm.Masters = data;
+      console.log(data);
     });
   }
 

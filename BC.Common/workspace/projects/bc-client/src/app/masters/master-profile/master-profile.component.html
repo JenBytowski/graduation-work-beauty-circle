@@ -1,14 +1,14 @@
 <ion-app>
   <ion-content>
-    <ion-img [src]="vm.Master.avatarUrl"></ion-img>
+    <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img>
     <ion-item>
       <ion-label>
-        Name: {{vm.Master.name}}
+        Name: {{vm.Master?.name}}
       </ion-label>
     </ion-item>
     <ion-item>
       <ion-label>
-        Spec: {{vm.Master.speciality}}
+        Spec: {{vm.Master?.speciality}}
       </ion-label>
     </ion-item>
     <ion-button [routerLink]="['../../masters']">gotest</ion-button>
