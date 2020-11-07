@@ -34,8 +34,8 @@ export class MasterListClient {
      * @param take (optional)
      * @return Success
      */
-    mastersList(cityId: string | null | undefined, serviceTypeIds: string[] | null | undefined, startHour: number | null | undefined, endHour: number | null | undefined, skip: number | undefined, take: number | undefined): Observable<MasterRes[]> {
-        let url_ = this.baseUrl + "/masters-list?";
+    getMasters(cityId: string | null | undefined, serviceTypeIds: string[] | null | undefined, startHour: number | null | undefined, endHour: number | null | undefined, skip: number | undefined, take: number | undefined): Observable<MasterRes[]> {
+        let url_ = this.baseUrl + "/masters-list/get-masters?";
         if (cityId !== undefined && cityId !== null)
             url_ += "CityId=" + encodeURIComponent("" + cityId) + "&";
         if (serviceTypeIds !== undefined && serviceTypeIds !== null)
@@ -63,11 +63,11 @@ export class MasterListClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMastersList(response_);
+            return this.processGetMasters(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMastersList(<any>response_);
+                    return this.processGetMasters(<any>response_);
                 } catch (e) {
                     return <Observable<MasterRes[]>><any>_observableThrow(e);
                 }
@@ -79,8 +79,8 @@ export class MasterListClient {
     /**
      * @return Success
      */
-    mastersListById(id: string): Observable<MasterRes> {
-        let url_ = this.baseUrl + "/masters-list/masters-list-by-id/{id}";
+    getMasterById(id: string): Observable<MasterRes> {
+        let url_ = this.baseUrl + "/masters-list/get-master-by-id/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -95,80 +95,16 @@ export class MasterListClient {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMastersListById(response_);
+            return this.processGetMasterById(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processMastersListById(<any>response_);
+                    return this.processGetMasterById(<any>response_);
                 } catch (e) {
                     return <Observable<MasterRes>><any>_observableThrow(e);
                 }
             } else
                 return <Observable<MasterRes>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
-     * @return Success
-     */
-    publishMaster(id: string): Observable<PublishMasterResult> {
-        let url_ = this.baseUrl + "/masters-list/publish-master/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processPublishMaster(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processPublishMaster(<any>response_);
-                } catch (e) {
-                    return <Observable<PublishMasterResult>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PublishMasterResult>><any>_observableThrow(response_);
-        }));
-    }
-
-    /**
-     * @return Success
-     */
-    unpublishMaster(id: string): Observable<UnpublishMasterResault> {
-        let url_ = this.baseUrl + "/masters-list/unpublish-master/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUnpublishMaster(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUnpublishMaster(<any>response_);
-                } catch (e) {
-                    return <Observable<UnpublishMasterResault>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<UnpublishMasterResault>><any>_observableThrow(response_);
         }));
     }
 
@@ -245,7 +181,39 @@ export class MasterListClient {
         }));
     }
 
-    protected processMastersList(response: HttpResponseBase): Observable<MasterRes[]> {
+    /**
+     * @return Success
+     */
+    publishMaster(id: string): Observable<PublishMasterResult> {
+        let url_ = this.baseUrl + "/masters-list/publish-master/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPublishMaster(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPublishMaster(<any>response_);
+                } catch (e) {
+                    return <Observable<PublishMasterResult>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PublishMasterResult>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMasters(response: HttpResponseBase): Observable<MasterRes[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -271,7 +239,39 @@ export class MasterListClient {
         return _observableOf<MasterRes[]>(<any>null);
     }
 
-    protected processMastersListById(response: HttpResponseBase): Observable<MasterRes> {
+    /**
+     * @return Success
+     */
+    unpublishMaster(id: string): Observable<UnpublishMasterResault> {
+        let url_ = this.baseUrl + "/masters-list/unpublish-master/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnpublishMaster(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnpublishMaster(<any>response_);
+                } catch (e) {
+                    return <Observable<UnpublishMasterResault>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<UnpublishMasterResault>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMasterById(response: HttpResponseBase): Observable<MasterRes> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -694,17 +694,17 @@ export class PublishMasterMessage implements IPublishMasterMessage {
         }
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.text = _data["text"];
+        }
+    }
+
     static fromJS(data: any): PublishMasterMessage {
         data = typeof data === 'object' ? data : {};
         let result = new PublishMasterMessage();
         result.init(data);
         return result;
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.text = _data["text"];
-        }
     }
 
     toJSON(data?: any) {
@@ -731,13 +731,6 @@ export class PublishMasterResult implements IPublishMasterResult {
         }
     }
 
-    static fromJS(data: any): PublishMasterResult {
-        data = typeof data === 'object' ? data : {};
-        let result = new PublishMasterResult();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.result = _data["result"];
@@ -747,6 +740,13 @@ export class PublishMasterResult implements IPublishMasterResult {
                     this.messages!.push(PublishMasterMessage.fromJS(item));
             }
         }
+    }
+
+    static fromJS(data: any): PublishMasterResult {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublishMasterResult();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {
@@ -778,17 +778,17 @@ export class UnpublishMasterMessage implements IUnpublishMasterMessage {
         }
     }
 
+    init(_data?: any) {
+        if (_data) {
+            this.text = _data["text"];
+        }
+    }
+
     static fromJS(data: any): UnpublishMasterMessage {
         data = typeof data === 'object' ? data : {};
         let result = new UnpublishMasterMessage();
         result.init(data);
         return result;
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.text = _data["text"];
-        }
     }
 
     toJSON(data?: any) {
@@ -815,13 +815,6 @@ export class UnpublishMasterResault implements IUnpublishMasterResault {
         }
     }
 
-    static fromJS(data: any): UnpublishMasterResault {
-        data = typeof data === 'object' ? data : {};
-        let result = new UnpublishMasterResault();
-        result.init(data);
-        return result;
-    }
-
     init(_data?: any) {
         if (_data) {
             this.result = _data["result"];
@@ -831,6 +824,13 @@ export class UnpublishMasterResault implements IUnpublishMasterResault {
                     this.messages!.push(UnpublishMasterMessage.fromJS(item));
             }
         }
+    }
+
+    static fromJS(data: any): UnpublishMasterResault {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnpublishMasterResault();
+        result.init(data);
+        return result;
     }
 
     toJSON(data?: any) {

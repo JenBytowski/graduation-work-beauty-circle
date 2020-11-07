@@ -15,36 +15,11 @@ export class MasterProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.vm.Master = new Master();
-    const id = +this.route.snapshot.paramMap.get('id');
-    this.masterList.mastersListById('').subscribe(data => this.vm.Master = this.initMasters(data).Masters.find(item => item.id == id));
-  }
-
-  public initMasters(masters: any): Vm {
-    let vm = new Vm();
-    let index: number = 0;
-    vm.Masters = masters.map(item => {
-      let master = new Master();
-      master.id = index;
-      master.name = item.name;
-      master.cityId = item.cityId;
-      master.speciality = item.speciality;
-      master.avatarUrl = item.avatarUrl ? item.avatarUrl : 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcRgAefR8jkzapHvRFbIIug_q3PcaqYmmbWdDQ&usqp=CAU';
-      master.about = item.about;
-      master.address = item.address;
-      master.phone = item.phone;
-      master.instagramProfile = item.instagramProfile;
-      master.vkProfile = item.vkProfile;
-      master.viber = item.viber;
-      master.skype = item.skype;
-      master.priceList = item.priceList;
-      master.schedule = item.schedule;
-      master.averageRating = item.averageRating;
-      master.starRating = this.countStarRating(item.averageRating);
-      index++;
-      return master;
+    const id = this.route.snapshot.paramMap.get('id');
+    this.masterList.getMasterById(id).subscribe(data => {
+      (data as any).starRating = this.countStarRating(data.averageRating);
+      this.vm.Master = data;
     });
-    return vm;
   }
 
   public countStarRating(rating: number) {
@@ -60,33 +35,5 @@ export class MasterProfileComponent implements OnInit {
 }
 
 class Vm {
-  public Masters: Master[] = [];
-  public Master: Master;
-}
-
-class Master {
-  public id: number;
-  public name: string;
-  public cityId: string;
-  public avatarUrl: string;
-  public about: string;
-  public address: string;
-  public phone: string;
-  public instagramProfile: string;
-  public vkProfile: string;
-  public viber: string;
-  public skype: string;
-  public speciality: string;
-  public priceList: PriceListItem[];
-  public schedule: ScheduleDay[];
-  public averageRating: number;
-  public starRating: string[];
-}
-
-class PriceListItem {
-
-}
-
-class ScheduleDay {
-
+  public Master: any;
 }

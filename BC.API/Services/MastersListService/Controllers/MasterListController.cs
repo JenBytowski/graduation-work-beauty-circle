@@ -20,13 +20,14 @@ namespace BC.API.Services.MastersListService.Controllers
     }
 
     [HttpGet]
+    [Route("get-masters")]
     public async Task<IEnumerable<MasterRes>> GetMasters([FromQuery] MastersFilter filter)
     {
       return await _mastersListerService.GetMasters(filter);
     }
 
     [HttpGet]
-    [Route("masters-list-by-id/{id}")]
+    [Route("get-master-by-id/{id}")]
     public MasterRes GetMasterById([FromRoute] Guid id)
     {
       return _mastersListerService.GetMasterById(id);
