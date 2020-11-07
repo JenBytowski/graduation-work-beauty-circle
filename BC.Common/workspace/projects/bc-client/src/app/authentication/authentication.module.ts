@@ -5,6 +5,7 @@ import {AuthenticationRoutingModule} from './authentication-routing.module';
 import {AuthenticationComponent} from "./authentication/authentication.component";
 import {IonicModule} from "@ionic/angular";
 import {CookieService} from "ngx-cookie-service";
+import {TokenStoreService} from "../token-store.service";
 
 export function getBaseUrl(document) {
   return document.getElementsByTagName('base')[0].href;
@@ -18,8 +19,10 @@ export function getBaseUrl(document) {
     IonicModule
   ],
   providers: [
+    TokenStoreService,
     {provide: 'BASE_URL', useFactory: getBaseUrl, deps: [DOCUMENT]},
-    CookieService]
+    CookieService
+  ]
 })
 export class AuthenticationModule {
 }

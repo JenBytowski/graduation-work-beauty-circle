@@ -2,7 +2,7 @@ import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationClient} from "bc-common";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {CookieService} from "ngx-cookie-service";
+import {TokenStoreService} from "../../token-store.service";
 
 @Component({
   selector: 'app-authentication',
@@ -17,7 +17,7 @@ export class AuthenticationComponent implements OnInit {
   public redirectUrl: string = this.baseUrl + 'authentication';
   private querySubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient.AuthenticationClient, private cookieService: CookieService, @Inject('BASE_URL') private baseUrl: string) {
+  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient.AuthenticationClient, private tokenStore: TokenStoreService, @Inject('BASE_URL') private baseUrl: string) {
   }
 
   ngOnInit() {
@@ -30,24 +30,27 @@ export class AuthenticationComponent implements OnInit {
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.cookieService.set('vk-auth-token', data.token);
-          this.cookieService.set('vk-username', data.username);
+          this.tokenStore.put(data.token);
+          // this.cookieService.set('vk-auth-token', data.token);
+          // this.cookieService.set('vk-username', data.username);
         });
       } else if (code && state == 'instagram') {
         this.authClient.authenticateByInstagram(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.cookieService.set('inst-auth-token', data.token);
-          this.cookieService.set('inst-username', data.username);
+          this.tokenStore.put(data.token);
+          // this.cookieService.set('inst-auth-token', data.token);
+          // this.cookieService.set('inst-username', data.username);
         });
       } else if (code && state == 'google') {
         this.authClient.authenticateByGoogle(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.cookieService.set('google-auth-token', data.token);
-          this.cookieService.set('google-username', data.username);
+          this.tokenStore.put(data.token);
+          // this.cookieService.set('google-auth-token', data.token);
+          // this.cookieService.set('google-username', data.username);
         });
       }
     });
@@ -74,8 +77,9 @@ export class AuthenticationComponent implements OnInit {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
         code: (this.code as any).el.value
-      })).subscribe(data => console.log(data));
-
+      })).subscribe(data => {
+        this.tokenStore.put(data.token);
+      });
     }
   }
 }

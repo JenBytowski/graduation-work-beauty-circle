@@ -9,16 +9,16 @@ import {
 } from "@angular/common/http";
 import {Observable} from "rxjs";
 import {tap} from "rxjs/operators";
-import {CookieService} from "ngx-cookie-service";
+import {TokenStoreService} from "./token-store.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthInterceptorService implements HttpInterceptor{
-  constructor() {}
+  constructor(private tokenStore: TokenStoreService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const authReq = req.clone({
-      headers: req.headers.set('Vk-Auth-Token', '123123123')
+      headers: req.headers.set('Auth-Token', this.tokenStore.get())
     });
     return next.handle(authReq).pipe(
       tap(event => {
