@@ -4,7 +4,7 @@ import {AppRoutingModule} from "./app-routing.module";
 import {AppComponent} from "./app.component";
 import {ApiClientModule, AuthenticationClient, BcCommonModule, BookingClient, MasterListClient} from "bc-common";
 import {IonicModule, IonicRouteStrategy} from "@ionic/angular";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MastersModule} from "./masters/masters.module";
 import {AuthenticationModule} from "./authentication/authentication.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
@@ -13,6 +13,7 @@ import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
 import {environment} from "../environments/environment";
+import {AuthInterceptorService} from "./auth-interceptor.service";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {environment} from "../environments/environment";
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},
     {provide: MasterListClient.API_BASE_URL, useValue: environment.apiUrl},
     {provide: AuthenticationClient.API_BASE_URL, useValue: environment.apiUrl},
     {provide: BookingClient.API_BASE_URL, useValue: environment.apiUrl},
