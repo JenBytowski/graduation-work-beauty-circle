@@ -7,7 +7,8 @@
 
   <ion-content *ngIf="vm.scheduleDay?.items.length > 0;else empty">
     <ion-card *ngFor="let item of vm.scheduleDay?.items">
-      <ion-item>Item: {{item.id}}</ion-item>
+      <ion-item>Item type: {{item.itemType}}</ion-item>
+      <ion-item>Client: {{item.clientId}}</ion-item>
       <ion-item>Start-time: {{item.startTime}}</ion-item>
       <ion-item>End-time: {{item.endTime}}</ion-item>
     </ion-card>

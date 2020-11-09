@@ -27,7 +27,7 @@
 
         <div class="icon_line">
           <ion-icon
-            (click)="authByPhone(); codePopupStatus = true;"
+            (click)="codePopupStatus = true"
             class="form_icon"
             icon="call">
           </ion-icon>
@@ -67,11 +67,10 @@
     'visible-code_popup': codePopupStatus === true
   }">
     <div class="code_popup__controls">
-      <ion-input class="code_popup__controls__input" color="medium" type="text" value="Phone"></ion-input>
+      <ion-input #phone class="code_popup__controls__input" color="medium" type="text" value="Phone"></ion-input>
+      <ion-button (click)="authByPhone()" class="code_popup__controls__button" color="medium" fill="outline">Request code</ion-button>
       <ion-input #code class="code_popup__controls__input" color="medium" type="text" value="Code"></ion-input>
-      <ion-button (click)="codePopupStatus = false; sendCode()" class="code_popup__controls__button" color="medium" fill="outline">
-        Exit
-      </ion-button>
+      <ion-button (click)="codePopupStatus = false; sendCode()" class="code_popup__controls__button" color="medium" fill="outline">Send code</ion-button>
     </div>
   </ion-content>
   <!--(click)="codePopupStatus = false"-->
