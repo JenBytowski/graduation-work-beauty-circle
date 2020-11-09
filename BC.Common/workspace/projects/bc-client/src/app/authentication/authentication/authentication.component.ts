@@ -12,9 +12,16 @@ import {CookieService} from "ngx-cookie-service";
 
 export class AuthenticationComponent implements OnInit {
 
+  @ViewChild("code_popup", {static: false})
+  code_popup: ElementRef;
+
   @ViewChild("code", {static: false})
   code: ElementRef;
+
+  public codePopupStatus: boolean = false;
+
   public redirectUrl: string = this.baseUrl + 'authentication';
+
   private querySubscription: Subscription;
 
   constructor(private route: ActivatedRoute, private authClient: AuthenticationClient.AuthenticationClient, private cookieService: CookieService, @Inject('BASE_URL') private baseUrl: string) {
@@ -74,7 +81,10 @@ export class AuthenticationComponent implements OnInit {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
         code: (this.code as any).el.value
-      })).subscribe(data => console.log(data));
+      })).subscribe(data => {
+        this.cookieService.set('phone-auth-token', data.token);
+        this.cookieService.set('phone-username', data.username);
+      });
 
     }
   }
