@@ -83,7 +83,11 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by vk", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by vk", ex);
       }
@@ -129,7 +133,11 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by google", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by google", ex);
       }
@@ -175,7 +183,11 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by instagram", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by instagram", ex);
       }
@@ -185,23 +197,30 @@ namespace BC.API.Services.AuthenticationService
     {
       try
       {
-        var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ?? await CreateUserByPhone(phone); 
+        var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ??
+                   await CreateUserByPhone(phone);
         await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
-        
+
         var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
         await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
       {
-        throw new AuthenticationException("Cant authenticate by instagram", ex);
+        throw new AuthenticationException("Cant authenticate by phone", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by phone", ex);
+      }
+      catch (CantSendSMSException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by phone", ex);
       }
     }
 
     public async Task<AuthenticationResponse> AuthenticateByPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
-      try
-      {
-        var user = _userManager.Users.Single(usr => usr.PhoneNumber == req.Phone);
+      var user = _userManager.Users.Single(usr => usr.PhoneNumber == req.Phone);
         var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
 
         if (!checkCodeResult)
@@ -211,11 +230,6 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
-      catch (Exception ex)
-      {
-        throw new AuthenticationException("Cant authenticate by phone", ex);
-      }
-    }
 
     private async Task AddToRoleIfNotYet(User user, string role)
     {
@@ -228,7 +242,7 @@ namespace BC.API.Services.AuthenticationService
 
       if (!addRoleResult.Succeeded)
       {
-        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+        throw new CantAssigneUserToRoleException(addRoleResult.Errors.First().Description);
       }
       
       this._eventBus.Publish(new UserAssignedToRoleEvent { UserId = user.Id, UserName = user.UserName, Role = role});
@@ -242,7 +256,7 @@ namespace BC.API.Services.AuthenticationService
 
         await _smsClient.SendSMS(sms);
       }
-      catch (CantSendSMSException ex)
+      catch (Exception ex)
       {
         throw new CantSendSMSException("Cant send sms with authentication code", ex);
       }

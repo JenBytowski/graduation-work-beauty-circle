@@ -243,8 +243,18 @@ namespace BC.API
         }
       });
 
+      app.Use(async (con, next) =>
+      {
+        await next.Invoke();
+        
+        if (con.Response.StatusCode == 500)
+        {
+          await con.Response.WriteAsync("Kek");
+        }
+      });
+      
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
+      
       authenticationService.EnsureDataInitialized().Wait();
     }
   }

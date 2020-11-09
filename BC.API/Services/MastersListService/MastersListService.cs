@@ -77,24 +77,22 @@ namespace BC.API.Services.MastersListService
 
     public MasterRes GetMasterById(Guid masterId)
     {
-      try
-      {
-        var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
+      var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
           .ThenInclude(mstr => mstr.PriceListItems)
           .Include(mstr => mstr.Speciality)
           .Include(mstr => mstr.Schedule)
           .ThenInclude(mstr => mstr.Days)
           .ThenInclude(mstr => mstr.Items)
           .ThenInclude(mstr => mstr.ScheduleDay)
-          .ThenInclude(mstr => mstr.Items).Single(mstr => mstr.Id == masterId);
+          .ThenInclude(mstr => mstr.Items).SingleOrDefault(mstr => mstr.Id == masterId);
 
+        if (master == null)
+        {
+          throw new CantFindMasterException($"Cant find master by id: {masterId}");
+        }
+        
         return MasterRes.ParseFromMaster(master);
       }
-      catch (Exception e)
-      {
-        throw new CantFindMasterException($"Cant find master by id: {masterId}");
-      }
-    }
 
     public async void UploadAvatar(Guid masterId, Stream stream, string fileName)
     {
@@ -253,8 +251,7 @@ namespace BC.API.Services.MastersListService
     {
     }
 
-    public void
-      OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
+    public void OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
     {
       throw new NotImplementedException();
     }
@@ -263,34 +260,34 @@ namespace BC.API.Services.MastersListService
     {
       var result = new MasterCanBePublishedCheckResult
       {
-        Messages = new List<MasterCanBePublishedCheckMessage>(), Result = true
+        Messages = new List<MasterCanBePublishedCheckMessage>(), 
+        Result = true
       };
-
+      
       if (string.IsNullOrEmpty(master.Name))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master name is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master name is empty"});
       }
 
-      if (string.IsNullOrEmpty(master.AvatarSourceFileName))
+      if (string.IsNullOrEmpty(master.AvatarUrl))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master avatar is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master avatar is empty"});
       }
-
+      
       if (string.IsNullOrEmpty(master.Address))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master info is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master info is empty"});
       }
-
-      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) &&
-          string.IsNullOrEmpty(master.InstagramProfile)
+      
+      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) && string.IsNullOrEmpty(master.InstagramProfile) 
           && string.IsNullOrEmpty(master.Viber) && string.IsNullOrEmpty(master.Skype))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master contacts is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master contacts is empty"});
       }
-
+      
       if (master.Speciality == null)
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master speciality is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master speciality is empty"});
       }
 
       if (result.Messages.Count > 0)

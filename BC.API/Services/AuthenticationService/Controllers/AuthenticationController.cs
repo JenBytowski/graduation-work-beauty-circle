@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BC.API.Services;
 using BC.API.Services.AuthenticationService;
+using BC.API.Services.AuthenticationService.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -32,10 +33,11 @@ namespace BC.API.Controllers
 
         return Ok(result);
       }
-      catch (Exception ex)
+      catch (AuthenticationException ex)
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.authentication_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -53,10 +55,11 @@ namespace BC.API.Controllers
         
         return Ok(result);
       }
-      catch (Exception ex)
+      catch (AuthenticationException ex)
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.authentication_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -74,10 +77,11 @@ namespace BC.API.Controllers
         
         return Ok(result);
       }
-      catch (Exception ex)
+      catch (AuthenticationException ex)
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.authentication_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -92,13 +96,14 @@ namespace BC.API.Controllers
       try
       {
         await _authenticationService.AuthenticateByPhoneStep1(request.Phone, request.Role);
-        
+
         return Ok();
       }
-      catch (Exception ex)
+      catch (AuthenticationException ex)
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.authentication_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -116,11 +121,12 @@ namespace BC.API.Controllers
 
         return Ok(result);
       }
-      catch (Exception ex)
+      catch (InvalidAuthenticationCodeException ex)
       {
         return BadRequest(new BadAPIResponse
         {
-          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+          Code = APIErrorCodes.invalid_authentication_code_exception.ToString(),
+          Messages = new List<string> {ex.Message}
         });
       }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using BC.API.Services.BookingService.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -28,6 +27,7 @@ namespace BC.API.Services.BookingService.Controllers
     {
       try
       {
+        throw new Exception();
         var schedule = _bookingService.GetSchedule(masterId);
 
         return Ok(schedule);
@@ -36,6 +36,7 @@ namespace BC.API.Services.BookingService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.booking_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -56,7 +57,11 @@ namespace BC.API.Services.BookingService.Controllers
       }
       catch (BookingException ex)
       {
-        return BadRequest(new BadAPIResponse {Messages = new List<string> {ex.Message, ex.InnerException?.Message}});
+        return BadRequest(new BadAPIResponse
+        {
+          Code = APIErrorCodes.booking_exception.ToString(),
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
       }
     }
 
@@ -80,6 +85,14 @@ namespace BC.API.Services.BookingService.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
+      catch (CantFoundWindowByTimeException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Code = APIErrorCodes.cant_found_window_by_time_exception.ToString(),
+          Messages = new List<string> {ex.Message}
+        });
+      }
     }
 
     [HttpPost]
@@ -99,6 +112,7 @@ namespace BC.API.Services.BookingService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.booking_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -124,6 +138,14 @@ namespace BC.API.Services.BookingService.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
+      catch (CantFoundWindowByTimeException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Code = APIErrorCodes.cant_found_window_by_time_exception.ToString(),
+          Messages = new List<string> {ex.Message}
+        });
+      }
     }
 
     [HttpPost]
@@ -143,6 +165,7 @@ namespace BC.API.Services.BookingService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
+          Code = APIErrorCodes.booking_exception.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }

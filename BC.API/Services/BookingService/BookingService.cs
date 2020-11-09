@@ -19,39 +19,6 @@ namespace BC.API.Services.BookingService
       _context = context;
     }
 
-    private void ConcatenateWindows(Guid dayId)
-    {
-      var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
-      var windows = day.Items.Where(imt => imt is Window);
-      var newWindows = windows.ToList();
-
-      _context.ScheduleDayItems.RemoveRange(windows);
-      _context.SaveChanges();
-
-      for (var counter = 0; counter < newWindows.Count;)
-      {
-        var window = newWindows[counter];
-        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
-
-        if (windowtoConcatenate == null)
-        {
-          counter++;
-        }
-
-        newWindows[counter] = new Window
-        {
-          Id = window.Id,
-          ScheduleDayId = window.ScheduleDayId,
-          StartTime = window.StartTime,
-          EndTime = windowtoConcatenate.EndTime
-        };
-        newWindows.Remove(windowtoConcatenate);
-      }
-
-      _context.ScheduleDayItems.AddRange(newWindows);
-      _context.SaveChanges();
-    }
-
     public GetScheduleRes GetSchedule(Guid MasterId)
     {
       var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
@@ -89,6 +56,7 @@ namespace BC.API.Services.BookingService
         newWeek = donorWeek.Select((day, i) =>
         {
           var newDate = req.MondayDate.AddDays(i);
+          
           return new ScheduleDay
           {
             ScheduleId = day.ScheduleId,
@@ -144,7 +112,7 @@ namespace BC.API.Services.BookingService
 
       if (windowtoRemove == null)
       {
-        throw new BookingException("Dont found window by this time");
+        throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
       var newBooking = new Booking
@@ -213,7 +181,7 @@ namespace BC.API.Services.BookingService
 
       if (windowtoRemove == null)
       {
-        throw new BookingException("Dont found window by this time");
+        throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
       var newPause = new Pause
@@ -258,6 +226,39 @@ namespace BC.API.Services.BookingService
       _context.SaveChanges();
 
       ConcatenateWindows(pause.ScheduleDayId);
+    }
+    
+    private void ConcatenateWindows(Guid dayId)
+    {
+      var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
+      var windows = day.Items.Where(imt => imt is Window);
+      var newWindows = windows.ToList();
+
+      _context.ScheduleDayItems.RemoveRange(windows);
+      _context.SaveChanges();
+
+      for (var counter = 0; counter < newWindows.Count;)
+      {
+        var window = newWindows[counter];
+        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
+
+        if (windowtoConcatenate == null)
+        {
+          counter++;
+        }
+
+        newWindows[counter] = new Window
+        {
+          Id = window.Id,
+          ScheduleDayId = window.ScheduleDayId,
+          StartTime = window.StartTime,
+          EndTime = windowtoConcatenate.EndTime
+        };
+        newWindows.Remove(windowtoConcatenate);
+      }
+
+      _context.ScheduleDayItems.AddRange(newWindows);
+      _context.SaveChanges();
     }
   }
 }
