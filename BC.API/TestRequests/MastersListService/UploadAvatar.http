@@ -1,4 +1,4 @@
-﻿POST http://localhost:5222/masters-list/upload-avatar/38f21320-c9ed-46bd-ae6d-af9df01d080b
+﻿POST http://localhost:5210/api/masters-list/upload-avatar/38f21320-c9ed-46bd-ae6d-af9df01d080b
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Connection: keep-alive
 

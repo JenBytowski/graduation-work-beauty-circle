@@ -22,8 +22,8 @@ namespace BC.API.Services.MastersListService
     private readonly HttpClient _httpClient;
 
     public MastersListService(
-      MastersListServiceConfig config, 
-      MastersContext mastersContext,  
+      MastersListServiceConfig config,
+      MastersContext mastersContext,
       AuthenticationContext authenticationContextContext,
       AvatarImageProcessingSaga avatarImageProcessingSaga,
       HttpClient httpClient
@@ -56,15 +56,21 @@ namespace BC.API.Services.MastersListService
           var avatarFileName = mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(avatarFileName))
           {
-            masterRes.AvatarUrl = Path.Combine(this._config.FilesServiceInternalUrl, avatarFileName);  
+            masterRes.AvatarUrl = new Uri(
+              new Uri(this._config.FilesServicePublicUrl), 
+              avatarFileName
+            ).ToString();
           }
 
           var thumbnailFileName = mstr.ThumbnailFileName ?? mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(thumbnailFileName))
           {
-            masterRes.ThumbnailUrl = Path.Combine(this._config.FilesServiceInternalUrl, thumbnailFileName);  
+            masterRes.ThumbnailUrl = new Uri(
+              new Uri(this._config.FilesServicePublicUrl),
+              thumbnailFileName
+            ).ToString();
           }
-          
+
           return masterRes;
         }).ToArray();
     }
@@ -92,22 +98,22 @@ namespace BC.API.Services.MastersListService
 
     public async void UploadAvatar(Guid masterId, Stream stream, string fileName)
     {
-      var master =   this._mastersContext.Masters.Single(m => m.Id == masterId);
-    
+      var master = this._mastersContext.Masters.Single(m => m.Id == masterId);
+
       var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName))
         .Replace(@"\", @"/");
-      
+
       var formData = new MultipartFormDataContent();
       formData.Add(new StreamContent(stream), name, name);
-      
+
       var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
-      
+
       await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
-      
+
       master.AvatarSourceFileName = name;
-      
+
       this._mastersContext.SaveChanges();
-      
+
       this._avatarImageProcessingSaga.Start(masterId);
     }
 
@@ -158,42 +164,42 @@ namespace BC.API.Services.MastersListService
     {
       var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
         .SingleOrDefault(mstr => mstr.Id == masterId);
-      
-        if (master == null)
+
+      if (master == null)
+      {
+        throw new CantFindMasterException($"Cant find master by id: {masterId}");
+      }
+
+      if (master.IsPublish)
+      {
+        return new PublishMasterResult
         {
-          throw new CantFindMasterException($"Cant find master by id: {masterId}");
-        }
+          Messages = new List<PublishMasterMessage> {new PublishMasterMessage {Text = "Master has already published"}}
+        };
+      }
 
-        if (master.IsPublish)
+      var validateResult = CheckIfMasterCanBePublished(master);
+
+      if (!validateResult.Result)
+      {
+        return new PublishMasterResult
         {
-          return new PublishMasterResult
-          {
-            Messages = new List<PublishMasterMessage> {new PublishMasterMessage {Text = "Master has already published"}}
-          };
-        }
+          Messages = validateResult.Messages.Select(msg =>
+            new PublishMasterMessage {Text = msg.Text})
+        };
+      }
 
-        var validateResult = CheckIfMasterCanBePublished(master);
+      master.IsPublish = true;
+      await _mastersContext.SaveChangesAsync();
 
-        if (!validateResult.Result)
-        {
-          return new PublishMasterResult
-          {
-            Messages = validateResult.Messages.Select(msg => 
-              new PublishMasterMessage {Text = msg.Text})
-          };
-        }
-
-        master.IsPublish = true;
-        await _mastersContext.SaveChangesAsync();
-        
-        return new PublishMasterResult {Result = true};
+      return new PublishMasterResult {Result = true};
     }
 
     public async Task<UnpublishMasterResault> UnPublishMaster(Guid masterId)
     {
       var master = _mastersContext.Masters.Include(mstr => mstr.PriceList)
         .SingleOrDefault(mstr => mstr.Id == masterId);
-      
+
       if (master == null)
       {
         throw new CantFindMasterException($"Cant find master by id: {masterId}");
@@ -203,14 +209,17 @@ namespace BC.API.Services.MastersListService
       {
         return new UnpublishMasterResault
         {
-          Messages = new List<UnpublishMasterMessage> {new UnpublishMasterMessage {Text = "Master has already unpublished"}}
+          Messages = new List<UnpublishMasterMessage>
+          {
+            new UnpublishMasterMessage {Text = "Master has already unpublished"}
+          }
         };
       }
-      
+
       master.IsPublish = default;
       await _mastersContext.SaveChangesAsync();
-      
-      return new UnpublishMasterResault { Result = true };
+
+      return new UnpublishMasterResault {Result = true};
     }
 
     public void OnUserCreated()
@@ -226,10 +235,7 @@ namespace BC.API.Services.MastersListService
 
       this._mastersContext.Masters.Add(new Master
       {
-        Id = @event.Id,
-        Name = "No name",
-        Schedule = new Schedule(),
-        PriceList = new PriceList()
+        Id = @event.Id, Name = "No name", Schedule = new Schedule(), PriceList = new PriceList()
       });
 
       await this._mastersContext.SaveChangesAsync();
@@ -247,7 +253,8 @@ namespace BC.API.Services.MastersListService
     {
     }
 
-    public void OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
+    public void
+      OnScheduleDayChanged(ScheduleDayChangedEvent @event) // лучше не евент, а свой тип, правда он будет такой же тупо
     {
       throw new NotImplementedException();
     }
@@ -256,34 +263,34 @@ namespace BC.API.Services.MastersListService
     {
       var result = new MasterCanBePublishedCheckResult
       {
-        Messages = new List<MasterCanBePublishedCheckMessage>(), 
-        Result = true
+        Messages = new List<MasterCanBePublishedCheckMessage>(), Result = true
       };
-      
+
       if (string.IsNullOrEmpty(master.Name))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master name is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master name is empty"});
       }
 
       if (string.IsNullOrEmpty(master.AvatarSourceFileName))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master avatar is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master avatar is empty"});
       }
-      
+
       if (string.IsNullOrEmpty(master.Address))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master info is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master info is empty"});
       }
-      
-      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) && string.IsNullOrEmpty(master.InstagramProfile) 
+
+      if (string.IsNullOrEmpty(master.Phone) && string.IsNullOrEmpty(master.VkProfile) &&
+          string.IsNullOrEmpty(master.InstagramProfile)
           && string.IsNullOrEmpty(master.Viber) && string.IsNullOrEmpty(master.Skype))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master contacts is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master contacts is empty"});
       }
-      
+
       if (master.Speciality == null)
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master speciality is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master speciality is empty"});
       }
 
       if (result.Messages.Count > 0)
