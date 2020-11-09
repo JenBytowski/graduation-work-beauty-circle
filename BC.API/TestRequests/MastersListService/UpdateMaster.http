@@ -1,4 +1,4 @@
-﻿PUT http://localhost:5210/api/masters-list/DC46D935-B34F-4C89-8AEC-828A2119003C
+﻿POST http://localhost:5210/api/masters-list/update-master/38f21320-c9ed-46bd-ae6d-af9df01d080b
 Content-Type: application/json
 
 {

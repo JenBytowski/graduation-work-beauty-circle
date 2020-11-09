@@ -78,14 +78,16 @@ namespace BC.API.Services.MastersListService
 
     public async void UploadAvatar(Guid masterId, Stream stream, string fileName)
     {
+      var master =   this._mastersContext.Masters.Single(m => m.Id == masterId);
+    
       var formData = new MultipartFormDataContent();
       var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName));
       formData.Add(new StreamContent(stream), name, name);
       var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
       await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
       
-      var master =   this._mastersContext.Masters.Single(m => m.Id == masterId);
       master.AvatarFileName = name;
+      
       this._mastersContext.SaveChanges();
     }
 
