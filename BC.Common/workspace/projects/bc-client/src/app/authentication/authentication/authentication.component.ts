@@ -17,7 +17,11 @@ export class AuthenticationComponent implements OnInit {
   public redirectUrl: string = this.baseUrl + 'authentication';
   private querySubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient.AuthenticationClient, private tokenStore: TokenStoreService, @Inject('BASE_URL') private baseUrl: string) {
+  constructor(
+    private route: ActivatedRoute,
+    private authClient: AuthenticationClient.AuthenticationClient,
+    private tokenStore: TokenStoreService,
+    @Inject('BASE_URL') private baseUrl: string) {
   }
 
   ngOnInit() {
