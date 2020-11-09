@@ -15,7 +15,7 @@ namespace BC.API.Services.MastersListService
 
     public string AvatarUrl { get; set; }
     
-    public string AvatarFileName { get; set; }
+    public string ThumbnailUrl { get; set; }
 
     public string About { get; set; }
 
@@ -46,8 +46,6 @@ namespace BC.API.Services.MastersListService
         Id = master.Id,
         Name = master.Name,
         CityId = master.CityId,
-        AvatarUrl = master.AvatarUrl,
-        AvatarFileName = master.AvatarFileName,
         About = master.About,
         Address = master.Address,
         Phone = master.Phone,

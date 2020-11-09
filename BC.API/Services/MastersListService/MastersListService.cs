@@ -15,14 +15,21 @@ namespace BC.API.Services.MastersListService
 {
   public class MastersListService
   {
-    private readonly AuthenticationContext _authenticationContextContext;
-    private readonly MastersContext _mastersContext;
     private readonly MastersListServiceConfig _config;
+    private readonly MastersContext _mastersContext;
+    private readonly AvatarImageProcessingSaga _avatarImageProcessingSaga;
+
     private readonly HttpClient _httpClient;
 
-    public MastersListService(MastersContext mastersContext, AuthenticationContext authenticationContextContext,  MastersListServiceConfig config, HttpClient httpClient)
+    public MastersListService(
+      MastersListServiceConfig config, 
+      MastersContext mastersContext,  
+      AuthenticationContext authenticationContextContext,
+      AvatarImageProcessingSaga avatarImageProcessingSaga,
+      HttpClient httpClient
+    )
     {
-      _authenticationContextContext = authenticationContextContext;
+      _avatarImageProcessingSaga = avatarImageProcessingSaga;
       _mastersContext = mastersContext;
       _config = config;
       _httpClient = httpClient;
@@ -45,10 +52,17 @@ namespace BC.API.Services.MastersListService
         .Select(mstr =>
         {
           var masterRes = MasterRes.ParseFromMaster(mstr);
-          
-          if (!string.IsNullOrWhiteSpace(masterRes.AvatarFileName))
+
+          var avatarFileName = mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
+          if (!string.IsNullOrWhiteSpace(avatarFileName))
           {
-            masterRes.AvatarUrl = Path.Combine(this._config.FilesServiceUrl, masterRes.AvatarFileName);  
+            masterRes.AvatarUrl = Path.Combine(this._config.FilesServiceInternalUrl, avatarFileName);  
+          }
+
+          var thumbnailFileName = mstr.ThumbnailFileName ?? mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
+          if (!string.IsNullOrWhiteSpace(thumbnailFileName))
+          {
+            masterRes.ThumbnailUrl = Path.Combine(this._config.FilesServiceInternalUrl, thumbnailFileName);  
           }
           
           return masterRes;
@@ -80,15 +94,21 @@ namespace BC.API.Services.MastersListService
     {
       var master =   this._mastersContext.Masters.Single(m => m.Id == masterId);
     
+      var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName))
+        .Replace(@"\", @"/");
+      
       var formData = new MultipartFormDataContent();
-      var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName));
       formData.Add(new StreamContent(stream), name, name);
-      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceUrl) {Content = formData};
+      
+      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
+      
       await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
       
-      master.AvatarFileName = name;
+      master.AvatarSourceFileName = name;
       
       this._mastersContext.SaveChanges();
+      
+      this._avatarImageProcessingSaga.Start(masterId);
     }
 
     //TODO отрефакторить логику и сделать валидацию
@@ -105,7 +125,6 @@ namespace BC.API.Services.MastersListService
         }
 
         master.Name = req.Name ?? master.Name;
-        master.AvatarUrl = req.AvatarUrl ?? master.AvatarUrl;
         master.About = req.About ?? master.About;
         master.Address = req.Address ?? master.Address;
         master.Phone = req.Phone ?? master.Phone;
@@ -205,13 +224,6 @@ namespace BC.API.Services.MastersListService
         return;
       }
 
-      var user = await this._authenticationContextContext.Users.SingleOrDefaultAsync(m => m.Id == @event.UserId);
-
-      if (user == null || _mastersContext.Masters.SingleOrDefault(mstr => mstr.Id == @event.UserId) != null)
-      {
-        return;
-      }
-
       this._mastersContext.Masters.Add(new Master
       {
         Id = @event.Id,
@@ -253,7 +265,7 @@ namespace BC.API.Services.MastersListService
         result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master name is empty"});
       }
 
-      if (string.IsNullOrEmpty(master.AvatarUrl))
+      if (string.IsNullOrEmpty(master.AvatarSourceFileName))
       {
         result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master avatar is empty"});
       }
@@ -285,6 +297,7 @@ namespace BC.API.Services.MastersListService
 
   public class MastersListServiceConfig
   {
-    public string FilesServiceUrl { get; set; }
+    public string FilesServiceInternalUrl { get; set; }
+    public string FilesServicePublicUrl { get; set; }
   }
 }
