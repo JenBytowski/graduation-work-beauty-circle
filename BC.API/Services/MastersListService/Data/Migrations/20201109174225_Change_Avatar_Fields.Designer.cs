@@ -4,14 +4,16 @@ using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BC.API.Services.MastersListService.Data.Migrations
 {
     [DbContext(typeof(MastersContext))]
-    partial class MastersContextModelSnapshot : ModelSnapshot
+    [Migration("20201109174225_Change_Avatar_Fields")]
+    partial class Change_Avatar_Fields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

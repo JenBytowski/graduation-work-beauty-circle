@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -17,7 +18,8 @@ namespace BC.API.Services.FilesService.Controllers
     
     private string GenerateFilePatch(string name)
     {
-      return Path.Combine(this._filesFolder, name);
+      var fileNameSegments = name.Split(new[] {'/', '\\'});
+      return Path.Combine(new []{this._filesFolder}.Union(fileNameSegments).ToArray());
     }
 
     public FilesController(IWebHostEnvironment appEnvironment)
@@ -49,21 +51,22 @@ namespace BC.API.Services.FilesService.Controllers
         }
 
         var fileName = Request.Form.Files[0].FileName;
-        var fullPath = GenerateFilePatch(fileName);
+        var filePatch = GenerateFilePatch(fileName);
         
-        var dir = Path.GetDirectoryName(fullPath);
+        var dir = Path.GetDirectoryName(filePatch);
         if (!Directory.Exists(dir))
         {
           Directory.CreateDirectory(dir);  
         }
 
-        using (var stream = new FileStream(fullPath, FileMode.Create))
+        using (var stream = new FileStream(filePatch, FileMode.Create))
         {
           file.CopyTo(stream);
         }
 
-        return Ok(fileName);
+        return Ok();
       }
+      
       catch (Exception ex)
       {
         return StatusCode(500, $"Internal server error: {ex}");

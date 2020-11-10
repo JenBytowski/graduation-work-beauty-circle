@@ -45,6 +45,8 @@ namespace BC.API
       services.AddTransient<BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
       services.AddTransient<BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
 
+      services.AddTransient<AvatarImageProcessingSaga>();
+
       var eb = this.Configuration.GetSection("RabbitMQEventBus");
       services.AddSingleton<IEventBus>(provider =>
       {
@@ -61,6 +63,8 @@ namespace BC.API
         bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
         bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
         bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
+        
+        bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();
 
         return bus;
       });
