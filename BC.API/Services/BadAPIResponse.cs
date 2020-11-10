@@ -15,10 +15,11 @@ namespace BC.API.Services
   public enum APIErrorCodes
   {
     booking_exception,
-    cant_found_window_by_time_exception,
+    cant_found_window_by_time,
     authentication_exception,
-    invalid_authentication_code_exception,
-    сant_update_master_exception,
-    cant_find_master_exception
+    cant_send_sms,
+    invalid_authentication_code,
+    сant_update_master,
+    cant_find_master
   }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using BC.API.Infrastructure.Interfaces;
 using BC.API.Services;
 using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.Exceptions;
@@ -51,8 +51,9 @@ namespace BC.API.Controllers
     {
       try
       {
-        var result = await _authenticationService.AuthenticateByInstagram(request.Code, request.RedirectUrl, request.Role);
-        
+        var result =
+          await _authenticationService.AuthenticateByInstagram(request.Code, request.RedirectUrl, request.Role);
+
         return Ok(result);
       }
       catch (AuthenticationException ex)
@@ -74,7 +75,7 @@ namespace BC.API.Controllers
       try
       {
         var result = await _authenticationService.AuthenticateByGoogle(request.Code, request.RedirectUrl, request.Role);
-        
+
         return Ok(result);
       }
       catch (AuthenticationException ex)
@@ -107,6 +108,14 @@ namespace BC.API.Controllers
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
+      catch (CantSendSMSException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Code = APIErrorCodes.cant_send_sms.ToString(),
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
     }
 
     [HttpPost]
@@ -125,8 +134,7 @@ namespace BC.API.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.invalid_authentication_code_exception.ToString(),
-          Messages = new List<string> {ex.Message}
+          Code = APIErrorCodes.invalid_authentication_code.ToString(), Messages = new List<string> {ex.Message}
         });
       }
     }

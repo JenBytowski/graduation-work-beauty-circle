@@ -41,7 +41,7 @@ namespace BC.API.Services.MastersListService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.cant_find_master_exception.ToString(),
+          Code = APIErrorCodes.cant_find_master.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -61,7 +61,7 @@ namespace BC.API.Services.MastersListService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.cant_find_master_exception.ToString(),
+          Code = APIErrorCodes.cant_find_master.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -81,7 +81,7 @@ namespace BC.API.Services.MastersListService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.cant_find_master_exception.ToString(),
+          Code = APIErrorCodes.cant_find_master.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }
@@ -103,7 +103,7 @@ namespace BC.API.Services.MastersListService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.сant_update_master_exception.ToString(),
+          Code = APIErrorCodes.сant_update_master.ToString(),
           Messages = new List<string> {ex.Message, ex.InnerException?.Message}
         });
       }

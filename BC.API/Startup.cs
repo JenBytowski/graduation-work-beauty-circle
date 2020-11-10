@@ -5,7 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using BC.API.Events;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
@@ -14,7 +13,6 @@ using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.Data;
 using BC.API.Services.BalanceService;
 using BC.API.Services.BalanceService.Data;
-using BC.API.Services.BalanceService.Handlers;
 using BC.API.Services.BookingService;
 using BC.API.Services.BookingService.Data;
 using BC.API.Services.MastersListService;
@@ -243,16 +241,6 @@ namespace BC.API
         }
       });
 
-      app.Use(async (con, next) =>
-      {
-        await next.Invoke();
-        
-        if (con.Response.StatusCode == 500)
-        {
-          await con.Response.WriteAsync("Kek");
-        }
-      });
-      
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
       
       authenticationService.EnsureDataInitialized().Wait();

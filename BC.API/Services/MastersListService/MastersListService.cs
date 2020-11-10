@@ -269,9 +269,9 @@ namespace BC.API.Services.MastersListService
         result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master name is empty"});
       }
 
-      if (string.IsNullOrEmpty(master.AvatarUrl))
+      if (string.IsNullOrEmpty(master.AvatarSourceFileName))
       {
-        result.Messages.Add(new MasterCanBePublishedCheckMessage { Text = "Master avatar is empty"});
+        result.Messages.Add(new MasterCanBePublishedCheckMessage {Text = "Master avatar is empty"});
       }
       
       if (string.IsNullOrEmpty(master.Address))

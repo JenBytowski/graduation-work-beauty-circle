@@ -89,7 +89,7 @@ namespace BC.API.Services.BookingService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.cant_found_window_by_time_exception.ToString(),
+          Code = APIErrorCodes.cant_found_window_by_time.ToString(),
           Messages = new List<string> {ex.Message}
         });
       }
@@ -142,7 +142,7 @@ namespace BC.API.Services.BookingService.Controllers
       {
         return BadRequest(new BadAPIResponse
         {
-          Code = APIErrorCodes.cant_found_window_by_time_exception.ToString(),
+          Code = APIErrorCodes.cant_found_window_by_time.ToString(),
           Messages = new List<string> {ex.Message}
         });
       }
