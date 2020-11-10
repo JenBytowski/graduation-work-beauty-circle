@@ -41,9 +41,9 @@ namespace BC.API.Services.AuthenticationService
     {
       foreach (var role in UserRoles.AllRoles)
       {
-        if (! await this._rolesManager.RoleExistsAsync(role))
+        if (!await this._rolesManager.RoleExistsAsync(role))
         {
-          await this._rolesManager.CreateAsync(new Role { Name = role} );
+          await this._rolesManager.CreateAsync(new Role {Name = role});
         }
       }
     }
@@ -78,12 +78,16 @@ namespace BC.API.Services.AuthenticationService
                    await CreateUserByVK(parsedResponse);
 
         await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
-        
+
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by vk", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by vk", ex);
       }
@@ -124,12 +128,16 @@ namespace BC.API.Services.AuthenticationService
         var user = await _userManager.FindByLoginAsync("google", userid) ??
                    await CreateUserByGoogle(encodedToken);
         await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
-        
+
         var jwToken = await GenerateJWToken(user);
 
         return new AuthenticationResponse {Token = jwToken, Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by google", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by google", ex);
       }
@@ -175,7 +183,11 @@ namespace BC.API.Services.AuthenticationService
 
         return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by instagram", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
       {
         throw new AuthenticationException("Cant authenticate by instagram", ex);
       }
@@ -185,36 +197,34 @@ namespace BC.API.Services.AuthenticationService
     {
       try
       {
-        var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ?? await CreateUserByPhone(phone); 
+        var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ??
+                   await CreateUserByPhone(phone);
         await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
-        
+
         var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
         await SendSMS(phone, $"Ваш код: {smsCode}. Расскажите его всем друзьям и покажите его соседу");
       }
-      catch (Exception ex)
+      catch (CantCreateUserException ex)
       {
-        throw new AuthenticationException("Cant authenticate by instagram", ex);
+        throw new AuthenticationException("Cant authenticate by phone", ex);
+      }
+      catch (CantAssigneUserToRoleException ex)
+      {
+        throw new AuthenticationException("Cant authenticate by phone", ex);
       }
     }
 
     public async Task<AuthenticationResponse> AuthenticateByPhoneStep2(AuthenticatebyPhoneStep2Req req)
     {
-      try
-      {
-        var user = _userManager.Users.Single(usr => usr.PhoneNumber == req.Phone);
-        var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
+      var user = _userManager.Users.Single(usr => usr.PhoneNumber == req.Phone);
+      var checkCodeResult = await _userManager.VerifyTwoFactorTokenAsync(user, "Phone", req.Code);
 
-        if (!checkCodeResult)
-        {
-          throw new InvalidAuthenticationCodeException("Invalid authentication code");
-        }
-
-        return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
-      }
-      catch (Exception ex)
+      if (!checkCodeResult)
       {
-        throw new AuthenticationException("Cant authenticate by phone", ex);
+        throw new InvalidAuthenticationCodeException("Invalid authentication code");
       }
+
+      return new AuthenticationResponse {Token = await GenerateJWToken(user), Username = user.UserName};
     }
 
     private async Task AddToRoleIfNotYet(User user, string role)
@@ -228,10 +238,10 @@ namespace BC.API.Services.AuthenticationService
 
       if (!addRoleResult.Succeeded)
       {
-        throw new CantCreateUserException(addRoleResult.Errors.First().Description);
+        throw new CantAssigneUserToRoleException(addRoleResult.Errors.First().Description);
       }
-      
-      this._eventBus.Publish(new UserAssignedToRoleEvent { UserId = user.Id, UserName = user.UserName, Role = role});
+
+      this._eventBus.Publish(new UserAssignedToRoleEvent {UserId = user.Id, UserName = user.UserName, Role = role});
     }
 
     private async Task SendSMS(string phone, string text)
@@ -242,7 +252,7 @@ namespace BC.API.Services.AuthenticationService
 
         await _smsClient.SendSMS(sms);
       }
-      catch (CantSendSMSException ex)
+      catch (Exception ex)
       {
         throw new CantSendSMSException("Cant send sms with authentication code", ex);
       }
@@ -270,7 +280,7 @@ namespace BC.API.Services.AuthenticationService
       {
         throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
-      
+
       this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
@@ -284,9 +294,7 @@ namespace BC.API.Services.AuthenticationService
 
       var createUserResult = await _userManager.CreateAsync(new User
       {
-        UserName = username,
-        Email = userEmail,
-        EmailConfirmed = true
+        UserName = username, Email = userEmail, EmailConfirmed = true
       });
 
       if (!createUserResult.Succeeded)
@@ -295,7 +303,7 @@ namespace BC.API.Services.AuthenticationService
       }
 
       var user = await _userManager.FindByNameAsync(username);
-      
+
       var addLoginResult = await _userManager.AddLoginAsync(user,
         new UserLoginInfo("google", userId, "google"));
 
@@ -303,7 +311,7 @@ namespace BC.API.Services.AuthenticationService
       {
         throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
-      
+
       this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
@@ -328,7 +336,7 @@ namespace BC.API.Services.AuthenticationService
       {
         throw new CantCreateUserException(addLoginResult.Errors.First().Description);
       }
-      
+
       this._eventBus.Publish(new UserCreatedEvent {UserId = user.Id, UserName = user.UserName});
 
       return user;
@@ -338,7 +346,10 @@ namespace BC.API.Services.AuthenticationService
     {
       var username = Guid.NewGuid().ToString();
       var createUserResult =
-        await _userManager.CreateAsync(new User {UserName = username, PhoneNumber = phone, PhoneNumberConfirmed = true});
+        await _userManager.CreateAsync(new User
+        {
+          UserName = username, PhoneNumber = phone, PhoneNumberConfirmed = true
+        });
 
       if (!createUserResult.Succeeded)
       {
