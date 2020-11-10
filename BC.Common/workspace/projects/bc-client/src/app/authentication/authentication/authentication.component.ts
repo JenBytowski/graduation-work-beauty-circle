@@ -14,7 +14,14 @@ export class AuthenticationComponent implements OnInit {
 
   @ViewChild("code", {static: false})
   code: ElementRef;
+
+  @ViewChild("phone", {static: false})
+  phone: ElementRef;
+
+  public codePopupStatus: boolean = false;
+
   public redirectUrl: string = this.baseUrl + 'authentication';
+
   private querySubscription: Subscription;
 
   constructor(
@@ -73,13 +80,13 @@ export class AuthenticationComponent implements OnInit {
   }
 
   public async authByPhone() {
-    await this.authClient.authenticateByPhoneStep1(AuthenticationClient.AuthenticationPhoneRequest.fromJS({phone: '375299854478'})).toPromise();
+    await this.authClient.authenticateByPhoneStep1(AuthenticationClient.AuthenticationPhoneRequest.fromJS({phone: (this.phone as any).el.value})).toPromise();
   }
 
   public async sendCode() {
-    if ((this.code as any).el.value) {
+    if ((this.code as any).el.value && (this.phone as any).el.value) {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
-        phone: '375299854478',
+        phone: (this.phone as any).el.value,
         code: (this.code as any).el.value
       })).subscribe(data => {
         this.tokenStore.put(data.token);
