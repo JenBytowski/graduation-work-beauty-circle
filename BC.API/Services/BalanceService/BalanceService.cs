@@ -26,7 +26,7 @@ namespace BC.API.Services.BalanceService
         return;
       }
 
-      var account = await this._context.Accounts.AddAsync(new Account {Id = Guid.NewGuid(), HolderId = @event.UserId, Balance = 15});
+      var account = await this._context.Accounts.AddAsync(new Account {Id = Guid.NewGuid(), HolderId = @event.UserId, Balance = 5});
       await this._context.SaveChangesAsync();
       this._eventBus.Publish(new BalanceChangedEvent { HolderId = account.Entity.HolderId, Balance = account.Entity.Balance });
     }
@@ -41,9 +41,24 @@ namespace BC.API.Services.BalanceService
 
     public async Task IncreaseBalance(Guid holderId, int amount)
     {
+      var maxAvailableBalance = 15;
+      
       var account = this._context.Accounts.Single(acc => acc.HolderId == holderId);
+
+      if (account.Balance >= maxAvailableBalance)
+      {
+        return;
+      }
+      
       account.Balance += amount;
+
+      if (account.Balance > maxAvailableBalance)
+      {
+        account.Balance = maxAvailableBalance;
+      }
+      
       await this._context.SaveChangesAsync();
+      
       this._eventBus.Publish(new BalanceChangedEvent { HolderId = account.HolderId, Balance = account.Balance });
     }
   }
