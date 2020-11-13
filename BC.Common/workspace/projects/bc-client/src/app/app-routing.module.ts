@@ -4,16 +4,13 @@ import {AuthenticationComponent} from "./authentication/authentication/authentic
 import {MastersListComponent} from "./masters/masters-list/masters-list.component";
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
 import {HomePage} from "./home/home.page";
+import {TokenStoreService} from "./token-store.service";
 
+const tokenStoreService: TokenStoreService = new TokenStoreService();
 const routes: Routes = [
   {
     path: 'home',
     component: HomePage,
-    pathMatch: 'full'
-  },
-  {
-    path: '',
-    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
@@ -29,6 +26,11 @@ const routes: Routes = [
   {
     path: 'master/:id',
     component: MasterProfileComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: '',
+    redirectTo: tokenStoreService.get() ? 'masters' : 'authentication',
     pathMatch: 'full'
   }
 ];
