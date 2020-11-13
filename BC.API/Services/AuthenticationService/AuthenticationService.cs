@@ -370,19 +370,20 @@ namespace BC.API.Services.AuthenticationService
         throw new ArgumentNullException(nameof(user));
       }
 
-      var claimIdentity = (await _userManager.GetClaimsAsync(user)).Any()
-        ? new List<Claim>
-        {
-          new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), new Claim("UserName", user.UserName)
-        }
-        : await _userManager.GetClaimsAsync(user);
-
+      var claims = new List<Claim>
+      {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
+        new Claim("UserName", user.UserName),
+      }.Union(
+        (await _userManager.GetClaimsAsync(user))
+      ).ToArray();
+      
       var tokenOptions = _configuration.GetSection("JWTokenOptions").Get<TokenOptions>();
 
       var token = new JwtSecurityToken(
         issuer: tokenOptions.Issuer,
         audience: tokenOptions.Audience,
-        claims: claimIdentity,
+        claims: claims,
         notBefore: DateTime.Now,
         expires: DateTime.Now.AddMinutes(100),
         signingCredentials: new SigningCredentials(

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BC.API.Services.BalanceService.Controllers
 {
+  [Route("balance")]
   public class BalanceController: ControllerBase
   {
     private readonly BalanceService _balanceService;
@@ -13,11 +14,11 @@ namespace BC.API.Services.BalanceService.Controllers
       _balanceService = balanceService;
     }
 
-    public async Task<IActionResult> IncreaseBalance()
+    [HttpPost]
+    [Route("increase-balance")]
+    public async Task<IActionResult> IncreaseBalance([FromHeader(Name = "UserId")] Guid userId)
     {
-      var currentUserId = Guid.NewGuid(); // Надо красиво получить айдишку юзера как-то
-      await this._balanceService.IncreaseBalance(currentUserId, 1);
-
+      await this._balanceService.IncreaseBalance(userId, 1);
       return Ok();
     }
   }

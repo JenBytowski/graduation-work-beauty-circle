@@ -20,18 +20,13 @@
           "Host": "bc-api",
           "Port": 80
         }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/api/masters-list",
-      "DownstreamPathTemplate": "/masters-list",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "bc-api",
-          "Port": 80
-        }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Jwt"
+      },
+      "AddHeadersToRequest": {
+        "UserId": "Claims[http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier] > value"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/booking/{xxx}",
@@ -42,7 +37,30 @@
           "Host": "bc-api",
           "Port": 80
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Jwt"
+      },
+      "AddHeadersToRequest": {
+        "UserId": "Claims[http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier] > value"
+      }
+    },
+    {
+      "UpstreamPathTemplate": "/api/balance/{xxx}",
+      "DownstreamPathTemplate": "/balance/{xxx}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "bc-api",
+          "Port": 80
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Jwt"
+      },
+      "AddHeadersToRequest": {
+        "UserId": "Claims[http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier] > value"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/files/{xxx}",
@@ -63,17 +81,6 @@
         {
           "Host": "bc-api",
           "Port": 80
-        }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/localhost-tip",
-      "DownstreamPathTemplate": "/localhost-tip",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "host.docker.internal",
-          "Port": 5222
         }
       ]
     }
