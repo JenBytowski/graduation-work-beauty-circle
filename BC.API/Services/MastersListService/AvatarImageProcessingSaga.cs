@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
@@ -13,28 +11,31 @@ using StrongCode.Seedwork.EventBus;
 
 namespace BC.API.Services.MastersListService
 {
-  public class AvatarImageProcessingSaga: IIntegrationEventHandler<AvatarImageProcessingSaga.SagaEvent>
+  public class AvatarImageProcessingSaga : IIntegrationEventHandler<AvatarImageProcessingSaga.SagaEvent>
   {
     public class SagaEvent : IntegrationEvent
     {
       public int Step { get; set; } = 0;
       public Guid MasterId { get; set; }
     }
-    
+
     private readonly IEventBus _eventBus;
     private readonly MastersContext _context;
     private readonly MastersListServiceConfig _config;
+    private readonly HttpClient _httpClient;
 
-    public AvatarImageProcessingSaga(IEventBus eventBus, MastersContext context, MastersListServiceConfig config)
+    public AvatarImageProcessingSaga(IEventBus eventBus, MastersContext context, MastersListServiceConfig config,
+      HttpClient httpClient)
     {
       _eventBus = eventBus;
       _context = context;
       _config = config;
+      _httpClient = httpClient;
     }
 
     public void Start(Guid masterId)
     {
-      this._eventBus.Publish(new SagaEvent { MasterId = masterId});
+      this._eventBus.Publish(new SagaEvent {MasterId = masterId});
     }
 
     public async Task Handle(SagaEvent @event)
@@ -58,79 +59,68 @@ namespace BC.API.Services.MastersListService
     private async Task CreateAvatar(Guid masterId)
     {
       var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
-      master.AvatarFileName = master.AvatarSourceFileName;
+
+      var masterSourcePic =
+        await (await _httpClient.GetAsync(_config.FilesServiceInternalUrl + master.AvatarSourceFileName)).Content
+          .ReadAsStreamAsync();
+      var masterAvatarPic = ProcessImage(masterSourcePic, 600, 600);
+      var masterAvatarName = master.AvatarSourceFileName.Replace("avatarSource", "avatar");
+
+      var formData = new MultipartFormDataContent();
+      formData.Add(new StreamContent(masterAvatarPic), masterAvatarName, masterAvatarName);
+
+      var request = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
+      var response = await _httpClient.SendAsync(request);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException("Cant save master avatar pic");
+      }
+
+      master.AvatarFileName = masterAvatarName;
       await this._context.SaveChangesAsync();
-      Console.WriteLine("Create Avatar");
     }
 
     private async Task CreateThumbnail(Guid masterId)
     {
       var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
-      master.ThumbnailFileName = master.AvatarSourceFileName;
+
+      var masterSourcePic =
+        await (await _httpClient.GetAsync(_config.FilesServiceInternalUrl + master.AvatarSourceFileName)).Content
+          .ReadAsStreamAsync();
+      var masterThumbnailPic = ProcessImage(masterSourcePic, 160, 160);
+      var masterThumbnailName = master.AvatarSourceFileName.Replace("avatarSource", "thumbnail");
+
+      var formData = new MultipartFormDataContent();
+      formData.Add(new StreamContent(masterThumbnailPic), masterThumbnailName, masterThumbnailName);
+
+      var request = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
+      var response = await _httpClient.SendAsync(request);
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new ApplicationException("Cant save master thumbnail pic");
+      }
+
+      master.ThumbnailFileName = masterThumbnailName;
       await this._context.SaveChangesAsync();
-      Console.WriteLine("Create Thumbnail");
     }
 
-    private Bitmap ProcessImage(Stream imageStream, int sideLength)
+    private Stream ProcessImage(Stream imageStream, int width, int height)
     {
-      var image = (Bitmap)Image.FromStream(imageStream);
-      
-      if (image.Width / image.Height != 1)
-      {
-        image = CropImageToSquare(image);
-      }
+      var sourceImage = Image.FromStream(imageStream) as Bitmap;
+      var resultImage = sourceImage.GetThumbnailImage(width, height, null, IntPtr.Zero);
 
-      return ResizeImage(image, new Size {Width = sideLength, Height = sideLength});
-    }
+      var resultImageStream = new MemoryStream();
+      resultImage.Save(resultImageStream,
+        ImageCodecInfo.GetImageEncoders().Single(x => x.FormatDescription == nameof(ImageFormat.Jpeg).ToUpper()),
+        new EncoderParameters {Param = new[] {new EncoderParameter(Encoder.Quality, 75L)}});
 
-    private Bitmap CropImageToSquare(Bitmap image)
-    {
-      var delta = Math.Abs(image.Width - image.Height);
-
-      if (image.Width > image.Height)
-      {
-        return image.Clone(new Rectangle(delta / 2, 0, image.Width - delta, image.Height),
-          image.PixelFormat);
-      }
-
-      return image.Clone(new Rectangle(0, delta / 2, image.Width, image.Height - delta), image.PixelFormat);
-    }
-    
-    private Bitmap ResizeImage(Image imgToResize, Size size)
-    {
-      var sourceWidth = imgToResize.Width;
-      var sourceHeight = imgToResize.Height;
-
-      var nPercent = 0f;
-      var nPercentW = 0f;
-      var nPercentH = 0f;
-
-      nPercentW = (float)size.Width / sourceWidth;
-      nPercentH = (float)size.Height / sourceHeight;
-
-      if (nPercentH < nPercentW)
-      {
-        nPercent = nPercentH;
-      }
-      else
-      {
-        nPercent = nPercentW;
-      }
-
-      var destWidth = (int)(sourceWidth * nPercent);
-      var destHeight = (int)(sourceHeight * nPercent);
-
-      var result = new Bitmap(destWidth, destHeight);
-      Graphics graphics = Graphics.FromImage(result);
-
-      graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-      graphics.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
-      graphics.Dispose();
-
-      return result;
+      return resultImageStream;
     }
 
     public void Dispose()
-    { }
+    {
+    }
   }
 }
