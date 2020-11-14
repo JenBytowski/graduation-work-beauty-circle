@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuController} from '@ionic/angular';
-import {MasterListClient} from "bc-common";
+import {MasterListClient, TokenStoreService} from "bc-common";
 
 @Component({
   selector: 'app-masters-list',
@@ -17,37 +17,42 @@ export class MastersListComponent implements OnInit {
   filter: ElementRef;
 
   public filterStatus: boolean = false;
-
   public vm: Vm = new Vm();
+  private isAuthorized: boolean;
 
-  constructor(private menu: MenuController, private masterList: MasterListClient.MasterListClient) {
+  constructor(
+    private menu: MenuController,
+    private masterList: MasterListClient.MasterListClient,
+    private tokenStore: TokenStoreService) {
   }
 
   ngOnInit(): void {
+    this.tokenStore.get() ? this.isAuthorized = true : this.isAuthorized = false;
+    console.log(this.isAuthorized);//
     this.masterList.getMasters(null, null, null, null, 0, 10).subscribe(data => {
       data.forEach(item => (item as any).starRating = this.countStarRating(item.averageRating));
       this.vm.Masters = data;
-      console.log(data);
+      console.log(data);//
     });
   }
 
   public logScrollStart() {
-    //console.log('scroll started');
+    console.log('scroll started');//
   }
 
   public logScrolling($event: any) {
-    //console.log($event.detail);
+    console.log($event.detail);//
     if ($event.detail.deltaY > 10) {
       if ((this.topMenu as any).el.classList.contains('header-top')) {
         (this.topMenu as any).el.classList.remove('header-top');
       }
-      //console.log('top');
+      console.log('top');//
     } else if ($event.detail.deltaY < -10) {
       (this.topMenu as any).el.classList.add('header-top');
       if ($event.detail.currentY === 0) {
         (this.topMenu as any).el.classList.remove('header-top');
       }
-      //console.log('bot');
+      console.log('bot');//
     }
   }
 
