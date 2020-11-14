@@ -98,7 +98,7 @@ namespace BC.API.Services.MastersListService
     {
       var master = this._mastersContext.Masters.Single(m => m.Id == masterId);
 
-      var name = Path.Combine("masters", masterId.ToString(), "avatar" + Path.GetExtension(fileName))
+      var name = Path.Combine("masters", masterId.ToString(), "avatarSource" + Path.GetExtension(fileName))
         .Replace(@"\", @"/");
 
       var formData = new MultipartFormDataContent();
