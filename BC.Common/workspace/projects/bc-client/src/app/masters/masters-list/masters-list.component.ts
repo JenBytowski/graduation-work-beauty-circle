@@ -1,9 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {MenuController} from '@ionic/angular';
 import {MasterListClient} from "bc-common";
-import {AuthInterceptorService} from "../../auth-interceptor.service";
-import {HttpClient, HttpHandler} from "@angular/common/http";
-import {CookieService} from "ngx-cookie-service";
 
 @Component({
   selector: 'app-masters-list',
@@ -23,27 +20,10 @@ export class MastersListComponent implements OnInit {
 
   public vm: Vm = new Vm();
 
-  constructor(
-    private menu: MenuController,
-    private masterList: MasterListClient.MasterListClient,
-    private interceptor: AuthInterceptorService,
-    private httpClient: HttpClient,
-    private httpHandler: HttpHandler,
-    private cookieService: CookieService) {
+  constructor(private menu: MenuController, private masterList: MasterListClient.MasterListClient) {
   }
 
   ngOnInit(): void {
-    // http://localhost:5211/api/masters-list/get-masters?Skip=0&Take=10
-    // let options: any = {
-    //   observe: "response",
-    //   responseType: "blob",
-    //   headers: new HttpHeaders({
-    //     "Accept": "text/plain",
-    //     "Vk-username": this.cookieService.get('vk-username'),
-    //     "Vk-auth-token": this.cookieService.get('vk-auth-token')
-    //   })
-    // };
-    // this.interceptor.intercept(new HttpRequest("get", 'http://localhost:5211/api/masters-list/get-masters?Skip=0&Take=10', options), this.httpHandler);
     this.masterList.getMasters(null, null, null, null, 0, 10).subscribe(data => {
       data.forEach(item => (item as any).starRating = this.countStarRating(item.averageRating));
       this.vm.Masters = data;

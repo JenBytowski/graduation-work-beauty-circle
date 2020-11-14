@@ -5,7 +5,7 @@ import {AuthenticationRoutingModule} from './authentication-routing.module';
 import {AuthenticationComponent} from "./authentication/authentication.component";
 import {IonicModule} from "@ionic/angular";
 import {CookieService} from "ngx-cookie-service";
-import {TokenStoreService} from "../token-store.service";
+import {TokenStoreService} from "bc-common";
 
 export function getBaseUrl(document) {
   return document.getElementsByTagName('base')[0].href;

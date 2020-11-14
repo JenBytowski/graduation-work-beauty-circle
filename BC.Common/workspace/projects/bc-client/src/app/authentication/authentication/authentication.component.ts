@@ -2,7 +2,7 @@ import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationClient} from "bc-common";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {TokenStoreService} from "../../token-store.service";
+import {TokenStoreService} from "bc-common";
 
 @Component({
   selector: 'app-authentication',

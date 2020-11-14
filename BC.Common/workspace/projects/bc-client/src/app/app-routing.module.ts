@@ -4,7 +4,7 @@ import {AuthenticationComponent} from "./authentication/authentication/authentic
 import {MastersListComponent} from "./masters/masters-list/masters-list.component";
 import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
 import {HomePage} from "./home/home.page";
-import {TokenStoreService} from "./token-store.service";
+import {TokenStoreService} from "bc-common";
 
 const tokenStoreService: TokenStoreService = new TokenStoreService();
 const routes: Routes = [

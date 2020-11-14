@@ -13,7 +13,7 @@ import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
 import {environment} from "../environments/environment";
-import {AuthInterceptorService} from "./auth-interceptor.service";
+import {AuthInterceptorService} from "bc-common";
 
 @NgModule({
   declarations: [
