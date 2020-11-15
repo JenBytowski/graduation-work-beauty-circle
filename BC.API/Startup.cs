@@ -84,6 +84,12 @@ namespace BC.API
           .Get<MastersListServiceConfig>()
       );
       
+      services.AddTransient<FilesServiceClientConfig>(provider =>
+        provider.GetService<IConfiguration>()
+          .GetSection("Services:FileServiceClient")
+          .Get<FilesServiceClientConfig>()
+      );
+      
       services.AddTransient<BalanceService>();
       services.AddTransient<AuthenticationService>();
       services.AddTransient<MastersListService>();
