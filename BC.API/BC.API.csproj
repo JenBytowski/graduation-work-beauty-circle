@@ -105,8 +105,6 @@
       <Folder Include="Services\AuthenticationService\Data\Migrations" />
       <Folder Include="Services\BookingService\Data\Migrations" />
       <Folder Include="Services\BookingService\Handlers" />
-      <Folder Include="Services\ImagesProcessorService\Controllers" />
-      <Folder Include="Services\ImagesProcessorService\Handlers" />
       <Folder Include="Services\MastersListService\Data\Migrations" />
       <Folder Include="Services\MastersListService\ServiceClients" />
       <Folder Include="Services\NotificationsService" />
