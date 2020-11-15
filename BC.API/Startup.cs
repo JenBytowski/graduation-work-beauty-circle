@@ -15,6 +15,7 @@ using BC.API.Services.BalanceService;
 using BC.API.Services.BalanceService.Data;
 using BC.API.Services.BookingService;
 using BC.API.Services.BookingService.Data;
+using BC.API.Services.FeedbackService.Data;
 using BC.API.Services.MastersListService;
 using BC.API.Services.MastersListService.Data;
 using BC.API.Services.MastersListService.Handlers;
@@ -144,6 +145,16 @@ namespace BC.API
         opt =>
         {
           opt.UseSqlServer(Configuration.GetConnectionString("BalanceContext"));
+        },
+        ServiceLifetime.Transient,
+        ServiceLifetime.Transient
+      );
+      
+      services.AddDbContext<FeedbackContext>
+      (
+        opt =>
+        {
+          opt.UseSqlServer(Configuration.GetConnectionString("FeedbackContext"));
         },
         ServiceLifetime.Transient,
         ServiceLifetime.Transient

@@ -12,4 +12,7 @@ dotnet ef database update --context BookingContext
 Write-Host "Migrating MastersContext"
 dotnet ef database update --context MastersContext
 
-Write-Host "Finished!"
+Write-Host "Migrating FeedbackContext"
+dotnet ef database update --context FeedbackContext
+
+Write-Host "Done!"

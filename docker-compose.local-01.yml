@@ -13,6 +13,7 @@ services:
       - ConnectionStrings__MastersContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__BookingContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - ConnectionStrings__BalanceContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
+      - ConnectionStrings__FeedbackContext=Server=sql-server,1433;Initial Catalog=BC;User=sa;Password=Password123
       - Services__MastersList__FilesServiceInternalUrl=http://gateway/api/files/
       - Services__MastersList__FilesServicePublicUrl="http://localhost:5210/api/files/"
       - RabbitMQEventBus__Host=rabbitmq
