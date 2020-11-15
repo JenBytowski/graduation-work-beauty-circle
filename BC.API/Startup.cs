@@ -78,12 +78,6 @@ namespace BC.API
 
     private void AddApplicationServices(IServiceCollection services)
     {
-      services.AddTransient<MastersListServiceConfig>(provider =>
-        provider.GetService<IConfiguration>()
-          .GetSection("Services:MastersList")
-          .Get<MastersListServiceConfig>()
-      );
-      
       services.AddTransient<FilesServiceClientConfig>(provider =>
         provider.GetService<IConfiguration>()
           .GetSection("Services:FileServiceClient")

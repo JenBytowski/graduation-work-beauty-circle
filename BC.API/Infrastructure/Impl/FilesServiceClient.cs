@@ -13,24 +13,26 @@ namespace BC.API.Infrastructure.Impl
 
     public FilesServiceClient(HttpClient httpClient, FilesServiceClientConfig config)
     {
+      FilesServiceUrl = config.FilesServiceInternalUrl;
+      
       _httpClient = httpClient;
       _config = config;
     }
+    
+    public string FilesServiceUrl { get; private set; }
 
-    public async Task<string> PostFile(Stream fileStream)
+    public async Task PostFile(Stream fileStream, string fileName)
     {
       var formData = new MultipartFormDataContent();
-      formData.Add(new StreamContent(fileStream), "file", "");
+      formData.Add(new StreamContent(fileStream), "file", fileName);
 
-      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServicePublicUrl) {Content = formData};
+      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
       var res = await this._httpClient.SendAsync(req);
 
       if (!res.IsSuccessStatusCode)
       {
-        throw new ApplicationException("Cant post file to File Service");
+        throw new CantPostFileToFilesServiceException("Cant post file to File Service");
       }
-      
-      return res.Content.ToString();
     }
   }
 
@@ -39,5 +41,11 @@ namespace BC.API.Infrastructure.Impl
     public string FilesServiceInternalUrl { get; set; }
     
     public string FilesServicePublicUrl { get; set; }
+  }
+
+  public class CantPostFileToFilesServiceException : ApplicationException
+  {
+    public CantPostFileToFilesServiceException(string message) : base(message) 
+    { }
   }
 }
