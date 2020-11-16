@@ -63,11 +63,7 @@ namespace BC.API.Services.MastersListService
       {
         var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
 
-        var masterSourcePic =
-          await (await _httpClient.GetAsync(_filesServiceClient.FilesServiceUrl + master.AvatarSourceFileName))
-            .Content
-            .ReadAsStreamAsync();
-
+        var masterSourcePic = await _filesServiceClient.GetFile(master.AvatarSourceFileName);
         var processedImageStream = ProcessImage(masterSourcePic, 600, 600);
         var avatarFileName = master.AvatarSourceFileName.Replace("avatarSource", "avatar");
 
@@ -76,7 +72,7 @@ namespace BC.API.Services.MastersListService
         master.AvatarFileName = avatarFileName;
         await this._context.SaveChangesAsync();
       }
-      catch (CantPostFileToFilesServiceException ex)
+      catch (CantCallToFilesServiceException ex)
       {
         throw;
       }
@@ -92,11 +88,7 @@ namespace BC.API.Services.MastersListService
       {
         var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
 
-        var masterSourcePic =
-          await (await _httpClient.GetAsync(_filesServiceClient.FilesServiceUrl + master.AvatarSourceFileName))
-            .Content
-            .ReadAsStreamAsync();
-
+        var masterSourcePic = await _filesServiceClient.GetFile(master.AvatarSourceFileName);
         var processedImageStream = ProcessImage(masterSourcePic, 160, 160);
         var thumbnailFileName = master.AvatarSourceFileName.Replace("avatarSource", "thumbnail");
 
@@ -105,7 +97,7 @@ namespace BC.API.Services.MastersListService
         master.ThumbnailFileName = thumbnailFileName;
         await this._context.SaveChangesAsync();
       }
-      catch (CantPostFileToFilesServiceException ex)
+      catch (CantCallToFilesServiceException ex)
       {
         throw;
       }

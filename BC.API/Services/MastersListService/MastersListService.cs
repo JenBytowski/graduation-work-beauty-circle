@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using BC.API.Domain;
 using BC.API.Events;
 using BC.API.Infrastructure.Impl;
-using BC.API.Services.AuthenticationService.Data;
 using BC.API.Services.MastersListService.Data;
 using BC.API.Services.MastersListService.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -55,19 +54,13 @@ namespace BC.API.Services.MastersListService
           var avatarFileName = mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(avatarFileName))
           {
-            masterRes.AvatarUrl = new Uri(
-              new Uri(this._filesServiceClient.FilesServiceUrl), 
-              avatarFileName
-            ).ToString();
+            masterRes.AvatarUrl = _filesServiceClient.BuildPublicUrl(avatarFileName);
           }
 
           var thumbnailFileName = mstr.ThumbnailFileName ?? mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(thumbnailFileName))
           {
-            masterRes.ThumbnailUrl = new Uri(
-              new Uri(this._filesServiceClient.FilesServiceUrl),
-              thumbnailFileName
-            ).ToString();
+            masterRes.ThumbnailUrl = _filesServiceClient.BuildPublicUrl(thumbnailFileName);
           }
 
           return masterRes;

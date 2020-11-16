@@ -6,7 +6,7 @@ using BC.API.Infrastructure.Interfaces;
 
 namespace BC.API.Infrastructure.Impl
 {
-  public class FilesServiceClient: IFilesServiceClient
+  public class FilesServiceClient : IFilesServiceClient
   {
     private HttpClient _httpClient;
     private FilesServiceClientConfig _config;
@@ -14,12 +14,24 @@ namespace BC.API.Infrastructure.Impl
     public FilesServiceClient(HttpClient httpClient, FilesServiceClientConfig config)
     {
       FilesServiceUrl = config.FilesServiceInternalUrl;
-      
+
       _httpClient = httpClient;
       _config = config;
     }
-    
+
     public string FilesServiceUrl { get; private set; }
+
+    public async Task<Stream> GetFile(string name)
+    {
+      var response = await _httpClient.GetAsync(Path.Combine(_config.FilesServiceInternalUrl,name));
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new CantCallToFilesServiceException("Cant get file from File Service");
+      }
+
+      return await response.Content.ReadAsStreamAsync();
+    }
 
     public async Task PostFile(Stream fileStream, string fileName)
     {
@@ -31,21 +43,38 @@ namespace BC.API.Infrastructure.Impl
 
       if (!res.IsSuccessStatusCode)
       {
-        throw new CantPostFileToFilesServiceException("Cant post file to File Service");
+        throw new CantCallToFilesServiceException("Cant post file to File Service");
       }
+    }
+
+    public async Task DeleteFile(string name)
+    {
+      var response = await _httpClient.DeleteAsync(Path.Combine(_config.FilesServiceInternalUrl, name));
+
+      if (!response.IsSuccessStatusCode)
+      {
+        throw new CantCallToFilesServiceException("Cant delete file from File Service");
+      }
+    }
+
+
+    public string BuildPublicUrl(string fileName)
+    {
+      return new Uri(new Uri(_config.FilesServicePublicUrl), fileName).ToString();
     }
   }
 
   public class FilesServiceClientConfig
   {
     public string FilesServiceInternalUrl { get; set; }
-    
+
     public string FilesServicePublicUrl { get; set; }
   }
 
-  public class CantPostFileToFilesServiceException : ApplicationException
+  public class CantCallToFilesServiceException : ApplicationException
   {
-    public CantPostFileToFilesServiceException(string message) : base(message) 
-    { }
+    public CantCallToFilesServiceException(string message) : base(message)
+    {
+    }
   }
 }

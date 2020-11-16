@@ -94,7 +94,7 @@ namespace BC.API
     {
       services.AddTransient<HttpClient>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
-      services.AddTransient<IFilesServiceClient, FilesServiceClient>();
+      services.AddTransient<FilesServiceClient>();
     }
 
     private void AddSwagger(IServiceCollection services)
