@@ -44,7 +44,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(this.baseUrl)
+            window.location.replace(this.baseUrl);
           }
         });
       } else if (code && state == 'instagram') {
@@ -54,7 +54,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(this.baseUrl)
+            window.location.replace(this.baseUrl);
           }
         });
       } else if (code && state == 'google') {

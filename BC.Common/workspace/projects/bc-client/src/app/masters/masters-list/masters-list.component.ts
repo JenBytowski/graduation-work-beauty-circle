@@ -18,7 +18,7 @@ export class MastersListComponent implements OnInit {
 
   public filterStatus: boolean = false;
   public vm: Vm = new Vm();
-  private isAuthorized: boolean;
+  public isAuthorized: boolean;
 
   constructor(
     private menu: MenuController,
