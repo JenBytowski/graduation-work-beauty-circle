@@ -13,7 +13,8 @@ export class TokenGuard implements CanActivate {
     if (this.tokenStore.get()) {
       return true;
     } else {
-      this.router.navigateByUrl('/unauthorized').then(() => {return false});
+      this.router.navigateByUrl('/authentication?return-url=' + location.href).then(() => {return false});
+      //this.router.navigateByUrl('/unauthorized').then(() => {return false});
     }
   }
 }

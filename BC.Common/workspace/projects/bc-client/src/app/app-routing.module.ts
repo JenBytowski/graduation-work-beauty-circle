@@ -12,7 +12,13 @@ import {UnauthorizedPageComponent} from "./exeption/unauthorized-page/unauthoriz
 const routes: Routes = [
   {
     path: '',
-    component: HomePage
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    component: HomePage,
+    pathMatch: 'full'
   },
   {
     path: 'authentication',

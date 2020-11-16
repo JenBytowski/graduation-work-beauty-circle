@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationClient, TokenStoreService} from "bc-common";
 import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-authentication',
@@ -18,15 +18,13 @@ export class AuthenticationComponent implements OnInit {
   phone: ElementRef;
 
   public codePopupStatus: boolean = false;
-
   public redirectUrl: string = this.baseUrl + 'authentication';
-
   public isAuthorize: boolean = false;
-
   private querySubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private authClient: AuthenticationClient.AuthenticationClient,
     private tokenStore: TokenStoreService,
     @Inject('BASE_URL') private baseUrl: string) {
@@ -37,6 +35,7 @@ export class AuthenticationComponent implements OnInit {
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
+      queryParam['return-url'] ? localStorage.setItem('return-url', queryParam['return-url']) : {};
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
@@ -44,7 +43,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(this.baseUrl);
+            window.location.replace(localStorage.getItem('return-url'));
           }
         });
       } else if (code && state == 'instagram') {
@@ -54,7 +53,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(this.baseUrl);
+            window.location.replace(localStorage.getItem('return-url'));
           }
         });
       } else if (code && state == 'google') {
@@ -64,7 +63,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(this.baseUrl)
+            window.location.replace(localStorage.getItem('return-url'));
           }
         });
       }
@@ -95,7 +94,7 @@ export class AuthenticationComponent implements OnInit {
       })).subscribe(data => {
         if (data.token) {
           this.tokenStore.put(data.token);
-          window.location.replace(this.baseUrl)
+          window.location.replace(localStorage.getItem('return-url'));
         }
       });
     }
