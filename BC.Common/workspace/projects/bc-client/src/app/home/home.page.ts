@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {TokenStoreService} from "bc-common";
 
 @Component({
   selector: 'app-home',
@@ -6,7 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-
-  constructor() {}
-
+  constructor(private tokenStore: TokenStoreService) {}
+  logOut(){
+    this.tokenStore.get() ? this.tokenStore.clear() : {};
+  }
 }
