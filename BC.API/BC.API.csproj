@@ -110,5 +110,10 @@
       <Folder Include="Services\NotificationsService" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="Infrastructure\NswagClients\Authentication\nswag.json" />
+      <None Include="Infrastructure\NswagClients\MastersList\nswag.json" />
+    </ItemGroup>
+
 
 </Project>

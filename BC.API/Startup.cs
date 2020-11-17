@@ -67,11 +67,11 @@ namespace BC.API
           provider
         );
 
-        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
-        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
-        bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
-        
-        bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();
+        // bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
+        // bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
+        // bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
+        //
+        // bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();
 
         return bus;
       });
