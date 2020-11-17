@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using BC.API.Domain;
 using BC.API.Events;
+using BC.API.Infrastructure.NswagClients.Booking;
 using BC.API.Services.AuthenticationService.Data;
 using BC.API.Services.MastersListService.Data;
 using BC.API.Services.MastersListService.Exceptions;
@@ -20,24 +21,27 @@ namespace BC.API.Services.MastersListService
     private readonly AvatarImageProcessingSaga _avatarImageProcessingSaga;
 
     private readonly HttpClient _httpClient;
+    private readonly BookingClient _bookingClient;
 
     public MastersListService(
       MastersListServiceConfig config,
       MastersContext mastersContext,
       AuthenticationContext authenticationContextContext,
       AvatarImageProcessingSaga avatarImageProcessingSaga,
-      HttpClient httpClient
+      HttpClient httpClient,
+      BookingClient bookingClient
     )
     {
       _avatarImageProcessingSaga = avatarImageProcessingSaga;
       _mastersContext = mastersContext;
       _config = config;
       _httpClient = httpClient;
+      _bookingClient = bookingClient;
     }
 
     public async Task<IEnumerable<MasterRes>> GetMasters(MastersFilter filter)
     {
-      return _mastersContext.Masters
+      var res = _mastersContext.Masters
         .Include(mstr => mstr.PriceList)
         .ThenInclude(mstr => mstr.PriceListItems)
         .Include(mstr => mstr.Speciality)
@@ -73,6 +77,8 @@ namespace BC.API.Services.MastersListService
 
           return masterRes;
         }).ToArray();
+
+      return res;
     }
 
     public MasterRes GetMasterById(Guid masterId)

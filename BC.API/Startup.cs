@@ -8,7 +8,10 @@ using System.Text.Json;
 using BC.API.Events;
 using BC.API.Infrastructure.Impl;
 using BC.API.Infrastructure.Interfaces;
-using BC.API.Services;
+using BC.API.Infrastructure.NswagClients;
+using BC.API.Infrastructure.NswagClients.Authentication;
+using BC.API.Infrastructure.NswagClients.Booking;
+using BC.API.Infrastructure.NswagClients.MastersList;
 using BC.API.Services.AuthenticationService;
 using BC.API.Services.AuthenticationService.Data;
 using BC.API.Services.BalanceService;
@@ -33,6 +36,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StrongCode.Seedwork.EventBus;
 using StrongCode.Seedwork.EventBus.RabbitMQ;
+using BadAPIResponse = BC.API.Services.BadAPIResponse;
 using JWTokenOptions = BC.API.Services.AuthenticationService.TokenOptions;
 
 namespace BC.API
@@ -67,11 +71,11 @@ namespace BC.API
           provider
         );
 
-        // bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
-        // bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
-        // bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
-        //
-        // bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();
+        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
+        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
+        bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
+
+        bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();
 
         return bus;
       });
@@ -84,7 +88,7 @@ namespace BC.API
           .GetSection("Services:MastersList")
           .Get<MastersListServiceConfig>()
       );
-      
+
       services.AddTransient<BalanceService>();
       services.AddTransient<AuthenticationService>();
       services.AddTransient<MastersListService>();
@@ -108,6 +112,36 @@ namespace BC.API
         opt.SwaggerDoc("booking", new OpenApiInfo {Title = "Booking", Version = "1.0"});
         opt.SwaggerDoc("file-service", new OpenApiInfo {Title = "File service", Version = "1.0"});
         opt.EnableAnnotations();
+      });
+    }
+
+    private void AddSwaggerClients(IServiceCollection services)
+    {
+      services.AddTransient<ApiClientsUrls>(provider =>
+        provider.GetService<IConfiguration>()
+          .GetSection("ApiClientsUrls")
+          .Get<ApiClientsUrls>()
+      );
+
+      services.AddTransient<AuthenticationClient>(provider =>
+      {
+        var urls = provider.GetService<ApiClientsUrls>();
+        var httpClient = provider.GetService<HttpClient>();
+        return new AuthenticationClient(urls.Authentication, httpClient);
+      });
+      
+      services.AddTransient<MastersListClient>(provider =>
+      {
+        var urls = provider.GetService<ApiClientsUrls>();
+        var httpClient = provider.GetService<HttpClient>();
+        return new MastersListClient(urls.MastersList, httpClient);
+      });
+      
+      services.AddTransient<BookingClient>(provider =>
+      {
+        var urls = provider.GetService<ApiClientsUrls>();
+        var httpClient = provider.GetService<HttpClient>();
+        return new BookingClient(urls.Booking, httpClient);
       });
     }
 
@@ -149,7 +183,7 @@ namespace BC.API
         ServiceLifetime.Transient,
         ServiceLifetime.Transient
       );
-      
+
       services.AddDbContext<FeedbackContext>
       (
         opt =>
@@ -195,6 +229,7 @@ namespace BC.API
       this.AddEventBus(services);
       this.AddApplicationServices(services);
       this.AddSwagger(services);
+      this.AddSwaggerClients(services);
       this.AddAuthentication(services);
 
       services.AddControllers();
@@ -240,20 +275,18 @@ namespace BC.API
         {
           context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
           context.Response.Headers.Add(new KeyValuePair<string, StringValues>("Content-Type", "application/json"));
-          
-          await context.Response.WriteAsync(JsonSerializer.Serialize<BadAPIResponse>(new BadAPIResponse
-          {
-            Messages = new List<string>
+
+          await context.Response.WriteAsync(JsonSerializer.Serialize<BadAPIResponse>(
+            new BadAPIResponse
             {
-              ex.Message,
-              ex.InnerException?.Message
-            }.Where(mess => !string.IsNullOrEmpty(mess))
-          }, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+              Messages = new List<string> {ex.Message, ex.InnerException?.Message}.Where(mess =>
+                !string.IsNullOrEmpty(mess))
+            }, new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase}));
         }
       });
 
       app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-      
+
       authenticationService.EnsureDataInitialized().Wait();
     }
   }

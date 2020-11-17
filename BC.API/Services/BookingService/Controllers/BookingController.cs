@@ -27,7 +27,6 @@ namespace BC.API.Services.BookingService.Controllers
     {
       try
       {
-        throw new Exception();
         var schedule = _bookingService.GetSchedule(masterId);
 
         return Ok(schedule);
