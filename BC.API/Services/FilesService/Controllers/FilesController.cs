@@ -25,7 +25,7 @@ namespace BC.API.Services.FilesService.Controllers
     public FilesController(IWebHostEnvironment appEnvironment)
     {
       _appEnvironment = appEnvironment;
-      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, @"Data\FilesFolder"); // TODO: Вынести в конфигурацию
+      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "Data","FilesFolder"); // TODO: Вынести в конфигурацию
     }
 
     [HttpGet]
