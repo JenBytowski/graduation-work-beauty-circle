@@ -85,10 +85,10 @@ namespace BC.API
 
     private void AddApplicationServices(IServiceCollection services)
     {
-      services.AddTransient<MastersListServiceConfig>(provider =>
+      services.AddTransient<FilesServiceClientConfig>(provider =>
         provider.GetService<IConfiguration>()
-          .GetSection("Services:MastersList")
-          .Get<MastersListServiceConfig>()
+          .GetSection("Services:FileServiceClient")
+          .Get<FilesServiceClientConfig>()
       );
 
       services.AddTransient<BalanceService>();
@@ -101,7 +101,7 @@ namespace BC.API
     {
       services.AddTransient<HttpClient>();
       services.AddSingleton<ISMSClient, ConsoleSMSClient>();
-      services.AddTransient<IFilesServiceClient, FilesServiceClient>();
+      services.AddTransient<FilesServiceClient>();
     }
 
     private void AddSwagger(IServiceCollection services)

@@ -5,6 +5,10 @@ namespace BC.API.Infrastructure.Interfaces
 {
   public interface IFilesServiceClient
   {
-     Task<string> PostFile(Stream fileStream);
+    Task<Stream> GetFile(string name);
+
+    Task PostFile(Stream fileStream, string fileName);
+
+    Task DeleteFile(string name);
   }
 }

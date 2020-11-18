@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BC.API.Domain;
 using BC.API.Events;
 using BC.API.Infrastructure.NswagClients.Booking;
-using BC.API.Services.AuthenticationService.Data;
+using BC.API.Infrastructure.Impl;
 using BC.API.Services.MastersListService.Data;
 using BC.API.Services.MastersListService.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -16,25 +16,23 @@ namespace BC.API.Services.MastersListService
 {
   public class MastersListService
   {
-    private readonly MastersListServiceConfig _config;
     private readonly MastersContext _mastersContext;
     private readonly AvatarImageProcessingSaga _avatarImageProcessingSaga;
-
+    private readonly FilesServiceClient _filesServiceClient;
     private readonly HttpClient _httpClient;
     private readonly BookingClient _bookingClient;
 
     public MastersListService(
-      MastersListServiceConfig config,
       MastersContext mastersContext,
-      AuthenticationContext authenticationContextContext,
       AvatarImageProcessingSaga avatarImageProcessingSaga,
+      FilesServiceClient filesServiceClient,
       HttpClient httpClient,
       BookingClient bookingClient
     )
     {
       _avatarImageProcessingSaga = avatarImageProcessingSaga;
       _mastersContext = mastersContext;
-      _config = config;
+      _filesServiceClient = filesServiceClient;
       _httpClient = httpClient;
       _bookingClient = bookingClient;
     }
@@ -60,19 +58,13 @@ namespace BC.API.Services.MastersListService
           var avatarFileName = mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(avatarFileName))
           {
-            masterRes.AvatarUrl = new Uri(
-              new Uri(this._config.FilesServicePublicUrl), 
-              avatarFileName
-            ).ToString();
+            masterRes.AvatarUrl = _filesServiceClient.BuildPublicUrl(avatarFileName);
           }
 
           var thumbnailFileName = mstr.ThumbnailFileName ?? mstr.AvatarFileName ?? mstr.AvatarSourceFileName;
           if (!string.IsNullOrWhiteSpace(thumbnailFileName))
           {
-            masterRes.ThumbnailUrl = new Uri(
-              new Uri(this._config.FilesServicePublicUrl),
-              thumbnailFileName
-            ).ToString();
+            masterRes.ThumbnailUrl = _filesServiceClient.BuildPublicUrl(thumbnailFileName);
           }
 
           return masterRes;
@@ -106,18 +98,11 @@ namespace BC.API.Services.MastersListService
 
       var name = Path.Combine("masters", masterId.ToString(), "avatarSource" + Path.GetExtension(fileName))
         .Replace(@"\", @"/");
-
-      var formData = new MultipartFormDataContent();
-      formData.Add(new StreamContent(stream), name, name);
-
-      var req = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
-
-      await this._httpClient.SendAsync(req).Result.Content.ReadAsStringAsync();
+      await _filesServiceClient.PostFile(stream, fileName);
 
       master.AvatarSourceFileName = name;
 
       this._mastersContext.SaveChanges();
-
       this._avatarImageProcessingSaga.Start(masterId);
     }
 
@@ -303,11 +288,5 @@ namespace BC.API.Services.MastersListService
 
       return result;
     }
-  }
-
-  public class MastersListServiceConfig
-  {
-    public string FilesServiceInternalUrl { get; set; }
-    public string FilesServicePublicUrl { get; set; }
   }
 }

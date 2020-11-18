@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using BC.API.Infrastructure.Impl;
 using BC.API.Services.MastersListService.Data;
 using Microsoft.EntityFrameworkCore;
 using StrongCode.Seedwork.EventBus;
@@ -21,15 +22,15 @@ namespace BC.API.Services.MastersListService
 
     private readonly IEventBus _eventBus;
     private readonly MastersContext _context;
-    private readonly MastersListServiceConfig _config;
+    private readonly FilesServiceClient _filesServiceClient;
     private readonly HttpClient _httpClient;
 
-    public AvatarImageProcessingSaga(IEventBus eventBus, MastersContext context, MastersListServiceConfig config,
+    public AvatarImageProcessingSaga(IEventBus eventBus, MastersContext context, FilesServiceClient filesServiceClient,
       HttpClient httpClient)
     {
       _eventBus = eventBus;
       _context = context;
-      _config = config;
+      _filesServiceClient = filesServiceClient;
       _httpClient = httpClient;
     }
 
@@ -58,56 +59,52 @@ namespace BC.API.Services.MastersListService
 
     private async Task CreateAvatar(Guid masterId)
     {
-      var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
-
-      var masterSourcePic =
-        await (await _httpClient.GetAsync(_config.FilesServiceInternalUrl + master.AvatarSourceFileName))
-          .Content
-          .ReadAsStreamAsync();
-
-      var processedImageStream = ProcessImage(masterSourcePic, 600, 600);
-      var avatarFileName = master.AvatarSourceFileName.Replace("avatarSource", "avatar");
-
-      var formData = new MultipartFormDataContent();
-      formData.Add(new StreamContent(processedImageStream), avatarFileName, avatarFileName);
-
-      var saveFileRequest = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
-      var saveFileResponse = await _httpClient.SendAsync(saveFileRequest);
-
-      if (!saveFileResponse.IsSuccessStatusCode)
+      try
       {
-        throw new ApplicationException("Cant save master avatar pic");
-      }
+        var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
 
-      master.AvatarFileName = avatarFileName;
-      await this._context.SaveChangesAsync();
+        var masterSourcePic = await _filesServiceClient.GetFile(master.AvatarSourceFileName);
+        var processedImageStream = ProcessImage(masterSourcePic, 600, 600);
+        var avatarFileName = master.AvatarSourceFileName.Replace("avatarSource", "avatar");
+
+        await _filesServiceClient.PostFile(processedImageStream, avatarFileName);
+
+        master.AvatarFileName = avatarFileName;
+        await this._context.SaveChangesAsync();
+      }
+      catch (CantCallToFilesServiceException ex)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw;
+      }
     }
 
     private async Task CreateThumbnail(Guid masterId)
     {
-      var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
-
-      var masterSourcePic =
-        await (await _httpClient.GetAsync(_config.FilesServiceInternalUrl + master.AvatarSourceFileName))
-          .Content
-          .ReadAsStreamAsync();
-      
-      var processedImageStream = ProcessImage(masterSourcePic, 160, 160);
-      var thumbnailFileName = master.AvatarSourceFileName.Replace("avatarSource", "thumbnail");
-
-      var formData = new MultipartFormDataContent();
-      formData.Add(new StreamContent(processedImageStream), thumbnailFileName, thumbnailFileName);
-
-      var saveFileRequest = new HttpRequestMessage(HttpMethod.Post, _config.FilesServiceInternalUrl) {Content = formData};
-      var saveFileResponse = await _httpClient.SendAsync(saveFileRequest);
-
-      if (!saveFileResponse.IsSuccessStatusCode)
+      try
       {
-        throw new ApplicationException("Cant save master thumbnail pic");
-      }
+        var master = await this._context.Masters.SingleAsync(m => m.Id == masterId);
 
-      master.ThumbnailFileName = thumbnailFileName;
-      await this._context.SaveChangesAsync();
+        var masterSourcePic = await _filesServiceClient.GetFile(master.AvatarSourceFileName);
+        var processedImageStream = ProcessImage(masterSourcePic, 160, 160);
+        var thumbnailFileName = master.AvatarSourceFileName.Replace("avatarSource", "thumbnail");
+
+        await _filesServiceClient.PostFile(processedImageStream, thumbnailFileName);
+
+        master.ThumbnailFileName = thumbnailFileName;
+        await this._context.SaveChangesAsync();
+      }
+      catch (CantCallToFilesServiceException ex)
+      {
+        throw;
+      }
+      catch (Exception ex)
+      {
+        throw;
+      }
     }
 
     private Stream ProcessImage(Stream imageStream, int width, int height)

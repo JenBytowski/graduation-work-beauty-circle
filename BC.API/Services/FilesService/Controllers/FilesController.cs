@@ -25,7 +25,7 @@ namespace BC.API.Services.FilesService.Controllers
     public FilesController(IWebHostEnvironment appEnvironment)
     {
       _appEnvironment = appEnvironment;
-      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, @"Data\FilesFolder"); // TODO: Вынести в конфигурацию
+      _filesFolder = Path.Combine(_appEnvironment.ContentRootPath, "Data","FilesFolder"); // TODO: Вынести в конфигурацию
     }
 
     [HttpGet]
@@ -77,6 +77,21 @@ namespace BC.API.Services.FilesService.Controllers
     [Route("{name}")]
     public IActionResult DeleteFile([FromRoute] string name)
     {
+      var filePath = Path.Combine(_filesFolder, name);
+      
+      if (!System.IO.File.Exists(filePath))
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Messages = new []
+          {
+            $"File {name} is already deleted or not exist"
+          }
+        });
+      }
+      
+      System.IO.File.Delete(filePath);
+      
       return Ok();
     }
   }
