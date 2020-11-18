@@ -36,9 +36,13 @@ namespace BC.API.Services.BookingService.Data
 
     public IList<ScheduleDay> Days { get; set; }
 
-    public bool ConnectedBookingsPrefered { get; set; }
-
-    public bool PreferedGapInMinutes { get; set; }
+    public int TimeStepInMinutes { get; set; }
+    
+    public int ConnectionGapInMinutes { get; set; }
+    
+    public int SpaceGapInMinutes { get; set; }
+    
+    public bool ConnectedBookingsOnly { get; set; }
   }
 
   public class ScheduleDay

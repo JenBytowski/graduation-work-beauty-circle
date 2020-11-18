@@ -4,14 +4,16 @@ using BC.API.Services.BookingService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BC.API.Services.BookingService.Data.Migrations
 {
     [DbContext(typeof(BookingContext))]
-    partial class BookingContextModelSnapshot : ModelSnapshot
+    [Migration("20201118162914_Rename_Field")]
+    partial class Rename_Field
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,17 +31,11 @@ namespace BC.API.Services.BookingService.Data.Migrations
                     b.Property<bool>("ConnectedBookingsOnly")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ConnectionGapInMinutes")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("MasterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("SpaceGapInMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TimeStepInMinutes")
-                        .HasColumnType("int");
+                    b.Property<bool>("PreferedGapInMinutes")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
