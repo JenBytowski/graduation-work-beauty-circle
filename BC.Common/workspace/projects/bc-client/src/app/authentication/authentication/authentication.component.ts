@@ -1,8 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {AuthenticationClient} from "bc-common";
+import {AuthenticationClient, TokenStoreService} from "bc-common";
 import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {TokenStoreService} from "../../token-store.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-authentication',
@@ -19,49 +18,53 @@ export class AuthenticationComponent implements OnInit {
   phone: ElementRef;
 
   public codePopupStatus: boolean = false;
-
   public redirectUrl: string = this.baseUrl + 'authentication';
-
+  public isAuthorize: boolean = false;
   private querySubscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private authClient: AuthenticationClient.AuthenticationClient,
     private tokenStore: TokenStoreService,
     @Inject('BASE_URL') private baseUrl: string) {
   }
 
   ngOnInit() {
-    //console.log(this.redirectUrl)
+    console.log(this.redirectUrl);//
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
+      queryParam['return-url'] ? localStorage.setItem('return-url', queryParam['return-url']) : {};
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.tokenStore.put(data.token);
-          // this.cookieService.set('vk-auth-token', data.token);
-          // this.cookieService.set('vk-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            window.location.replace(localStorage.getItem('return-url'));
+          }
         });
       } else if (code && state == 'instagram') {
         this.authClient.authenticateByInstagram(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.tokenStore.put(data.token);
-          // this.cookieService.set('inst-auth-token', data.token);
-          // this.cookieService.set('inst-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            window.location.replace(localStorage.getItem('return-url'));
+          }
         });
       } else if (code && state == 'google') {
         this.authClient.authenticateByGoogle(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
           redirectUrl: this.redirectUrl
         })).subscribe(data => {
-          this.tokenStore.put(data.token);
-          // this.cookieService.set('google-auth-token', data.token);
-          // this.cookieService.set('google-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            window.location.replace(localStorage.getItem('return-url'));
+          }
         });
       }
     });
@@ -89,7 +92,10 @@ export class AuthenticationComponent implements OnInit {
         phone: (this.phone as any).el.value,
         code: (this.code as any).el.value
       })).subscribe(data => {
-        this.tokenStore.put(data.token);
+        if (data.token) {
+          this.tokenStore.put(data.token);
+          window.location.replace(localStorage.getItem('return-url'));
+        }
       });
     }
   }

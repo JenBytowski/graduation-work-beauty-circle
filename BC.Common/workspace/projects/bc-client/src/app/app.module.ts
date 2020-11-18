@@ -2,7 +2,14 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppRoutingModule} from "./app-routing.module";
 import {AppComponent} from "./app.component";
-import {ApiClientModule, AuthenticationClient, BcCommonModule, BookingClient, MasterListClient} from "bc-common";
+import {
+  ApiClientModule,
+  AuthenticationClient,
+  AuthInterceptorService,
+  BcCommonModule,
+  BookingClient,
+  MasterListClient
+} from "bc-common";
 import {IonicModule, IonicRouteStrategy} from "@ionic/angular";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {MastersModule} from "./masters/masters.module";
@@ -13,7 +20,9 @@ import {StatusBar} from "@ionic-native/status-bar/ngx";
 import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
 import {environment} from "../environments/environment";
-import {AuthInterceptorService} from "./auth-interceptor.service";
+import {ExeptionModule} from './exeption/exeption.module';
+import {TokenGuard} from "./guards/masters.guard";
+import {AuthenticationGuard} from "./guards/authentication.guard";
 
 @NgModule({
   declarations: [
@@ -29,13 +38,14 @@ import {AuthInterceptorService} from "./auth-interceptor.service";
     AuthenticationModule,
     BrowserAnimationsModule,
     HomePageModule,
-    ApiClientModule
-
-
+    ApiClientModule,
+    ExeptionModule
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    TokenGuard,
+    AuthenticationGuard,
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
