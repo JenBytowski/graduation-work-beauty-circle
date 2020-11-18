@@ -36,11 +36,11 @@ namespace BC.API.Services.BookingService
   {
     public Guid Id { get; set; }
 
+    public string ItemType { get; set; }
+
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
-    
-    public string ItemType { get; set; }
 
     public Guid? ClientId { get; set; }
 
@@ -59,7 +59,7 @@ namespace BC.API.Services.BookingService
       if (scheduleDayItem is Booking)
       {
         var booking = scheduleDayItem as Booking;
-        
+
         return new ScheduleDayItemRes
         {
           Id = booking.Id,
@@ -98,5 +98,51 @@ namespace BC.API.Services.BookingService
       };
     }
   }
-  
+
+  public class BookingRes
+  {
+    public Guid Id { get; set; }
+
+    public DateTime StartTime { get; set; }
+
+    public DateTime EndTime { get; set; }
+
+    public Guid MasterId { get; set; }
+
+    public Guid ClientId { get; set; }
+
+    public Guid ServiceTypeId { get; set; }
+
+    public string Description { get; set; }
+
+    public double PriceMin { get; set; }
+
+    public double PriceMax { get; set; }
+
+    public int DurationInMinutesMax { get; set; }
+
+    public static BookingRes ParseFromScheduleDayItem(ScheduleDayItem scheduleDayItem)
+    {
+      if (!(scheduleDayItem is Booking))
+      {
+        throw new ApplicationException("Can not parse booking res from not booking schedule day item");
+      }
+
+      var booking = (Booking) scheduleDayItem;
+
+      return new BookingRes
+      {
+        Id = booking.Id,
+        StartTime = booking.StartTime,
+        EndTime = booking.StartTime,
+        MasterId = booking.ScheduleDay.Schedule.MasterId,
+        ClientId = booking.ClientId,
+        Description = booking.Description,
+        ServiceTypeId = booking.ServiceTypeId,
+        PriceMax = booking.PriceMax,
+        PriceMin = booking.PriceMin,
+        DurationInMinutesMax = booking.DurationInMinutesMax
+      };
+    }
+  }
 }

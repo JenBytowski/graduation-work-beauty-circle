@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BC.API.Services.BookingService.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -106,6 +107,28 @@ namespace BC.API.Services.BookingService.Controllers
         _bookingService.CancelBooking(request);
         
         return Ok();
+      }
+      catch (BookingException ex)
+      {
+        return BadRequest(new BadAPIResponse
+        {
+          Code = APIErrorCodes.booking_exception.ToString(),
+          Messages = new List<string> {ex.Message, ex.InnerException?.Message}
+        });
+      }
+    }
+
+    [HttpGet]
+    [Route("get-booking")]
+    [SwaggerResponse(200, nameof(BookingRes), typeof(BookingRes))]
+    [SwaggerResponse(400, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    [SwaggerResponse(500, nameof(BadAPIResponse), typeof(BadAPIResponse))]
+    public async Task<ActionResult<BookingRes>> GetBooking([FromQuery]Guid bookingId)
+    {
+      try
+      {
+        var bookingRes = await this._bookingService.GetBooking(bookingId);
+        return Ok(bookingRes);
       }
       catch (BookingException ex)
       {

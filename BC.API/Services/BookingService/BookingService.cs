@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using BC.API.Events;
 using BC.API.Services.BookingService.Data;
 using BC.API.Services.BookingService.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -164,6 +166,25 @@ namespace BC.API.Services.BookingService
       ConcatenateWindows(booking.ScheduleDayId);
     }
 
+    public async Task<BookingRes> GetBooking(Guid bookingId)
+    {
+      try
+      {
+        var booking = await _context.Bookings
+          .Include(b => b.ScheduleDay)
+          .ThenInclude(sd => sd.Schedule)
+          .SingleAsync(b => b.Id == bookingId);
+
+        var bookingRes = BookingRes.ParseFromScheduleDayItem(booking);
+
+        return bookingRes;
+      }
+      catch (Exception exception)
+      {
+        throw new BookingException("Booking not found");
+      }
+    }
+
     public void AddPause(AddPauseReq req)
     {
       var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
@@ -259,6 +280,26 @@ namespace BC.API.Services.BookingService
 
       _context.ScheduleDayItems.AddRange(newWindows);
       _context.SaveChanges();
+    }
+
+    public async Task OnUserAssignedToRole(UserAssignedToRoleEvent userAssignedToRoleEvent)
+    {
+      if (userAssignedToRoleEvent.Role != Domain.UserRoles.Master)
+      {
+        return;
+      }
+      
+      if (this._context.Schedules.Any(s => s.MasterId == userAssignedToRoleEvent.UserId))
+      {
+        return;
+      }
+
+      await this._context.Schedules.AddAsync(new Schedule
+      {
+        MasterId = userAssignedToRoleEvent.UserId
+      });
+
+      await this._context.SaveChangesAsync();
     }
   }
 }

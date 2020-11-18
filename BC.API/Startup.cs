@@ -55,6 +55,7 @@ namespace BC.API
       services.AddTransient<ScheduleDayChangedEventHandler>();
       services.AddTransient<BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
       services.AddTransient<BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
+      services.AddTransient<BC.API.Services.BookingService.Handlers.UserAssignedToRoleHandler>();
 
       services.AddTransient<AvatarImageProcessingSaga>();
 
@@ -73,6 +74,7 @@ namespace BC.API
 
         bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BalanceService.Handlers.UserAssignedToRoleHandler>();
         bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.MastersListService.Handlers.UserAssignedToRoleHandler>();
+        bus.Subscribe<UserAssignedToRoleEvent, BC.API.Services.BookingService.Handlers.UserAssignedToRoleHandler>();
         bus.Subscribe<ScheduleDayChangedEvent, ScheduleDayChangedEventHandler>();
 
         bus.Subscribe<AvatarImageProcessingSaga.SagaEvent, AvatarImageProcessingSaga>();

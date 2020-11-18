@@ -239,7 +239,7 @@ namespace BC.API.Services.MastersListService
 
       this._mastersContext.Masters.Add(new Master
       {
-        Id = @event.Id, Name = "No name", Schedule = new Schedule(), PriceList = new PriceList()
+        Id = @event.UserId, Name = "No name", Schedule = new Schedule(), PriceList = new PriceList()
       });
 
       await this._mastersContext.SaveChangesAsync();

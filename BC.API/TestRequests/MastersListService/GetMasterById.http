@@ -1,3 +1,4 @@
-GET  http://localhost:5210/api/masters-list/634A0DA3-0E06-4714-B7FB-3608EF5B6E27
+GET  http://localhost:5210/api/masters-list/get-master-by-id/38f21320-c9ed-46bd-ae6d-af9df01d080b
 Accept: application/json
 Connection: keep-alive
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjFkYjY4YTZlLTQ5M2UtNDYxYS1hZmYxLTA4ZDg4NGNiNzI3MSIsIlVzZXJOYW1lIjoiMjc5NTkwNTctMTg1Ny00Yjc4LWJkZmUtNjM4ODgzYmVkNGYxIiwibmJmIjoxNjA1NzAzNzk5LCJleHAiOjE2MDU3MDk3OTksImlzcyI6ImRlZmF1bHRTZXJ2ZXIiLCJhdWQiOiJkZWZhdWx0Q2xpZW50In0.85RlcgDdR9yzEy-oSN4EOyfWjWE1R-E4P7pj-blV7Q8
