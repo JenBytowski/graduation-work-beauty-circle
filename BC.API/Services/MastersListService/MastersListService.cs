@@ -230,10 +230,6 @@ namespace BC.API.Services.MastersListService
       await this._mastersContext.SaveChangesAsync();
     }
 
-    public void OnUserDeleted()
-    {
-    }
-
     public void OnReviewPosted()
     {
     }
