@@ -12,8 +12,7 @@ import {environment} from "../environments/environment";
 import {RouteReuseStrategy} from "@angular/router";
 import {CalendarModule} from './calendar/calendar.module'
 import {AuthenticationModule} from "./authentication/authentication.module";
-
-;
+import {MasterProfileModule} from './master-profile/master-profile.module';
 
 @NgModule({
   declarations: [
@@ -29,6 +28,8 @@ import {AuthenticationModule} from "./authentication/authentication.module";
     BrowserAnimationsModule,
     CalendarModule,
     AuthenticationModule
+    ,
+    MasterProfileModule
   ],
   providers: [
     StatusBar,

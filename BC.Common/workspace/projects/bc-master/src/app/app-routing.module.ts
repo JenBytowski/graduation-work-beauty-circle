@@ -3,11 +3,13 @@ import {RouterModule, Routes} from '@angular/router';
 import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
 import {DayComponent} from "./calendar/day/day.component";
 import {WeekComponent} from "./calendar/week/week.component";
+import {TokenGuard} from "bc-common";
+import {MasterProfileComponent} from "./master-profile/master-profile/master-profile.component";
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'authentication',
+    redirectTo: 'master',
     pathMatch: 'full'
   },
   {
@@ -18,12 +20,20 @@ const routes: Routes = [
   {
     path: 'day/:id',
     component: DayComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [TokenGuard]
   },
   {
     path: 'week',
     component: WeekComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [TokenGuard]
+  },
+  {
+    path: 'master',
+    component: MasterProfileComponent,
+    pathMatch: 'full',
+    canActivate: [TokenGuard]
   }
 ];
 
