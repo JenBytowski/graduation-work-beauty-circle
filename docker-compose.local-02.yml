@@ -23,6 +23,9 @@ services:
       - ApiClientsUrls__Booking="http://bc-api/booking"
       - RabbitMQEventBus__Host=rabbitmq
       - RabbitMQEventBus__Port=5672
+      - RabbitMQEventBus__UserName=guest
+      - RabbitMQEventBus__Password=guest
+      - RabbitMQEventBus__Exchange=beauty-circle-exchange
       - ASPNETCORE_URLS=http://+:80
   sql-server:
     ports:
