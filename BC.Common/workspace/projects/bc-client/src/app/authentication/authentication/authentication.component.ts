@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {AuthenticationClient, TokenStoreService} from "bc-common";
 import {Subscription} from "rxjs";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-authentication',
@@ -24,7 +24,6 @@ export class AuthenticationComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private authClient: AuthenticationClient.AuthenticationClient,
     private tokenStore: TokenStoreService,
     @Inject('BASE_URL') private baseUrl: string) {
