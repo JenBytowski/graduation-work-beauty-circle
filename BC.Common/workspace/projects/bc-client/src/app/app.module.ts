@@ -8,7 +8,7 @@ import {
   AuthInterceptorService,
   BcCommonModule,
   BookingClient,
-  MasterListClient
+  MasterListClient, TokenGuard
 } from "bc-common";
 import {IonicModule, IonicRouteStrategy} from "@ionic/angular";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
@@ -21,8 +21,6 @@ import {SplashScreen} from "@ionic-native/splash-screen/ngx";
 import {RouteReuseStrategy} from "@angular/router";
 import {environment} from "../environments/environment";
 import {ExeptionModule} from './exeption/exeption.module';
-import {TokenGuard} from "./guards/masters.guard";
-import {AuthenticationGuard} from "./guards/authentication.guard";
 
 @NgModule({
   declarations: [
@@ -45,7 +43,6 @@ import {AuthenticationGuard} from "./guards/authentication.guard";
     StatusBar,
     SplashScreen,
     TokenGuard,
-    AuthenticationGuard,
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
