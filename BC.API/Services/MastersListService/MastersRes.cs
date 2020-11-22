@@ -56,6 +56,8 @@ namespace BC.API.Services.MastersListService
         Speciality = master.Speciality?.Name,
         PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItemRes.ParseFromPriseListItem(itm)),
         Schedule = master.Schedule?.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day)),
+        AvatarUrl = master.AvatarFileName,
+        ThumbnailUrl = master.ThumbnailFileName,
         AverageRating = master.ReviewsCount > 0 ? (master.Stars / (double?)master.ReviewsCount) : null
       };
     }
