@@ -15,35 +15,37 @@ namespace BC.API.Services
 
     public DateTime Date { get; set; }
 
-    public IEnumerable<ScheduleDayModelItem> Items { get; set; }
-    
+    public List<ScheduleDayModelItem> Items { get; set; }
+
     public int TimeStepInMinutes { get; set; }
-    
+
     public int ConnectionGapInMinutes { get; set; }
-    
+
     public int SpaceGapInMinutes { get; set; }
-    
+
     public bool ConnectedBookingsOnly { get; set; }
 
-    public ScheduleDayModel(ScheduleDay day, (int TimeStepInMinutes, int ConnectionGapInMinutes, int SpaceGapInMinutes, bool ConnectedBookingsOnly) scheduleParams)
+    public ScheduleDayModel(ScheduleDay day,
+      (int TimeStepInMinutes, int ConnectionGapInMinutes, int SpaceGapInMinutes, bool ConnectedBookingsOnly)
+        scheduleParams)
     {
       Id = day.Id;
       ScheduleId = day.ScheduleId;
       Date = day.Date;
-      // Items = day.Items.Select(itm =>
-      // {
-      //   if (itm is Booking)
-      //   {
-      //     return new BookingModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
-      //   }
-      //
-      //   if (itm is Pause)
-      //   {
-      //     return new PauseModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
-      //   }
-      //   
-      //   return new WindowModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
-      // });
+      Items = day.Items.Select(itm =>
+      {
+        if (itm is Booking)
+        {
+          return new BookingModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime} as ScheduleDayModelItem;
+        }
+      
+        if (itm is Pause)
+        {
+          return new PauseModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
+        }
+        
+        return new WindowModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
+      }).ToList();
       TimeStepInMinutes = scheduleParams.TimeStepInMinutes;
       ConnectionGapInMinutes = scheduleParams.ConnectionGapInMinutes;
       SpaceGapInMinutes = scheduleParams.SpaceGapInMinutes;
@@ -53,41 +55,103 @@ namespace BC.API.Services
     //TODO написать логику
     public ScheduleDay ParseToScheduleDay()
     {
-      return new ScheduleDay
-      {
-        Id = Id,
-        ScheduleId = ScheduleId,
-        Date = Date,
-        Items = null
-      };
+      return new ScheduleDay {Id = Id, ScheduleId = ScheduleId, Date = Date, Items = null};
     }
 
-    public void AddBooking(DateTime startTime, DateTime endTime, TimeSpan serviceTimeDuration)
+    public void AddBooking(DateTime startTime, TimeSpan serviceTimeDuration)
     {
       var windows = Items.Where(itm => itm is WindowModel);
       var windowtoRemove =
-        windows.FirstOrDefault(wind => wind.StartTime <= startTime && wind.EndTime >= endTime);
+        windows.FirstOrDefault(
+          wind => wind.StartTime <= startTime && wind.EndTime >= startTime.Add(serviceTimeDuration));
 
       if (windowtoRemove == null)
       {
         throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
-      var newBooking = new BookingModel
-      {
-        StartTime = startTime,
-        EndTime = endTime,
-      };
+      var newBooking = new BookingModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)};
 
-      // var newWindows = new List<Window>
-      // {
-      //   scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newBooking.StartTime) == null
-      //     ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
-      //     : null,
-      //   scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newBooking.EndTime) == null
-      //     ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
-      //     : null
-      // }.Where(wind => wind != null);
+      var newWindows = new List<WindowModel>
+      {
+        windowtoRemove.StartTime != startTime
+          ? new WindowModel {StartTime = windowtoRemove.StartTime, EndTime = startTime}
+          : null,
+        windowtoRemove.EndTime != startTime.Add(serviceTimeDuration)
+          ? new WindowModel {StartTime = startTime.Add(serviceTimeDuration), EndTime = windowtoRemove.EndTime}
+          : null
+      }.Where(wind => wind != null).ToList();
+
+      Items.Remove(windowtoRemove);
+      Items.Add(newBooking);
+      Items.AddRange(newWindows);
+    }
+
+    public void CancelBooking(DateTime startTime, TimeSpan serviceTimeDuration)
+    {
+      var bookingToRemove = Items.Where(itm => itm is BookingModel).SingleOrDefault(bk =>
+        bk.StartTime == startTime && bk.EndTime == startTime.Add(serviceTimeDuration));
+
+      if (bookingToRemove == null)
+      {
+        throw new BookingException($"Dont found booking by this time"); 
+      }
+
+      Items.Remove(bookingToRemove);
+      Items.Add(new WindowModel
+      {
+        StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)
+      });
+
+      ConcatenateWindows();
+    }
+
+    public void AddPause(DateTime startTime, TimeSpan serviceTimeDuration)
+    {
+      var windows = Items.Where(itm => itm is WindowModel);
+      var windowtoRemove =
+        windows.FirstOrDefault(
+          wind => wind.StartTime <= startTime && wind.EndTime >= startTime.Add(serviceTimeDuration));
+
+      if (windowtoRemove == null)
+      {
+        throw new CantFoundWindowByTimeException("Dont found window by this time");
+      }
+
+      var newPause = new PauseModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)};
+
+      var newWindows = new List<WindowModel>
+      {
+        windowtoRemove.StartTime != startTime
+          ? new WindowModel {StartTime = windowtoRemove.StartTime, EndTime = startTime}
+          : null,
+        windowtoRemove.EndTime != startTime.Add(serviceTimeDuration)
+          ? new WindowModel {StartTime = startTime.Add(serviceTimeDuration), EndTime = windowtoRemove.EndTime}
+          : null
+      }.Where(wind => wind != null).ToList();
+
+      Items.Remove(windowtoRemove);
+      Items.Add(newPause);
+      Items.AddRange(newWindows);
+    }
+
+    public void CancelPause(DateTime startTime, TimeSpan serviceTimeDuration)
+    {
+      var pauseToRemove = Items.Where(itm => itm is PauseModel).SingleOrDefault(ps =>
+        ps.StartTime == startTime && ps.EndTime == startTime.Add(serviceTimeDuration));
+
+      if (pauseToRemove == null)
+      {
+        throw new BookingException($"Dont found pause by this time"); 
+      }
+
+      Items.Remove(pauseToRemove);
+      Items.Add(new WindowModel
+      {
+        StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)
+      });
+
+      ConcatenateWindows();
     }
     
     public IEnumerable<WindowModel> GetPreferedWindowsForBooking(Schedule schedule)
@@ -108,8 +172,37 @@ namespace BC.API.Services
       return Items.Where(itm => itm is WindowModel)
         .Where(wnd => wnd.EndTime - wnd.StartTime.Date >= procedureTimeDuration).Select(itm => itm as WindowModel);
     }
+    
+    private void ConcatenateWindows()
+    {
+      var windows = Items.Where(imt => imt is WindowModel);
+      var newWindows = windows.ToList();
+
+      Items.RemoveAll(itm => itm is WindowModel);
+
+      for (var counter = 0; counter < newWindows.Count;)
+      {
+        var window = newWindows[counter];
+        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
+
+        if (windowtoConcatenate == null)
+        {
+          counter++;
+        }
+
+        newWindows[counter] = new WindowModel
+        {
+          Id = window.Id,
+          StartTime = window.StartTime,
+          EndTime = windowtoConcatenate.EndTime
+        };
+        newWindows.Remove(windowtoConcatenate);
+      }
+
+      Items.AddRange(newWindows);
+    }
   }
-  
+
   public class ScheduleDayModelItem
   {
     public Guid Id { get; set; }
@@ -125,9 +218,7 @@ namespace BC.API.Services
 
   public class BookingModel : ScheduleDayModelItem
   {
-    public Guid ServiceTypeId { get; set; }
-
-    public int DurationInMinutesMax { get; set; }
+    
   }
 
   public class WindowModel : ScheduleDayModelItem
