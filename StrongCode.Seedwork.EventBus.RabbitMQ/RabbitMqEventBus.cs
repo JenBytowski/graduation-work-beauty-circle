@@ -10,13 +10,12 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
 {
   public class RabbitMqEventBus : IEventBus, IDisposable
   {
+    private readonly IServiceProvider _serviceProvider;
+    private readonly string EXCHANGE_NAME;
     private readonly string HOST;
+    private readonly string PASSWORD;
     private readonly string PORT;
     private readonly string USER_NAME;
-    private readonly string PASSWORD;
-    private readonly string EXCHANGE_NAME;
-
-    private readonly IServiceProvider _serviceProvider;
 
     private IConnection _connection = null;
     private IModel _consumeChannel = null;
@@ -42,87 +41,15 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
       this._serviceProvider = serviceProvider;
     }
 
-    private static IConnection CreateConnection(string hostName,string port, string userName, string password)
+    public void Dispose()
     {
-      var factory = new ConnectionFactory() {HostName = hostName, Port = int.Parse(port),UserName = userName, Password = password};
-      return factory.CreateConnection();
-    }
-
-    private IConnection GetConnection()
-    {
-      var connectionBroken =
-        this._connection == null ||
-        !this._connection.IsOpen;
-
-      if (connectionBroken)
+      foreach (var subscription in this._subscriptions.ToList())
       {
-        this._connection = CreateConnection(this.HOST, this.PORT, this.USER_NAME, this.PASSWORD);
+        this.Unsubscribe(subscription);
       }
 
-      return this._connection;
-    }
-
-
-    private static IModel CreateChannel(IConnection connection)
-    {
-      return connection.CreateModel();
-    }
-
-    private IModel GetConsumeChannel()
-    {
-      return this._consumeChannel ??= CreateChannel(this.GetConnection());
-    }
-
-    private static void EnsureExchangeExists(IModel channel, string exchangeName)
-    {
-      channel.ExchangeDeclare(exchangeName, ExchangeType.Direct, true, false);
-    }
-
-    private static void EnsureQueueExists(IModel channel, string queueName)
-    {
-      if (String.IsNullOrEmpty(queueName))
-      {
-        throw new ApplicationException(
-          "Queue name should be specified if you are not just publishing messages but consuming them too");
-      }
-
-      channel.QueueDeclare(queueName, true, false, false, null);
-    }
-
-    private static byte[] Serialize(IntegrationEvent @event)
-    {
-      var asJson = JsonConvert.SerializeObject(@event);
-      var asBytes = Encoding.UTF8.GetBytes(asJson);
-      return asBytes;
-    }
-
-    private static T Deserialize<T>(byte[] bodyAsBytes)
-    {
-      var bodyAsString = Encoding.UTF8.GetString(bodyAsBytes);
-      var body = JsonConvert.DeserializeObject<T>(bodyAsString);
-      return body;
-    }
-
-    private static string GetEventRoutingKey<TEvent>()
-    {
-      return typeof(TEvent).Name;
-    }
-
-    private static string GetQueueName<THandler>()
-    {
-      return $"{typeof(THandler).FullName}.ReceiveQueue";
-    }
-
-    private static string GetEventRoutingKey(IntegrationEvent @event)
-    {
-      return @event.GetType().Name;
-    }
-
-    private void Unsubscribe(Subscription subscription)
-    {
-      var channel = this.GetConsumeChannel();
-      channel.BasicCancel(subscription.ConsumerTag);
-      this._subscriptions.Remove(subscription);
+      _consumeChannel?.Dispose();
+      _connection?.Dispose();
     }
 
     public void Publish(IntegrationEvent @event)
@@ -188,15 +115,92 @@ namespace StrongCode.Seedwork.EventBus.RabbitMQ
       }
     }
 
-    public void Dispose()
+    private static IConnection CreateConnection(string hostName,string port, string userName, string password)
     {
-      foreach (var subscription in this._subscriptions.ToList())
+      var factory = new ConnectionFactory() {HostName = hostName, Port = int.Parse(port),UserName = userName, Password = password};
+      return factory.CreateConnection();
+    }
+
+    private IConnection GetConnection()
+    {
+      var connectionBroken =
+        this._connection == null ||
+        !this._connection.IsOpen;
+
+      if (connectionBroken)
       {
-        this.Unsubscribe(subscription);
+        this._connection = CreateConnection(this.HOST, this.PORT, this.USER_NAME, this.PASSWORD);
       }
 
-      _consumeChannel?.Dispose();
-      _connection?.Dispose();
+      return this._connection;
+    }
+
+
+    private static IModel CreateChannel(IConnection connection)
+    {
+      return connection.CreateModel();
+    }
+
+    private IModel GetConsumeChannel()
+    {
+      if (this._consumeChannel == null || !this._consumeChannel.IsOpen)
+      {
+        this._consumeChannel = CreateChannel(this.GetConnection());
+      }
+
+      return this._consumeChannel;
+    }
+
+    private static void EnsureExchangeExists(IModel channel, string exchangeName)
+    {
+      channel.ExchangeDeclare(exchangeName, ExchangeType.Direct, true, false);
+    }
+
+    private static void EnsureQueueExists(IModel channel, string queueName)
+    {
+      if (String.IsNullOrEmpty(queueName))
+      {
+        throw new ApplicationException(
+          "Queue name should be specified if you are not just publishing messages but consuming them too");
+      }
+
+      channel.QueueDeclare(queueName, true, false, false, null);
+    }
+
+    private static byte[] Serialize(IntegrationEvent @event)
+    {
+      var asJson = JsonConvert.SerializeObject(@event);
+      var asBytes = Encoding.UTF8.GetBytes(asJson);
+      return asBytes;
+    }
+
+    private static T Deserialize<T>(byte[] bodyAsBytes)
+    {
+      var bodyAsString = Encoding.UTF8.GetString(bodyAsBytes);
+      var body = JsonConvert.DeserializeObject<T>(bodyAsString);
+      return body;
+    }
+
+    private static string GetEventRoutingKey<TEvent>()
+    {
+      return typeof(TEvent).Name;
+    }
+
+    private static string GetQueueName<THandler>()
+    {
+      return $"{typeof(THandler).FullName}.ReceiveQueue";
+    }
+
+    private static string GetEventRoutingKey(IntegrationEvent @event)
+    {
+      return @event.GetType().Name;
+    }
+
+    private void Unsubscribe(Subscription subscription)
+    {
+      var channel = this.GetConsumeChannel();
+      channel.BasicCancel(subscription.ConsumerTag);
+      this._subscriptions.Remove(subscription);
     }
   }
 }

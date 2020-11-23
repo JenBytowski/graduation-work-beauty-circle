@@ -21,11 +21,11 @@ namespace BC.API.Services.AuthenticationService
 {
   public class AuthenticationService
   {
-    private readonly UserManager<User> _userManager;
-    private readonly RoleManager<Role> _rolesManager;
     private readonly IConfiguration _configuration;
-    private readonly ISMSClient _smsClient;
     private readonly IEventBus _eventBus;
+    private readonly RoleManager<Role> _rolesManager;
+    private readonly ISMSClient _smsClient;
+    private readonly UserManager<User> _userManager;
 
     public AuthenticationService(UserManager<User> userManager, ISMSClient smsClient,
       IConfiguration configuration, IEventBus eventBus, RoleManager<Role> rolesManager)
@@ -199,6 +199,7 @@ namespace BC.API.Services.AuthenticationService
       {
         var user = _userManager.Users.SingleOrDefault(usr => usr.PhoneNumber == phone) ??
                    await CreateUserByPhone(phone);
+        
         await this.AddToRoleIfNotYet(user, UserRoles.ReturnIfValidOrDefault(role));
 
         var smsCode = await _userManager.GenerateTwoFactorTokenAsync(user, "Phone");
