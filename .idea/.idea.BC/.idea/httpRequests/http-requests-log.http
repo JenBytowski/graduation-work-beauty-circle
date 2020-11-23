@@ -1,0 +1,262 @@
+﻿POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375299854478",
+"Code": "927692"
+}
+
+<> 2020-11-23T042028.200.json
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375299854478",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/booking/add-working-week
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "D08AC59F-2155-48A5-84A9-59690294591B",
+"MondayDate": "2020-10-19T00:00:00",
+"DaysToWork": [1,2,3,4,5],
+"StartTime": "8:30",
+"EndTime": "18:30"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375299854478",
+"Code": "102846"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375299854478",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Code": "569906"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Code": "203998"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Code": "132743"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-2
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Code": "681440"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/authentication/authenticate-by-phone-step-1
+Content-Type: application/json
+
+{
+"Phone": "375290000000",
+"Role": "Master"
+}
+
+###
+
+POST http://localhost:5211/api/booking/add-pause
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"StartTime": "2020-10-19T09:00:00",
+"EndTime": "2020-10-19T10:00:00",
+"Description": "Description"
+}
+
+###
+
+POST http://localhost:5210/api/booking/add-pause
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"StartTime": "2020-10-19T09:00:00",
+"EndTime": "2020-10-19T10:00:00",
+"Description": "Description"
+}
+
+###
+
+POST http://localhost:5211/api/booking/add-booking
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"ClientId": "E256550D-DE3D-4B63-94A9-9D2C3EA25CEA",
+"ServiceType": "b3e5ca75-7b72-4269-9ffa-447356950d19",
+"Description": "Description",
+"StartTime": "2020-10-19T08:30:00",
+"EndTime": "2020-10-19T09:00:00"
+}
+
+###
+
+POST http://localhost:5211/api/booking/add-booking
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"ClientId": "E256550D-DE3D-4B63-94A9-9D2C3EA25CEA",
+"ServiceType": "b3e5ca75-7b72-4269-9ffa-447356950d19",
+"Description": "Description",
+"StartTime": "8:35",
+"EndTime": "9:00"
+}
+
+<> 2020-10-26T045628.400.json
+
+###
+
+POST http://localhost:5211/api/booking/add-working-week
+Content-Type: application/json
+Connection: keep-alive
+
+{
+"MasterId": "DEFF0772-EACB-4935-8623-7700C58B930A",
+"MondayDate": "2020-10-19T00:00:00",
+"DaysToWork": [1,2,3],
+"StartTime": "8:30",
+"EndTime": "18:30"
+}
+
+###
+
+GET http://yandex.com
+Accept: */*
+Cache-Control: no-cache
+
+<> 2020-08-04T051353.200.html
+
+###
+
+GET http://google.com
+Accept: */*
+Cache-Control: no-cache
+
+<> 2020-08-04T050953.200.html
+
+###
+
+GET http://localhost:5011
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+GET https://localhost:5011
+Accept: */*
+Cache-Control: no-cache
+
+###
+
+GET http://localhost:5011
+Accept: */*
+Cache-Control: no-cache
+
+###
+

@@ -30,7 +30,8 @@ export class AuthenticationComponent implements OnInit {
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
@@ -40,7 +41,8 @@ export class AuthenticationComponent implements OnInit {
       } else if (code && state == 'instagram') {
         this.authClient.authenticateByInstagram(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
@@ -50,7 +52,8 @@ export class AuthenticationComponent implements OnInit {
       } else if (code && state == 'google') {
         this.authClient.authenticateByGoogle(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
@@ -81,7 +84,8 @@ export class AuthenticationComponent implements OnInit {
     if ((this.code as any).el.value) {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
-        code: (this.code as any).el.value
+        code: (this.code as any).el.value,
+        role: 'Master'
       })).subscribe(data => {
         if (data.token) {
           this.tokenStore.put(data.token);
