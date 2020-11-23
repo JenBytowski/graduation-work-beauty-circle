@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using BC.API.Services.BookingService.Data;
 using BC.API.Services.BookingService.Exceptions;
-using Window = BC.API.Services.MastersListService.Data.Window;
 
 namespace BC.API.Services
 {
   public class ScheduleDayModel
   {
-    public Guid Id { get; set; }
-
-    public Guid ScheduleId { get; set; }
-
     public DateTime Date { get; set; }
 
     public List<ScheduleDayModelItem> Items { get; set; }
@@ -25,37 +20,25 @@ namespace BC.API.Services
 
     public bool ConnectedBookingsOnly { get; set; }
 
-    public ScheduleDayModel(ScheduleDay day,
-      (int TimeStepInMinutes, int ConnectionGapInMinutes, int SpaceGapInMinutes, bool ConnectedBookingsOnly)
-        scheduleParams)
+    public ScheduleDayModel(DateTime startTime, DateTime endTime, int timeStepInMinutes, int connectionGapInMinutes,
+      int spaceGapInMinutes, bool connectedBookingsOnly)
     {
-      Id = day.Id;
-      ScheduleId = day.ScheduleId;
-      Date = day.Date;
-      Items = day.Items.Select(itm =>
+      if (startTime.Date != endTime.Date || startTime > endTime)
       {
-        if (itm is Booking)
-        {
-          return new BookingModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime} as ScheduleDayModelItem;
-        }
-      
-        if (itm is Pause)
-        {
-          return new PauseModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
-        }
-        
-        return new WindowModel {Id = itm.Id, StartTime = itm.StartTime, EndTime = itm.EndTime};
-      }).ToList();
-      TimeStepInMinutes = scheduleParams.TimeStepInMinutes;
-      ConnectionGapInMinutes = scheduleParams.ConnectionGapInMinutes;
-      SpaceGapInMinutes = scheduleParams.SpaceGapInMinutes;
-      ConnectedBookingsOnly = scheduleParams.ConnectedBookingsOnly;
-    }
+        throw new ScheduleDayModelException("Entered params are incorrect");
+      }
 
-    //TODO написать логику
-    public ScheduleDay ParseToScheduleDay()
-    {
-      return new ScheduleDay {Id = Id, ScheduleId = ScheduleId, Date = Date, Items = null};
+      if (timeStepInMinutes < 0 || connectionGapInMinutes < 0 || spaceGapInMinutes < 0)
+      {
+        throw new ScheduleDayModelException("Entered params are incorrect");
+      }
+
+      Date = startTime.Date;
+      Items = new List<ScheduleDayModelItem> {new WindowModel {StartTime = startTime, EndTime = endTime}};
+      TimeStepInMinutes = timeStepInMinutes;
+      ConnectionGapInMinutes = connectionGapInMinutes;
+      SpaceGapInMinutes = spaceGapInMinutes;
+      ConnectedBookingsOnly = connectedBookingsOnly;
     }
 
     public void AddBooking(DateTime startTime, TimeSpan serviceTimeDuration)
@@ -94,14 +77,11 @@ namespace BC.API.Services
 
       if (bookingToRemove == null)
       {
-        throw new BookingException($"Dont found booking by this time"); 
+        throw new BookingException($"Dont found booking by this time");
       }
 
       Items.Remove(bookingToRemove);
-      Items.Add(new WindowModel
-      {
-        StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)
-      });
+      Items.Add(new WindowModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)});
 
       ConcatenateWindows();
     }
@@ -142,18 +122,15 @@ namespace BC.API.Services
 
       if (pauseToRemove == null)
       {
-        throw new BookingException($"Dont found pause by this time"); 
+        throw new BookingException($"Dont found pause by this time");
       }
 
       Items.Remove(pauseToRemove);
-      Items.Add(new WindowModel
-      {
-        StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)
-      });
+      Items.Add(new WindowModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)});
 
       ConcatenateWindows();
     }
-    
+
     public IEnumerable<WindowModel> GetPreferedWindowsForBooking(Schedule schedule)
     {
       var procedureTimeDuration = new TimeSpan();
@@ -172,7 +149,7 @@ namespace BC.API.Services
       return Items.Where(itm => itm is WindowModel)
         .Where(wnd => wnd.EndTime - wnd.StartTime.Date >= procedureTimeDuration).Select(itm => itm as WindowModel);
     }
-    
+
     private void ConcatenateWindows()
     {
       var windows = Items.Where(imt => imt is WindowModel);
@@ -183,19 +160,15 @@ namespace BC.API.Services
       for (var counter = 0; counter < newWindows.Count;)
       {
         var window = newWindows[counter];
-        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
+        var windowtoConcatenate =
+          newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
 
         if (windowtoConcatenate == null)
         {
           counter++;
         }
 
-        newWindows[counter] = new WindowModel
-        {
-          Id = window.Id,
-          StartTime = window.StartTime,
-          EndTime = windowtoConcatenate.EndTime
-        };
+        newWindows[counter] = new WindowModel {StartTime = window.StartTime, EndTime = windowtoConcatenate.EndTime};
         newWindows.Remove(windowtoConcatenate);
       }
 
@@ -205,11 +178,11 @@ namespace BC.API.Services
 
   public class ScheduleDayModelItem
   {
-    public Guid Id { get; set; }
-
     public DateTime StartTime { get; set; }
 
     public DateTime EndTime { get; set; }
+
+    public object AdditionalData { get; set; }
   }
 
   public class PauseModel : ScheduleDayModelItem
@@ -218,10 +191,16 @@ namespace BC.API.Services
 
   public class BookingModel : ScheduleDayModelItem
   {
-    
   }
 
   public class WindowModel : ScheduleDayModelItem
   {
+  }
+
+  public class ScheduleDayModelException : ApplicationException
+  {
+    public ScheduleDayModelException(string message) : base(message)
+    {
+    }
   }
 }

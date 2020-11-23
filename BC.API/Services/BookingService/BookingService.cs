@@ -58,7 +58,7 @@ namespace BC.API.Services.BookingService
         newWeek = donorWeek.Select((day, i) =>
         {
           var newDate = req.MondayDate.AddDays(i);
-          
+
           return new ScheduleDay
           {
             ScheduleId = day.ScheduleId,
@@ -248,7 +248,7 @@ namespace BC.API.Services.BookingService
 
       ConcatenateWindows(pause.ScheduleDayId);
     }
-    
+
     private void ConcatenateWindows(Guid dayId)
     {
       var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
@@ -261,7 +261,8 @@ namespace BC.API.Services.BookingService
       for (var counter = 0; counter < newWindows.Count;)
       {
         var window = newWindows[counter];
-        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
+        var windowtoConcatenate =
+          newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
 
         if (windowtoConcatenate == null)
         {
@@ -288,18 +289,76 @@ namespace BC.API.Services.BookingService
       {
         return;
       }
-      
+
       if (this._context.Schedules.Any(s => s.MasterId == userAssignedToRoleEvent.UserId))
       {
         return;
       }
 
-      await this._context.Schedules.AddAsync(new Schedule
-      {
-        MasterId = userAssignedToRoleEvent.UserId
-      });
+      await this._context.Schedules.AddAsync(new Schedule {MasterId = userAssignedToRoleEvent.UserId});
 
       await this._context.SaveChangesAsync();
+    }
+
+    private ScheduleDay ParseFromScheduleDayModel(ScheduleDayModel model, ScheduleDay scheduleDay)
+    {
+      scheduleDay.Items = model.Items.Select(itm =>
+      {
+        if (itm.AdditionalData is Booking)
+        {
+          var bookingData = itm.AdditionalData as Booking;
+
+          if (bookingData == null)
+          {
+            throw new ApplicationException();
+          }
+    
+          return new Booking
+          {
+            Id = bookingData.Id,
+            ScheduleDayId = bookingData.ScheduleDayId,
+            ClientId = bookingData.ClientId,
+            ServiceTypeId = bookingData.ServiceTypeId,
+            ServiceTypeName = bookingData.ServiceTypeName,
+            StartTime = itm.StartTime,
+            EndTime = itm.EndTime,
+            PriceMax = bookingData.PriceMax,
+            PriceMin = bookingData.PriceMin,
+            DurationInMinutesMax = bookingData.DurationInMinutesMax,
+            Description = bookingData.Description
+          } as ScheduleDayItem;
+        }
+
+        if (itm.AdditionalData is Pause)
+        {
+          var pauseData = itm.AdditionalData as Pause;
+
+          if (pauseData == null)
+          {
+            throw new ApplicationException();
+          }
+          
+          return new Pause
+          {
+            Id = pauseData.Id,
+            ScheduleDayId = pauseData.ScheduleDayId,
+            StartTime = itm.StartTime,
+            EndTime = itm.EndTime,
+            Description = pauseData.Description
+          };
+        }
+
+        var windowData = itm.AdditionalData as Window;
+        
+        return new Window
+        {
+          ScheduleDayId = windowData?.ScheduleDayId ?? scheduleDay.ScheduleId,
+          StartTime = itm.StartTime,
+          EndTime = itm.EndTime
+        };
+      }).ToList();
+
+      return scheduleDay;
     }
   }
 }
