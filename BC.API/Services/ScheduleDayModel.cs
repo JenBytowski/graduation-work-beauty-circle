@@ -41,44 +41,44 @@ namespace BC.API.Services
       ConnectedBookingsOnly = connectedBookingsOnly;
     }
 
-    public void AddBooking(DateTime startTime, TimeSpan serviceTimeDuration, object additionalData)
+    public void AddBooking(DateTime startTime, DateTime endTime, object additionalData)
     {
+      if (startTime > endTime || startTime.Date != endTime.Date)
+      {
+        throw new ScheduleDayModelException("Entered params are incorrect");
+      }
+      
       var windows = Items.Where(itm => itm is WindowModel);
-      var windowtoRemove =
+      var windowToRemove =
         windows.FirstOrDefault(
-          wind => wind.StartTime <= startTime && wind.EndTime >= startTime.Add(serviceTimeDuration));
+          wind => wind.StartTime <= startTime && wind.EndTime >= endTime);
 
-      if (windowtoRemove == null)
+      if (windowToRemove == null)
       {
         throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
-      var newBooking = new BookingModel
-      {
-        StartTime = startTime, 
-        EndTime = startTime.Add(serviceTimeDuration), 
-        AdditionalData = additionalData
-      };
+      var newBooking = new BookingModel {StartTime = startTime, EndTime = endTime, AdditionalData = additionalData};
 
       var newWindows = new List<WindowModel>
       {
-        windowtoRemove.StartTime != startTime
-          ? new WindowModel {StartTime = windowtoRemove.StartTime, EndTime = startTime}
+        windowToRemove.StartTime != startTime
+          ? new WindowModel {StartTime = windowToRemove.StartTime, EndTime = startTime}
           : null,
-        windowtoRemove.EndTime != startTime.Add(serviceTimeDuration)
-          ? new WindowModel {StartTime = startTime.Add(serviceTimeDuration), EndTime = windowtoRemove.EndTime}
+        windowToRemove.EndTime != endTime
+          ? new WindowModel {StartTime = endTime, EndTime = windowToRemove.EndTime}
           : null
       }.Where(wind => wind != null).ToList();
 
-      Items.Remove(windowtoRemove);
+      Items.Remove(windowToRemove);
       Items.Add(newBooking);
       Items.AddRange(newWindows);
     }
 
-    public void CancelBooking(DateTime startTime, TimeSpan serviceTimeDuration)
+    public void CancelBooking(DateTime startTime, DateTime endTime)
     {
       var bookingToRemove = Items.Where(itm => itm is BookingModel).SingleOrDefault(bk =>
-        bk.StartTime == startTime && bk.EndTime == startTime.Add(serviceTimeDuration));
+        bk.StartTime == startTime && bk.EndTime == endTime);
 
       if (bookingToRemove == null)
       {
@@ -86,37 +86,37 @@ namespace BC.API.Services
       }
 
       Items.Remove(bookingToRemove);
-      Items.Add(new WindowModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)});
+      Items.Add(new WindowModel {StartTime = startTime, EndTime = endTime});
 
       ConcatenateWindows();
     }
 
-    public void AddPause(DateTime startTime, TimeSpan serviceTimeDuration, object additionalData)
+    public void AddPause(DateTime startTime, DateTime endTime, object additionalData)
     {
+      if (startTime > endTime || startTime.Date != endTime.Date)
+      {
+        throw new ScheduleDayModelException("Entered params are incorrect");
+      }
+      
       var windows = Items.Where(itm => itm is WindowModel);
       var windowtoRemove =
         windows.FirstOrDefault(
-          wind => wind.StartTime <= startTime && wind.EndTime >= startTime.Add(serviceTimeDuration));
+          wind => wind.StartTime <= startTime && wind.EndTime >= endTime);
 
       if (windowtoRemove == null)
       {
         throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
-      var newPause = new PauseModel 
-      {
-        StartTime = startTime, 
-        EndTime = startTime.Add(serviceTimeDuration),
-        AdditionalData = additionalData
-      };
+      var newPause = new PauseModel {StartTime = startTime, EndTime = endTime, AdditionalData = additionalData};
 
       var newWindows = new List<WindowModel>
       {
         windowtoRemove.StartTime != startTime
           ? new WindowModel {StartTime = windowtoRemove.StartTime, EndTime = startTime}
           : null,
-        windowtoRemove.EndTime != startTime.Add(serviceTimeDuration)
-          ? new WindowModel {StartTime = startTime.Add(serviceTimeDuration), EndTime = windowtoRemove.EndTime}
+        windowtoRemove.EndTime != endTime
+          ? new WindowModel {StartTime = endTime, EndTime = windowtoRemove.EndTime}
           : null
       }.Where(wind => wind != null).ToList();
 
@@ -125,10 +125,10 @@ namespace BC.API.Services
       Items.AddRange(newWindows);
     }
 
-    public void CancelPause(DateTime startTime, TimeSpan serviceTimeDuration)
+    public void CancelPause(DateTime startTime, DateTime endTime)
     {
       var pauseToRemove = Items.Where(itm => itm is PauseModel).SingleOrDefault(ps =>
-        ps.StartTime == startTime && ps.EndTime == startTime.Add(serviceTimeDuration));
+        ps.StartTime == startTime && ps.EndTime == endTime);
 
       if (pauseToRemove == null)
       {
@@ -136,7 +136,7 @@ namespace BC.API.Services
       }
 
       Items.Remove(pauseToRemove);
-      Items.Add(new WindowModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)});
+      Items.Add(new WindowModel {StartTime = startTime, EndTime = endTime});
 
       ConcatenateWindows();
     }
@@ -176,9 +176,12 @@ namespace BC.API.Services
         if (windowtoConcatenate == null)
         {
           counter++;
+          continue;
         }
 
-        newWindows[counter] = new WindowModel {StartTime = window.StartTime, EndTime = windowtoConcatenate.EndTime};
+        newWindows[counter] = window.StartTime < windowtoConcatenate.StartTime
+          ? new WindowModel {StartTime = window.StartTime, EndTime = windowtoConcatenate.EndTime}
+          : new WindowModel {StartTime = windowtoConcatenate.StartTime, EndTime = window.EndTime};
         newWindows.Remove(windowtoConcatenate);
       }
 

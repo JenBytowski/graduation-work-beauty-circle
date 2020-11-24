@@ -100,26 +100,26 @@ namespace BC.API.Services.BookingService
     public void AddBooking(AddBookingReq req)
     {
       var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
-        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+        .SingleOrDefault(sch => sch.MasterId == req.MasterId);
 
       if (schedule == null)
       {
         throw new BookingException("Dont found schedule for this master");
       }
 
-      var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
-      var windows = scheduleDay.Items.Where(itm => itm is Window);
-      var windowtoRemove =
-        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+      var day = schedule.Days.SingleOrDefault(day => day.Date == req.StartTime.Date);
 
-      if (windowtoRemove == null)
+      if (day == null)
       {
-        throw new CantFoundWindowByTimeException("Dont found window by this time");
+        throw new BookingException("Dont found this day in masters schedule");
       }
+
+      var dayModel = CreateScheduleDayModel(day, schedule.TimeStepInMinutes, schedule.ConnectionGapInMinutes,
+        schedule.SpaceGapInMinutes, schedule.ConnectedBookingsOnly);
 
       var newBooking = new Booking
       {
-        ScheduleDayId = scheduleDay.Id,
+        ScheduleDayId = day.Id,
         ClientId = req.ClientId,
         StartTime = req.StartTime,
         EndTime = req.EndTime,
@@ -127,22 +127,11 @@ namespace BC.API.Services.BookingService
         Description = req.Description
       };
 
-      var newWindows = new List<Window>
-      {
-        scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newBooking.StartTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
-          : null,
-        scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newBooking.EndTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
-          : null
-      }.Where(wind => wind != null);
+      dayModel.AddBooking(newBooking.StartTime, newBooking.EndTime, newBooking);
 
-      _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindows);
-      _context.ScheduleDayItems.Add(newBooking);
+      FillScheduleDayByModel(day, dayModel);
+
       _context.SaveChanges();
-
-      //this._eventBus.Publish(new ScheduleDayChangedEvent() { });
     }
 
     public void CancelBooking(CancelBookingReq req)
@@ -154,16 +143,16 @@ namespace BC.API.Services.BookingService
         throw new BookingException($"Dont found booking by id: {req.BookingId}");
       }
 
-      var newWindow = new Window
-      {
-        ScheduleDayId = booking.ScheduleDayId, StartTime = booking.StartTime, EndTime = booking.EndTime
-      };
+      var day = _context.ScheduleDays.Include(day => day.Items).SingleOrDefault(day => day.Id == booking.ScheduleDayId);
 
-      _context.ScheduleDayItems.Remove(booking);
-      _context.ScheduleDayItems.Add(newWindow);
+      var dayModel = CreateScheduleDayModel(day, default, default,
+        default, default);
+
+      dayModel.CancelBooking(booking.StartTime, booking.EndTime);
+
+      FillScheduleDayByModel(day, dayModel);
+
       _context.SaveChanges();
-
-      ConcatenateWindows(booking.ScheduleDayId);
     }
 
     public async Task<BookingRes> GetBooking(Guid bookingId)
@@ -188,43 +177,32 @@ namespace BC.API.Services.BookingService
     public void AddPause(AddPauseReq req)
     {
       var schedule = _context.Schedules.Include(sch => sch.Days).ThenInclude(day => day.Items)
-        .FirstOrDefault(sch => sch.MasterId == req.MasterId);
+        .SingleOrDefault(sch => sch.MasterId == req.MasterId);
 
       if (schedule == null)
       {
         throw new BookingException("Dont found schedule for this master");
       }
 
-      var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
-      var windows = scheduleDay.Items.Where(itm => itm is Window);
-      var windowtoRemove =
-        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+      var day = schedule.Days.SingleOrDefault(day => day.Date == req.StartTime.Date);
 
-      if (windowtoRemove == null)
+      if (day == null)
       {
-        throw new CantFoundWindowByTimeException("Dont found window by this time");
+        throw new BookingException("Dont found this day in masters schedule");
       }
+
+      var dayModel = CreateScheduleDayModel(day, schedule.TimeStepInMinutes, schedule.ConnectionGapInMinutes,
+        schedule.SpaceGapInMinutes, schedule.ConnectedBookingsOnly);
 
       var newPause = new Pause
       {
-        ScheduleDayId = scheduleDay.Id,
-        StartTime = req.StartTime,
-        EndTime = req.EndTime,
-        Description = req.Description
+        ScheduleDayId = day.Id, StartTime = req.StartTime, EndTime = req.EndTime, Description = req.Description
       };
-      var newWindows = new List<Window>
-      {
-        scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newPause.StartTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
-          : null,
-        scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newPause.EndTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
-          : null
-      }.Where(wind => wind != null);
 
-      _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindows);
-      _context.ScheduleDayItems.Add(newPause);
+      dayModel.AddPause(newPause.StartTime, newPause.EndTime, newPause);
+
+      FillScheduleDayByModel(day, dayModel);
+
       _context.SaveChanges();
     }
 
@@ -237,49 +215,15 @@ namespace BC.API.Services.BookingService
         throw new BookingException($"Dont found pause by id: {req.PauseId}");
       }
 
-      var newWindow = new Window
-      {
-        ScheduleDayId = pause.ScheduleDayId, StartTime = pause.StartTime, EndTime = pause.EndTime
-      };
+      var day = _context.ScheduleDays.Include(day => day.Items).SingleOrDefault(day => day.Id == pause.ScheduleDayId);
 
-      _context.ScheduleDayItems.Remove(pause);
-      _context.ScheduleDayItems.Add(newWindow);
-      _context.SaveChanges();
+      var dayModel = CreateScheduleDayModel(day, default, default,
+        default, default);
 
-      ConcatenateWindows(pause.ScheduleDayId);
-    }
+      dayModel.CancelPause(pause.StartTime, pause.EndTime);
 
-    private void ConcatenateWindows(Guid dayId)
-    {
-      var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
-      var windows = day.Items.Where(imt => imt is Window);
-      var newWindows = windows.ToList();
+      FillScheduleDayByModel(day, dayModel);
 
-      _context.ScheduleDayItems.RemoveRange(windows);
-      _context.SaveChanges();
-
-      for (var counter = 0; counter < newWindows.Count;)
-      {
-        var window = newWindows[counter];
-        var windowtoConcatenate =
-          newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
-
-        if (windowtoConcatenate == null)
-        {
-          counter++;
-        }
-
-        newWindows[counter] = new Window
-        {
-          Id = window.Id,
-          ScheduleDayId = window.ScheduleDayId,
-          StartTime = window.StartTime,
-          EndTime = windowtoConcatenate.EndTime
-        };
-        newWindows.Remove(windowtoConcatenate);
-      }
-
-      _context.ScheduleDayItems.AddRange(newWindows);
       _context.SaveChanges();
     }
 
@@ -305,37 +249,32 @@ namespace BC.API.Services.BookingService
       int spaceGapInMinutes, bool connectedBookingsOnly)
     {
       var model = new ScheduleDayModel(scheduleDay.Items.Min(itm => itm.StartTime),
-        scheduleDay.Items.Max(itm => itm.StartTime), timeStepInMinutes, connectionGapInMinutes, spaceGapInMinutes,
+        scheduleDay.Items.Max(itm => itm.EndTime), timeStepInMinutes, connectionGapInMinutes, spaceGapInMinutes,
         connectedBookingsOnly);
 
       foreach (var item in scheduleDay.Items)
       {
         if (item is Booking)
         {
-          model.AddBooking(item.StartTime, item.EndTime - item.StartTime, item as Booking);
+          model.AddBooking(item.StartTime, item.EndTime, item as Booking);
         }
 
         if (item is Pause)
         {
-          model.AddPause(item.StartTime, item.EndTime -item.StartTime, item as Pause);
+          model.AddPause(item.StartTime, item.EndTime, item as Pause);
         }
       }
 
       return model;
     }
 
-    private ScheduleDay ParseFromScheduleDayModel(ScheduleDayModel model, ScheduleDay scheduleDay)
+    private void FillScheduleDayByModel(ScheduleDay scheduleDay, ScheduleDayModel model)
     {
       scheduleDay.Items = model.Items.Select(itm =>
       {
         if (itm.AdditionalData is Booking)
         {
           var bookingData = itm.AdditionalData as Booking;
-
-          if (bookingData == null)
-          {
-            throw new ApplicationException();
-          }
 
           return new Booking
           {
@@ -357,11 +296,6 @@ namespace BC.API.Services.BookingService
         {
           var pauseData = itm.AdditionalData as Pause;
 
-          if (pauseData == null)
-          {
-            throw new ApplicationException();
-          }
-
           return new Pause
           {
             Id = pauseData.Id,
@@ -381,8 +315,6 @@ namespace BC.API.Services.BookingService
           EndTime = itm.EndTime
         };
       }).ToList();
-
-      return scheduleDay;
     }
   }
 }
