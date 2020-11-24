@@ -300,6 +300,30 @@ namespace BC.API.Services.BookingService
       await this._context.SaveChangesAsync();
     }
 
+    private ScheduleDayModel CreateScheduleDayModel(ScheduleDay scheduleDay, int timeStepInMinutes,
+      int connectionGapInMinutes,
+      int spaceGapInMinutes, bool connectedBookingsOnly)
+    {
+      var model = new ScheduleDayModel(scheduleDay.Items.Min(itm => itm.StartTime),
+        scheduleDay.Items.Max(itm => itm.StartTime), timeStepInMinutes, connectionGapInMinutes, spaceGapInMinutes,
+        connectedBookingsOnly);
+
+      foreach (var item in scheduleDay.Items)
+      {
+        if (item is Booking)
+        {
+          model.AddBooking(item.StartTime, item.EndTime - item.StartTime, item as Booking);
+        }
+
+        if (item is Pause)
+        {
+          model.AddPause(item.StartTime, item.EndTime -item.StartTime, item as Pause);
+        }
+      }
+
+      return model;
+    }
+
     private ScheduleDay ParseFromScheduleDayModel(ScheduleDayModel model, ScheduleDay scheduleDay)
     {
       scheduleDay.Items = model.Items.Select(itm =>
@@ -312,7 +336,7 @@ namespace BC.API.Services.BookingService
           {
             throw new ApplicationException();
           }
-    
+
           return new Booking
           {
             Id = bookingData.Id,
@@ -337,7 +361,7 @@ namespace BC.API.Services.BookingService
           {
             throw new ApplicationException();
           }
-          
+
           return new Pause
           {
             Id = pauseData.Id,
@@ -349,7 +373,7 @@ namespace BC.API.Services.BookingService
         }
 
         var windowData = itm.AdditionalData as Window;
-        
+
         return new Window
         {
           ScheduleDayId = windowData?.ScheduleDayId ?? scheduleDay.ScheduleId,

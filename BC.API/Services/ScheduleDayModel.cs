@@ -41,7 +41,7 @@ namespace BC.API.Services
       ConnectedBookingsOnly = connectedBookingsOnly;
     }
 
-    public void AddBooking(DateTime startTime, TimeSpan serviceTimeDuration)
+    public void AddBooking(DateTime startTime, TimeSpan serviceTimeDuration, object additionalData)
     {
       var windows = Items.Where(itm => itm is WindowModel);
       var windowtoRemove =
@@ -53,7 +53,12 @@ namespace BC.API.Services
         throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
-      var newBooking = new BookingModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)};
+      var newBooking = new BookingModel
+      {
+        StartTime = startTime, 
+        EndTime = startTime.Add(serviceTimeDuration), 
+        AdditionalData = additionalData
+      };
 
       var newWindows = new List<WindowModel>
       {
@@ -86,7 +91,7 @@ namespace BC.API.Services
       ConcatenateWindows();
     }
 
-    public void AddPause(DateTime startTime, TimeSpan serviceTimeDuration)
+    public void AddPause(DateTime startTime, TimeSpan serviceTimeDuration, object additionalData)
     {
       var windows = Items.Where(itm => itm is WindowModel);
       var windowtoRemove =
@@ -98,7 +103,12 @@ namespace BC.API.Services
         throw new CantFoundWindowByTimeException("Dont found window by this time");
       }
 
-      var newPause = new PauseModel {StartTime = startTime, EndTime = startTime.Add(serviceTimeDuration)};
+      var newPause = new PauseModel 
+      {
+        StartTime = startTime, 
+        EndTime = startTime.Add(serviceTimeDuration),
+        AdditionalData = additionalData
+      };
 
       var newWindows = new List<WindowModel>
       {
