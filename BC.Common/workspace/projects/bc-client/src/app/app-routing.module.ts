@@ -1,57 +1,54 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {AuthenticationComponent} from "./authentication/authentication/authentication.component";
-import {MastersListComponent} from "./masters/masters-list/masters-list.component";
-import {MasterProfileComponent} from "./masters/master-profile/master-profile.component";
-import {HomePage} from "./home/home.page";
-import {TokenGuard} from "./guards/masters.guard";
-import {NotFoundPageComponent} from "./exeption/not-found-page/not-found-page.component";
-import {AuthenticationGuard} from "./guards/authentication.guard";
-import {UnauthorizedPageComponent} from "./exeption/unauthorized-page/unauthorized-page.component";
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AuthenticationComponent } from './authentication/authentication/authentication.component';
+import { MastersListComponent } from './masters/masters-list/masters-list.component';
+import { MasterProfileComponent } from './masters/master-profile/master-profile.component';
+import { HomePage } from './home/home.page';
+import { NotFoundPageComponent } from './exeption/not-found-page/not-found-page.component';
+import { TokenGuard } from 'bc-common';
+import { UnauthorizedPageComponent } from './exeption/unauthorized-page/unauthorized-page.component';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'home',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'home',
     component: HomePage,
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'authentication',
     component: AuthenticationComponent,
-    pathMatch: 'full',
-    canActivate: [AuthenticationGuard]
+    pathMatch: 'full'
   },
   {
     path: 'masters',
     component: MastersListComponent,
     pathMatch: 'full',
-    canActivate: [TokenGuard]
+    canActivate: [TokenGuard],
   },
   {
     path: 'master/:id',
     component: MasterProfileComponent,
     pathMatch: 'full',
-    canActivate: [TokenGuard]
+    canActivate: [TokenGuard],
   },
   {
     path: 'unauthorized',
     component: UnauthorizedPageComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: '**',
-    component: NotFoundPageComponent
-  }
+    component: NotFoundPageComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule {
-}
+export class AppRoutingModule {}
