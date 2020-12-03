@@ -78,26 +78,27 @@ export class UpdateMasterComponent implements OnInit {
   }
 
   public updateMasterInfo(): void {
+    let masterReq = MasterListClient.UpdateMasterReq.fromJS({
+      name: ((this.name as any).el.value | this.vm.Master?.name).toString(),
+      avatarUrl: this.vm.Master?.avatarUrl,
+      about: ((this.about as any).el.value | this.vm.Master?.about).toString(),
+      address: ((this.adderss as any).el.value | this.vm.Master?.address).toString(),
+      phone: ((this.phone as any).el.value | this.vm.Master?.phone).toString(),
+      instagramProfile:
+        ((this.instagramProfile as any).el.value |
+        this.vm.Master?.instagramProfile).toString(),
+      vkProfile:
+        ((this.vkProfile as any).el.value | this.vm.Master?.vkProfile).toString(),
+      viber: ((this.viber as any).el.value | this.vm.Master?.viber).toString(),
+      skype: ((this.skype as any).el.value | this.vm.Master?.skype).toString(),
+      specialityId: this.vm.Master?.specialityId,
+      priceListItems: this.vm.Master?.priceListItems,
+    });
+    console.log(masterReq);
     this.masterList
       .updateMaster(
-        this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
-        MasterListClient.UpdateMasterReq.fromJS({
-          name: (this.name as any).el.value | this.vm.Master.name,
-          avatarUrl: this.vm.Master.avatarUrl,
-          about: (this.about as any).el.value | this.vm.Master.about,
-          address: (this.adderss as any).el.value | this.vm.Master.address,
-          phone: (this.phone as any).el.value | this.vm.Master.phone,
-          instagramProfile:
-            (this.instagramProfile as any).el.value |
-            this.vm.Master.instagramProfile,
-          vkProfile:
-            (this.vkProfile as any).el.value | this.vm.Master.vkProfile,
-          viber: (this.viber as any).el.value | this.vm.Master.viber,
-          skype: (this.skype as any).el.value | this.vm.Master.skype,
-          specialityId: this.vm.Master.specialityId,
-          priceListItems: this.vm.Master.priceListItems,
-        })
-      )
+        this.jwtdecode.decode(
+          this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'], masterReq)
       .subscribe(() => window.location.reload());
   }
 }
