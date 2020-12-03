@@ -3,11 +3,11 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
   ApiClientModule,
-  AuthenticationClient,
+  AuthenticationClient, AuthInterceptorService,
   BcCommonModule,
   BookingClient,
   MasterListClient,
@@ -40,6 +40,11 @@ import { MasterProfileModule } from './master-profile/master-profile.module';
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
     { provide: MasterListClient.API_BASE_URL, useValue: environment.apiUrl },
     {
       provide: AuthenticationClient.API_BASE_URL,
