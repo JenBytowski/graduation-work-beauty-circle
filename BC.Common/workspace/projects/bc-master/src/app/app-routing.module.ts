@@ -33,7 +33,7 @@ const routes: Routes = [
     path: 'update',
     component: UpdateMasterComponent,
     pathMatch: 'full',
-    //canActivate: [TokenGuard],
+    canActivate: [TokenGuard],
   },
 ];
 

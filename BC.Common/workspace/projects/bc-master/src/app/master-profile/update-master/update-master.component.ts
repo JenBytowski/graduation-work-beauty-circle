@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import {MasterListClient, JWTDecodeService, TokenStoreService} from 'bc-common';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {JWTDecodeService, MasterListClient, TokenStoreService} from 'bc-common';
 
 @Component({
   selector: 'app-update-master',
@@ -8,23 +8,23 @@ import {MasterListClient, JWTDecodeService, TokenStoreService} from 'bc-common';
   styleUrls: ['./update-master.component.scss'],
 })
 export class UpdateMasterComponent implements OnInit {
-  @ViewChild('name', { static: false })
+  @ViewChild('name', {static: false})
   name: ElementRef;
-  @ViewChild('speciality', { static: false })
+  @ViewChild('speciality', {static: false})
   speciality: ElementRef;
-  @ViewChild('about', { static: false })
+  @ViewChild('about', {static: false})
   about: ElementRef;
-  @ViewChild('adderss', { static: false })
+  @ViewChild('adderss', {static: false})
   adderss: ElementRef;
-  @ViewChild('phone', { static: false })
+  @ViewChild('phone', {static: false})
   phone: ElementRef;
-  @ViewChild('instagramProfile', { static: false })
+  @ViewChild('instagramProfile', {static: false})
   instagramProfile: ElementRef;
-  @ViewChild('vkProfile', { static: false })
+  @ViewChild('vkProfile', {static: false})
   vkProfile: ElementRef;
-  @ViewChild('viber', { static: false })
+  @ViewChild('viber', {static: false})
   viber: ElementRef;
-  @ViewChild('skype', { static: false })
+  @ViewChild('skype', {static: false})
   skype: ElementRef;
 
   public vm: Vm = new Vm();
@@ -34,10 +34,11 @@ export class UpdateMasterComponent implements OnInit {
     private masterList: MasterListClient.MasterListClient,
     private tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
-    const id = this.jwtdecode.decode(this.tokenStore.get()['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']);
+    const id = this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
     this.masterList.getMasterById(id).subscribe((data) => {
       (data as any).starRating = this.countStarRating(data.averageRating);
       this.vm.Master = data;
@@ -77,10 +78,9 @@ export class UpdateMasterComponent implements OnInit {
   }
 
   public updateMasterInfo(): void {
-    const id = this.route.snapshot.paramMap.get('id'); //TODO: add jwt-decode
     this.masterList
       .updateMaster(
-        id,
+        this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
         MasterListClient.UpdateMasterReq.fromJS({
           name: (this.name as any).el.value | this.vm.Master.name,
           avatarUrl: this.vm.Master.avatarUrl,

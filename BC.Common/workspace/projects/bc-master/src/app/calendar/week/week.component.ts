@@ -18,7 +18,7 @@ export class WeekComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get()['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'])).subscribe(sch => {
+    this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']).subscribe(sch => {
       this.vm.schedule = sch;
       console.log(sch);
     });

@@ -19,7 +19,7 @@ export class DayComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     console.log(id);
-    this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get()['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'])).subscribe(sch => {
+    this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']).subscribe(sch => {
       this.vm.scheduleDay = sch.days.find(item => item?.id === id.toString());
       console.log(this.vm.scheduleDay);
     });
