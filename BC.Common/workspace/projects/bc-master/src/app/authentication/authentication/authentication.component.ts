@@ -26,7 +26,8 @@ export class AuthenticationComponent implements OnInit {
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           this.cookieService.set('vk-auth-token', data.token);
           this.cookieService.set('vk-username', data.username);
@@ -34,7 +35,8 @@ export class AuthenticationComponent implements OnInit {
       } else if (code && state == 'instagram') {
         this.authClient.authenticateByInstagram(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           this.cookieService.set('inst-auth-token', data.token);
           this.cookieService.set('inst-username', data.username);
@@ -42,7 +44,8 @@ export class AuthenticationComponent implements OnInit {
       } else if (code && state == 'google') {
         this.authClient.authenticateByGoogle(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
           this.cookieService.set('google-auth-token', data.token);
           this.cookieService.set('google-username', data.username);
@@ -71,7 +74,8 @@ export class AuthenticationComponent implements OnInit {
     if ((this.code as any).el.value) {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
-        code: (this.code as any).el.value
+        code: (this.code as any).el.value,
+        role: 'Master'
       })).subscribe(data => console.log(data));
 
     }
