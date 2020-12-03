@@ -19,7 +19,10 @@ export class TokenGuard implements CanActivate {
     if(this.tokenStore.get()){
       return true;
     } else {
-      this.router.navigate(['/authentication']);
+      this.router.navigate(['/authentication'],{
+        queryParams: {
+          return: state.url
+        }});
       return false;
     }
   }

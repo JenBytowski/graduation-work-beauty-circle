@@ -35,7 +35,7 @@ export class AuthenticationComponent implements OnInit {
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
-      queryParam['return-url'] ? localStorage.setItem('return-url', queryParam['return-url']) : {};
+      queryParam['return'] ? localStorage.setItem('return', queryParam['return']) : {};
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
@@ -43,7 +43,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(localStorage.getItem('return-url'));
+            this.router.navigate([localStorage.getItem('return')]);
           }
         });
       } else if (code && state == 'instagram') {
@@ -53,7 +53,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(localStorage.getItem('return-url'));
+            this.router.navigate([localStorage.getItem('return')]);
           }
         });
       } else if (code && state == 'google') {
@@ -63,7 +63,7 @@ export class AuthenticationComponent implements OnInit {
         })).subscribe(data => {
           if (data.token) {
             this.tokenStore.put(data.token);
-            window.location.replace(localStorage.getItem('return-url'));
+            this.router.navigate([localStorage.getItem('return')]);
           }
         });
       }
@@ -94,7 +94,7 @@ export class AuthenticationComponent implements OnInit {
       })).subscribe(data => {
         if (data.token) {
           this.tokenStore.put(data.token);
-          window.location.replace(localStorage.getItem('return-url'));
+          this.router.navigate([localStorage.getItem('return')]);
         }
       });
     }
