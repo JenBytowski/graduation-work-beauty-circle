@@ -1,6 +1,6 @@
 import {
   ActivatedRouteSnapshot,
-  CanActivate,
+  CanActivate, Router,
   RouterStateSnapshot,
 } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -11,11 +11,16 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class TokenGuard implements CanActivate {
-  constructor(private tokenStore: TokenStoreService) {}
+  constructor(private tokenStore: TokenStoreService, private router: Router) {}
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | boolean {
-    return !!this.tokenStore.get();
+    if(this.tokenStore.get()){
+      return true;
+    } else {
+      this.router.navigate(['/authentication']);
+      return false;
+    }
   }
 }
