@@ -79,18 +79,15 @@ export class UpdateMasterComponent implements OnInit {
 
   public updateMasterInfo(): void {
     let masterReq = MasterListClient.UpdateMasterReq.fromJS({
-      name: ((this.name as any).el.value | this.vm.Master?.name).toString(),
+      name: (this.name as any).el.value ? (this.name as any).el.value.toString() : undefined,
       avatarUrl: this.vm.Master?.avatarUrl,
-      about: ((this.about as any).el.value | this.vm.Master?.about).toString(),
-      address: ((this.adderss as any).el.value | this.vm.Master?.address).toString(),
-      phone: ((this.phone as any).el.value | this.vm.Master?.phone).toString(),
-      instagramProfile:
-        ((this.instagramProfile as any).el.value |
-        this.vm.Master?.instagramProfile).toString(),
-      vkProfile:
-        ((this.vkProfile as any).el.value | this.vm.Master?.vkProfile).toString(),
-      viber: ((this.viber as any).el.value | this.vm.Master?.viber).toString(),
-      skype: ((this.skype as any).el.value | this.vm.Master?.skype).toString(),
+      about: (this.about as any).el.value ? (this.about as any).el.value.toString() : undefined,
+      address: (this.adderss as any).el.value ? (this.adderss as any).el.value.toString() : undefined,
+      phone: (this.phone as any).el.value ? (this.phone as any).el.value.toString() : undefined,
+      instagramProfile: (this.instagramProfile as any).el.value ? (this.instagramProfile as any).el.value.toString() : undefined,
+      vkProfile: (this.vkProfile as any).el.value ? (this.vkProfile as any).el.value.toString() : undefined,
+      viber: (this.viber as any).el.value ? (this.viber as any).el.value.toString() : undefined,
+      skype: (this.skype as any).el.value ? (this.skype as any).el.value.toString() : undefined,
       specialityId: this.vm.Master?.specialityId,
       priceListItems: this.vm.Master?.priceListItems,
     });
