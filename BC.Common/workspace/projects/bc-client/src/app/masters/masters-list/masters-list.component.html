@@ -64,6 +64,37 @@
     'hidden-filter': filterStatus === false,
     'visible-filter': filterStatus === true
   }" color="medium">
+    <ion-item>
+      <ion-label>
+        CityId: <ion-input #cityId [value]="vm.filtre?.cityId"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        ServiceTypes: <ion-input #serviceTypes [value]="vm.filtre?.serviceTypeIds"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        StartHour: <ion-input #startHour [value]="vm.filtre?.startHour"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        EndHour: <ion-input #endHour [value]="vm.filtre?.endHour"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        Skip: <ion-input #skip [value]="vm.filtre?.skip"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-item>
+      <ion-label>
+        Take: <ion-input #take [value]="vm.filtre?.take"></ion-input>
+      </ion-label>
+    </ion-item>
+    <ion-button (click)="regetMasters(); filterStatus = false;" color="danger">Send</ion-button>
     <ion-button (click)="filterStatus = false" color="danger">Exit</ion-button>
   </ion-content>
 
