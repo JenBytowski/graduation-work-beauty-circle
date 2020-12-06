@@ -10,7 +10,7 @@ import {
   AuthenticationClient, AuthInterceptorService,
   BcCommonModule,
   BookingClient,
-  MasterListClient,
+  MasterListClient, TokenGuard,
 } from 'bc-common';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -37,6 +37,7 @@ import { MasterProfileModule } from './master-profile/master-profile.module';
   providers: [
     StatusBar,
     SplashScreen,
+    TokenGuard,
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
