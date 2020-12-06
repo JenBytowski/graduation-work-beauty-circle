@@ -1,24 +1,27 @@
-﻿import {BrowserModule} from "@angular/platform-browser";
-import {NgModule} from "@angular/core";
-import {AppRoutingModule} from "./app-routing.module";
-import {AppComponent} from "./app.component";
-import {IonicModule, IonicRouteStrategy} from "@ionic/angular";
-import {HttpClientModule} from "@angular/common/http";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import {ApiClientModule, AuthenticationClient, BcCommonModule, BookingClient, MasterListClient} from "bc-common";
-import {StatusBar} from "@ionic-native/status-bar/ngx";
-import {SplashScreen} from "@ionic-native/splash-screen/ngx";
-import {environment} from "../environments/environment";
-import {RouteReuseStrategy} from "@angular/router";
-import {CalendarModule} from './calendar/calendar.module'
-import {AuthenticationModule} from "./authentication/authentication.module";
-
-;
+﻿import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  ApiClientModule,
+  AuthenticationClient, AuthInterceptorService,
+  BcCommonModule,
+  BookingClient,
+  MasterListClient,
+} from 'bc-common';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { environment } from '../environments/environment';
+import { RouteReuseStrategy } from '@angular/router';
+import { CalendarModule } from './calendar/calendar.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { MasterProfileModule } from './master-profile/master-profile.module';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     IonicModule.forRoot(),
     BrowserModule,
@@ -28,7 +31,8 @@ import {AuthenticationModule} from "./authentication/authentication.module";
     ApiClientModule,
     BrowserAnimationsModule,
     CalendarModule,
-    AuthenticationModule
+    AuthenticationModule,
+    MasterProfileModule,
   ],
   providers: [
     StatusBar,
@@ -36,12 +40,19 @@ import {AuthenticationModule} from "./authentication/authentication.module";
     MasterListClient.MasterListClient,
     AuthenticationClient.AuthenticationClient,
     BookingClient.BookingClient,
-    {provide: MasterListClient.API_BASE_URL, useValue: environment.apiUrl},
-    {provide: AuthenticationClient.API_BASE_URL, useValue: environment.apiUrl},
-    {provide: BookingClient.API_BASE_URL, useValue: environment.apiUrl},
-    {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptorService,
+      multi: true,
+    },
+    { provide: MasterListClient.API_BASE_URL, useValue: environment.apiUrl },
+    {
+      provide: AuthenticationClient.API_BASE_URL,
+      useValue: environment.apiUrl,
+    },
+    { provide: BookingClient.API_BASE_URL, useValue: environment.apiUrl },
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {AuthenticationClient} from "bc-common";
+import {ActivatedRoute, Router} from "@angular/router";
+import {AuthenticationClient, TokenStoreService} from "bc-common";
 import {CookieService} from "ngx-cookie-service";
 
 @Component({
@@ -15,37 +15,53 @@ export class AuthenticationComponent implements OnInit {
   public redirectUrl: string = this.baseUrl + 'authentication';
   private querySubscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private authClient: AuthenticationClient.AuthenticationClient, private cookieService: CookieService, @Inject('BASE_URL') private baseUrl: string) {
+  constructor(
+    private route: ActivatedRoute,
+    private authClient: AuthenticationClient.AuthenticationClient,
+    private tokenStore: TokenStoreService,
+    private cookieService: CookieService, @Inject('BASE_URL')
+    private baseUrl: string,
+    private router: Router) {
   }
 
   ngOnInit() {
-    //console.log(this.redirectUrl)
+    console.log(this.redirectUrl);//
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
       const state = queryParam['state'];
+      queryParam['return'] ? localStorage.setItem('return', queryParam['return']) : {};
       if (code && state == 'vk') {
         this.authClient.authenticateByVk(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
-          this.cookieService.set('vk-auth-token', data.token);
-          this.cookieService.set('vk-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            this.router.navigate([localStorage.getItem('return')]);
+          }
         });
       } else if (code && state == 'instagram') {
         this.authClient.authenticateByInstagram(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
-          this.cookieService.set('inst-auth-token', data.token);
-          this.cookieService.set('inst-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            this.router.navigate([localStorage.getItem('return')]);
+          }
         });
       } else if (code && state == 'google') {
         this.authClient.authenticateByGoogle(AuthenticationClient.AuthenticationCodeRequest.fromJS({
           code: code,
-          redirectUrl: this.redirectUrl
+          redirectUrl: this.redirectUrl,
+          role: 'Master'
         })).subscribe(data => {
-          this.cookieService.set('google-auth-token', data.token);
-          this.cookieService.set('google-username', data.username);
+          if (data.token) {
+            this.tokenStore.put(data.token);
+            this.router.navigate([localStorage.getItem('return')]);
+          }
         });
       }
     });
@@ -71,8 +87,14 @@ export class AuthenticationComponent implements OnInit {
     if ((this.code as any).el.value) {
       await this.authClient.authenticateByPhoneStep2(AuthenticationClient.AuthenticatebyPhoneStep2Req.fromJS({
         phone: '375299854478',
-        code: (this.code as any).el.value
-      })).subscribe(data => console.log(data));
+        code: (this.code as any).el.value,
+        role: 'Master'
+      })).subscribe(data => {
+        if (data.token) {
+          this.tokenStore.put(data.token);
+          this.router.navigate([localStorage.getItem('return')]);
+        }
+      });
 
     }
   }

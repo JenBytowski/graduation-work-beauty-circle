@@ -11,4 +11,6 @@ export * as AuthenticationClient from './lib/api-client/authentication/clients';
 export * as BookingClient from './lib/api-client/booking/clients';
 export * from './lib/common/auth-interceptor.service';
 export * from './lib/common/token-store.service';
+export * from './lib/common/authentication.guard';
+export * from './lib/common/jwtdecode.service';
 export {slideInAnimation} from './lib/common/animations';

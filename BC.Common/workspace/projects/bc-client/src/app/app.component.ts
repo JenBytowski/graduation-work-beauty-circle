@@ -1,14 +1,14 @@
-import {Component} from '@angular/core';
-import {slideInAnimation} from "bc-common";
-import {IonRouterOutlet, Platform} from "@ionic/angular";
-import {SplashScreen} from "@ionic-native/splash-screen/ngx";
-import {StatusBar} from "@ionic-native/status-bar/ngx";
+import { Component } from '@angular/core';
+import { slideInAnimation } from 'bc-common';
+import { IonRouterOutlet, Platform } from '@ionic/angular';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  animations: [slideInAnimation]
+  animations: [slideInAnimation],
 })
 export class AppComponent {
   title = 'bc-client';
@@ -22,7 +22,11 @@ export class AppComponent {
   }
 
   prepareRoute(outlet: IonRouterOutlet) {
-    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
+    return (
+      outlet &&
+      outlet.activatedRouteData &&
+      outlet.activatedRouteData['animation']
+    );
   }
 
   initializeApp() {
