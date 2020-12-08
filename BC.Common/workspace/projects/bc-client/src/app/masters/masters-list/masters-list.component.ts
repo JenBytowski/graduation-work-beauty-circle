@@ -40,6 +40,8 @@ export class MastersListComponent implements OnInit {
 
   ngOnInit(): void {
     this.vm.filtre = new Filtre();
+    this.fillFiltre();
+    console.log(this.vm);
     this.tokenStore.get() ? this.isAuthorized = true : this.isAuthorized = false;
     console.log(this.isAuthorized);//
     this.improveGetMasters(this.vm.filtre);
@@ -66,12 +68,12 @@ export class MastersListComponent implements OnInit {
   }
 
   public fillFiltre(){
-    this.vm.filtre.cityId = (this.cityId as any).el.value ? (this.cityId as any).el.value.toString() : undefined;
-    this.vm.filtre.serviceTypeIds = (this.serviceTypes as any).el.value ? (this.serviceTypes as any).el.value.toString().split(' ') : undefined;
-    this.vm.filtre.startHour = (this.startHour as any).el.value ? (this.startHour as any).el.value.toString() : undefined;
-    this.vm.filtre.endHour = (this.endHour as any).el.value ? (this.endHour as any).el.value.toString() : undefined;
-    this.vm.filtre.skip = (this.skip as any).el.value ? (this.skip as any).el.value.toString() : 0;
-    this.vm.filtre.take = (this.take as any).el.value ? (this.take as any).el.value.toString() : 10;
+    this.vm.filtre.cityId = (this.cityId as any)?.el.value ? (this.cityId as any).el.value.toString() : null;
+    this.vm.filtre.serviceTypeIds = (this.serviceTypes as any)?.el.value ? (this.serviceTypes as any).el.value.toString().split(' ') : null;
+    this.vm.filtre.startHour = (this.startHour as any)?.el.value ? (this.startHour as any).el.value.toString() : null;
+    this.vm.filtre.endHour = (this.endHour as any)?.el.value ? (this.endHour as any).el.value.toString() : null;
+    this.vm.filtre.skip = (this.skip as any)?.el.value ? (this.skip as any).el.value.toString() : 0;
+    this.vm.filtre.take = (this.take as any)?.el.value ? (this.take as any).el.value.toString() : 10;
   }
 
   public logScrollStart() {
