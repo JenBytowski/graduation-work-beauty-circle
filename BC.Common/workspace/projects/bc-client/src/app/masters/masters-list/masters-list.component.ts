@@ -47,6 +47,7 @@ export class MastersListComponent implements OnInit {
 
   public regetMasters(){
     this.fillFiltre();
+    console.log(this.vm);
     this.improveGetMasters(this.vm.filtre);
   }
 
@@ -66,30 +67,30 @@ export class MastersListComponent implements OnInit {
 
   public fillFiltre(){
     this.vm.filtre.cityId = (this.cityId as any).el.value ? (this.cityId as any).el.value.toString() : undefined;
-    this.vm.filtre.serviceTypeIds = (this.serviceTypes as any).el.value ? (this.serviceTypes as any).el.value.toString() : undefined;
+    this.vm.filtre.serviceTypeIds = (this.serviceTypes as any).el.value ? (this.serviceTypes as any).el.value.toString().split(' ') : undefined;
     this.vm.filtre.startHour = (this.startHour as any).el.value ? (this.startHour as any).el.value.toString() : undefined;
     this.vm.filtre.endHour = (this.endHour as any).el.value ? (this.endHour as any).el.value.toString() : undefined;
-    this.vm.filtre.skip = (this.skip as any).el.value ? (this.skip as any).el.value.toString() : undefined;
-    this.vm.filtre.take = (this.take as any).el.value ? (this.take as any).el.value.toString() : undefined;
+    this.vm.filtre.skip = (this.skip as any).el.value ? (this.skip as any).el.value.toString() : 0;
+    this.vm.filtre.take = (this.take as any).el.value ? (this.take as any).el.value.toString() : 10;
   }
 
   public logScrollStart() {
-    console.log('scroll started');//
+    //console.log('scroll started');//
   }
 
   public logScrolling($event: any) {
-    console.log($event.detail);//
+    //console.log($event.detail);//
     if ($event.detail.deltaY > 10) {
       if ((this.topMenu as any).el.classList.contains('header-top')) {
         (this.topMenu as any).el.classList.remove('header-top');
       }
-      console.log('top');//
+      //console.log('top');//
     } else if ($event.detail.deltaY < -10) {
       (this.topMenu as any).el.classList.add('header-top');
       if ($event.detail.currentY === 0) {
         (this.topMenu as any).el.classList.remove('header-top');
       }
-      console.log('bot');//
+      //console.log('bot');//
     }
   }
 
