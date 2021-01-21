@@ -1,43 +1,51 @@
 <ion-app>
+
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon>
+        <ion-title> {{vm.Master?.name}} </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
   <ion-content>
-    <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img>
-    <ion-item>
-      <ion-label>
-        Id: {{vm.Master?.id}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Name: {{vm.Master?.name}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Spec: {{vm.Master?.speciality}}
-      </ion-label>
-    </ion-item>
+
+  <div>
+    <div style="width:400px; height:400px;">
+      <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img></div>
+    <div>
+      <ion-item>
+        <ion-label>
+          Id: {{vm.Master?.id}}
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Name: {{vm.Master?.name}}
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Spec: {{vm.Master?.speciality}}
+        </ion-label>
+      </ion-item>
+    </div>
+  </div>
+
+    
+    
     <ion-button [routerLink]="['../../masters']">gotest</ion-button>
     <a [routerLink]="['/']">Main</a>
-    GUID (Globally Unique Identifier) — статистически уникальный 128-битный идентификатор. Его главная особенность —
-    уникальность, которая позволяет создавать расширяемые сервисы и приложения без опасения конфликтов, вызванных
-    совпадением идентификаторов. Хотя уникальность каждого отдельного GUID не гарантируется, общее количество уникальных
-    ключей настолько велико (2128 или 3,4028×1038), что вероятность того, что в мире будут независимо сгенерированы два
-    совпадающих ключа, крайне мала.
-    <div style="padding: 1em;">
-      GUID (Globally Unique Identifier) — статистически уникальный 128-битный идентификатор. Его главная особенность —
-      уникальность, которая позволяет создавать расширяемые сервисы и приложения без опасения конфликтов, вызванных
-      совпадением идентификаторов. Хотя уникальность каждого отдельного GUID не гарантируется, общее количество
-      уникальных
-      ключей настолько велико (2128 или 3,4028×1038), что вероятность того, что в мире будут независимо сгенерированы
-      два
-      совпадающих ключа, крайне мала.
-
-      «GUID» называют некоторые реализации стандарта, имеющего название Universally Unique Identifier (UUID).
-
-      В тексте GUID записывается в виде строки из тридцати двух шестнадцатеричных цифр, разбитой на группы дефисами и
-      опционально окружённой фигурными скобками:
-
-      6F9619FF-8B86-D011-B42D-00CF4FC964FF
-    </div>
+    
   </ion-content>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title> BC </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+
 </ion-app>

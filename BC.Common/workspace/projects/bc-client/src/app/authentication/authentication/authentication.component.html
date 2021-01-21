@@ -1,12 +1,9 @@
 <ion-app>
-
   <ion-header>
     <ion-toolbar>
       <ion-item>
-        <!--        <ion-button class="menu-icon" slot="start" color="warning" (click)="openFirst()">Menu</ion-button>-->
-        <ion-title>
-          Аутентификация (клиент)
-        </ion-title>
+        <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon>
+        <ion-title> Authentication (client) </ion-title>
       </ion-item>
     </ion-toolbar>
   </ion-header>
@@ -14,72 +11,94 @@
   <ion-content>
     <div class="navigation_form_background">
       <div class="navigation_form">
-
-        <!--        <ion-item>-->
-        <!--          <ion-button (click)="authByPhone()">Get code</ion-button>-->
-        <!--          <ion-input type="number" #code></ion-input>-->
-        <!--          <ion-button (click)="sendCode()">Reg</ion-button>-->
-        <!--        </ion-item>-->
-
-        <div class="form_text">
-          Войдите
-        </div>
+        <div class="form_text">Log in via</div>
 
         <div class="icon_line">
           <ion-icon
             (click)="codePopupStatus = true"
             class="form_icon"
-            icon="call">
+            icon="call"
+          >
           </ion-icon>
-          <ion-icon
-            (click)="authByVk()"
-            class="form_icon"
-            icon="logo-vk">
+          <ion-icon (click)="authByVk()" class="form_icon" icon="logo-vk">
           </ion-icon>
           <ion-icon
             (click)="authByInstagram()"
             class="form_icon"
-            icon="logo-instagram">
+            icon="logo-instagram"
+          >
           </ion-icon>
           <ion-icon
             (click)="authByGoogle()"
             class="form_icon"
-            icon="logo-google">
+            icon="logo-google"
+          >
           </ion-icon>
         </div>
-
-        <div class="form_text">
-          или
-        </div>
-
-        <div class="form_text">
-          <a [routerLink]="['../']">Зарегестрируйтесь</a>
-        </div>
-
       </div>
     </div>
   </ion-content>
   <!--    -->
   <!--    -->
   <!--    -->
-  <ion-content #enter_code_popup [ngClass]="{
-    'hidden-code_popup': codePopupStatus === false,
-    'visible-code_popup': codePopupStatus === true
-  }">
+  <ion-content
+    #enter_code_popup
+    [ngClass]="{
+      'hidden-code_popup': codePopupStatus === false,
+      'visible-code_popup': codePopupStatus === true
+    }"
+  >
     <div class="code_popup__controls">
-      <ion-input #phone class="code_popup__controls__input" color="medium" type="text" value="Phone"></ion-input>
-      <ion-button (click)="authByPhone()" class="code_popup__controls__button" color="medium" fill="outline">Request code</ion-button>
-      <ion-input #code class="code_popup__controls__input" color="medium" type="text" value="Code"></ion-input>
-      <ion-button (click)="codePopupStatus = false; sendCode()" class="code_popup__controls__button" color="medium" fill="outline">Send code</ion-button>
+      <ion-input
+        #phone
+        class="code_popup__controls__input"
+        color="primaty"
+        type="text"
+        placeholder="Phone"
+      ></ion-input>
+      <ion-button
+        (click)="authByPhone()"
+        class="code_popup__controls__button"
+        color="medium"
+        fill="outline"
+        >Request code</ion-button
+      >
+      <ion-input
+        #code
+        class="code_popup__controls__input"
+        color="medium"
+        type="text"
+        placeholder="Code"
+      >
+      </ion-input>
+      <ion-button
+        (click)="codePopupStatus = false; sendCode()"
+        class="code_popup__controls__button"
+        color="medium"
+        fill="outline"
+        >Send code</ion-button
+      >
     </div>
   </ion-content>
-  <!--(click)="codePopupStatus = false"-->
-  <ion-content [ngClass]="{
-    'hidden-code_popup': codePopupStatus === false,
-    'visible-code_popup': codePopupStatus === true
-  }" class="code_popup__background">
+  <!---->
+  <ion-content
+    [ngClass]="{
+      'hidden-code_popup': codePopupStatus === false,
+      'visible-code_popup': codePopupStatus === true
+    }"
+    class="code_popup__background"
+    (click)="codePopupStatus = false"
+  >
     <!--    -->
     <!--    -->
     <!--    -->
   </ion-content>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title> BC </ion-title>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
 </ion-app>

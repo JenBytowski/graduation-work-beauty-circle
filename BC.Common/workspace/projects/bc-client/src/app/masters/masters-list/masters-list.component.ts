@@ -106,6 +106,10 @@ export class MastersListComponent implements OnInit {
       (rating >= 5 ? 'star' : rating >= 4.5 ? 'star-half-outline' : 'star-outline'),
     ];
   }
+
+  public redirect(url: string){
+    window.location.replace(url);
+  }
 }
 
 class Vm {

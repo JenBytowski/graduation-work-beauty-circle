@@ -3,9 +3,8 @@
   <ion-header>
     <ion-toolbar>
       <ion-item>
-        <ion-title [routerLink]="['../']">
-          Мастера
-        </ion-title>
+        <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon>
+        <ion-title>Masters</ion-title>
       </ion-item>
     </ion-toolbar>
   </ion-header>
@@ -13,8 +12,8 @@
   <ion-content (ionScroll)="logScrolling($event)" (ionScrollStart)="logScrollStart()" [scrollEvents]="true">
 
     <ion-item #topMenu>
-      <ion-label slot="start">Need cut some hairs, sweet?</ion-label>
-      <ion-button (click)="filterStatus = true" color="medium" fill="outline" slot="end">Yes!!</ion-button>
+      <ion-label slot="start">Filter</ion-label>
+      <ion-button (click)="filterStatus = true" color="medium" fill="outline" slot="end">Open</ion-button>
     </ion-item>
 
     <ion-card *ngFor="let master of vm.Masters">
@@ -39,10 +38,12 @@
       </div>
       <ion-item class="links_item">
         Links:
-        <ion-icon class="link" icon="logo-vk"></ion-icon>
-        <ion-icon class="link" icon="logo-skype"></ion-icon>
-        <ion-icon class="link" icon="logo-instagram"></ion-icon>
-        <ion-icon class="link" icon="logo-google"></ion-icon>
+        <ion-icon class="link" icon="logo-vk" (click)="redirect(master.vkProfile)"></ion-icon>
+        <ion-icon class="link" icon="logo-skype" (click)="redirect(master.skype)"></ion-icon>
+        <ion-icon class="link" icon="logo-instagram" (click)="redirect(master.instagramProfile)"></ion-icon>
+      </ion-item>
+      <ion-item class="links_item">
+        Phone/Viber: +{{master.phone}}
       </ion-item>
     </ion-card>
 
