@@ -1,5 +1,15 @@
-ion-header{
+ion-header {
   display: flex;
   justify-content: start;
   background-color: white;
+}
+
+.content_cover {
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  width: 60%;
+  height: 100%;
 }

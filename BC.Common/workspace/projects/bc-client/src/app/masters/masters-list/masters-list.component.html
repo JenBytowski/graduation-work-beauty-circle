@@ -3,7 +3,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-item>
-        <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon>
+        <ion-icon name="storefront-outline" [routerLink]="['/']"></ion-icon>
         <ion-title>Masters</ion-title>
       </ion-item>
     </ion-toolbar>
@@ -18,7 +18,7 @@
 
     <ion-card *ngFor="let master of vm.Masters">
       <ion-card-title class="card_title">{{master.name}}
-        <ion-icon class="favorite_icon" name="heart"></ion-icon>
+        <ion-icon class="favorite_icon" name="heart" style="cursor: pointer;"></ion-icon>
       </ion-card-title>
       <div class="card_main_info">
         <ion-avatar>
@@ -95,8 +95,10 @@
         Take: <ion-input #take [value]="vm.filtre?.take"></ion-input>
       </ion-label>
     </ion-item>
-    <ion-button (click)="regetMasters(); filterStatus = false;" color="danger">Send</ion-button>
-    <ion-button (click)="filterStatus = false" color="danger">Exit</ion-button>
+    <ion-item>
+      <ion-button slot="start" (click)="regetMasters(); filterStatus = false;" color="medium">Send</ion-button>
+      <ion-button slot="end" (click)="filterStatus = false" color="medium">Exit</ion-button>
+    </ion-item>
   </ion-content>
 
   <ion-content (click)="filterStatus = false" [ngClass]="{

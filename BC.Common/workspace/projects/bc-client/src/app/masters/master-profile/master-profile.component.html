@@ -3,41 +3,54 @@
   <ion-header>
     <ion-toolbar>
       <ion-item>
-        <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon>
+        <ion-icon name="storefront-outline" [routerLink]="['/']"></ion-icon>
         <ion-title> {{vm.Master?.name}} </ion-title>
+        <ion-button color="medium" (click)="addBooking()">Booking</ion-button>
+        <ion-button color="medium" [routerLink]="['../../masters']" >Masters</ion-button>
       </ion-item>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
-
-  <div>
-    <div style="width:400px; height:400px;">
+    <div class="content_cover">
+      <div class="content">
+    <div style="width:150px; height:150px;">
       <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img></div>
     <div>
       <ion-item>
         <ion-label>
-          Id: {{vm.Master?.id}}
-        </ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>
           Name: {{vm.Master?.name}}
         </ion-label>
+        <ion-icon slot="end" *ngFor="let star of vm.Master?.starRating" [icon]="star"></ion-icon>
       </ion-item>
       <ion-item>
         <ion-label>
           Spec: {{vm.Master?.speciality}}
         </ion-label>
       </ion-item>
+      <ion-item>
+        <ion-label>
+          Links: {{vm.Master?.vkProfile}}; {{vm.Master?.instagramProfile}}; {{vm.Master?.skype}};
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Phone/Viber: {{vm.Master?.phone}}; {{vm.Master?.viber}};
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          Address: {{vm.Master?.address}}
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>
+          About: {{vm.Master?.about}}
+        </ion-label>
+      </ion-item>
     </div>
-  </div>
-
-    
-    
-    <ion-button [routerLink]="['../../masters']">gotest</ion-button>
-    <a [routerLink]="['/']">Main</a>
-    
+      </div>
+    </div>
   </ion-content>
 
   <ion-footer>
