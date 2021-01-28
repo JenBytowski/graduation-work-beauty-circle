@@ -61,14 +61,18 @@ export class MasterProfileComponent implements OnInit {
     ];
   }
 
+  public redirect(url: string) {
+    window.location.replace(url);
+  }
+
   public addBooking() {
     let req: BookingClient.AddBookingReq = new BookingClient.AddBookingReq();
     req.masterId = this.vm.Master.id;
     req.clientId = this.vm.ClientId;
-    req.serviceType = null;
+    req.serviceType = "23d407e7-6c56-4360-8b20-f4599247b787";
     req.description = 'Description';
-    req.startTime = new Date(0);
-    req.endTime = new Date(10000);
+    req.startTime = new Date("2021-01-25T01:00:00");
+    req.endTime = new Date("2021-01-25T02:00:00");
     console.log(req);//
     this.booking.addBooking(req).subscribe((data) => console.log(data));
   }

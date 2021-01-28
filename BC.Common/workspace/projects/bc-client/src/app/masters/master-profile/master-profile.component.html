@@ -29,13 +29,14 @@
         </ion-label>
       </ion-item>
       <ion-item>
-        <ion-label>
-          Links: {{vm.Master?.vkProfile}}; {{vm.Master?.instagramProfile}}; {{vm.Master?.skype}};
-        </ion-label>
+          Links: 
+        <ion-icon class="link" icon="logo-vk" (click)="redirect(vm.Master?.vkProfile)"></ion-icon>
+        <ion-icon class="link" icon="logo-skype" (click)="redirect(vm.Master?.skype)"></ion-icon>
+        <ion-icon class="link" icon="logo-instagram" (click)="redirect(vm.Master?.instagramProfile)"></ion-icon>
       </ion-item>
       <ion-item>
         <ion-label>
-          Phone/Viber: {{vm.Master?.phone}}; {{vm.Master?.viber}};
+          Phone/Viber: +{{vm.Master?.phone}}
         </ion-label>
       </ion-item>
       <ion-item>

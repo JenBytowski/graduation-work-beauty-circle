@@ -45,6 +45,7 @@ namespace BC.API.Services.MastersListService
       {
         Id = master.Id,
         Name = master.Name,
+        AvatarUrl = master.AvatarUrl,
         CityId = master.CityId,
         About = master.About,
         Address = master.Address,

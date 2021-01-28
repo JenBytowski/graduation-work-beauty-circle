@@ -13,3 +13,7 @@ ion-header {
   width: 60%;
   height: 100%;
 }
+
+.link {
+  margin-left: 1em;
+}
