@@ -1,6 +1,22 @@
 <ion-app>
+<ion-header>
+  <ion-toolbar>
+    <ion-item>
+      <ion-title> {{ vm.Master?.name }} </ion-title>
+      <ion-button color="medium" (click)="updateMasterInfo()">Update</ion-button>
+      <ion-button color="medium" [routerLink]="['../week']">Calendar</ion-button>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
   <ion-content>
-    <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img>
+    <div class="content_cover">
+      <div class="content">
+        <div style="width: 150px; height: 150px">
+          <ion-img
+            [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'">
+          </ion-img>
+        </div>
     <ion-item>
       <ion-label>
         Id: {{vm.Master?.id}}
@@ -55,10 +71,7 @@
       <ion-icon *ngFor="let star of vm.Master?.starRating" [icon]="star"></ion-icon>
     </ion-item>
 
-    <ion-item>
-      <ion-button (click)="updateMasterInfo()">Submit</ion-button>
-    </ion-item>
-
-    <a [routerLink]="['/']">Main</a>
+    </div>
+    </div>
   </ion-content>
 </ion-app>
