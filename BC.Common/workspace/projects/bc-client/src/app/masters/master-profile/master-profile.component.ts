@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MasterListClient, BookingClient, JWTDecodeService, TokenStoreService } from 'bc-common';
 
@@ -10,24 +10,29 @@ import { MasterListClient, BookingClient, JWTDecodeService, TokenStoreService } 
 export class MasterProfileComponent implements OnInit {
   public vm: Vm = new Vm();
 
+  @ViewChild("start", { static: false })
+  start: ElementRef;
+  @ViewChild("end", { static: false })
+  end: ElementRef;
+
   constructor(
     private route: ActivatedRoute,
     private masterList: MasterListClient.MasterListClient,
     private booking: BookingClient.BookingClient,
     private tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    this.booking.getSchedule(id).subscribe(data => this.vm.Schedule = data);
     this.masterList.getMasterById(id).subscribe((data) => {
       (data as any).starRating = this.countStarRating(data.averageRating);
       this.vm.Master = data;
-      this.vm.Schedule = this.FillSchrdule(id);
       this.vm.ClientId = this.jwtdecode.decode(this.tokenStore.get())[
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
       ];
-      console.log(data);
+      console.log(this.vm);
     });
   }
 
@@ -37,28 +42,28 @@ export class MasterProfileComponent implements OnInit {
       rating >= 1
         ? 'star'
         : rating >= 0.5
-        ? 'star-half-outline'
-        : 'star-outline',
+          ? 'star-half-outline'
+          : 'star-outline',
       rating >= 2
         ? 'star'
         : rating >= 1.5
-        ? 'star-half-outline'
-        : 'star-outline',
+          ? 'star-half-outline'
+          : 'star-outline',
       rating >= 3
         ? 'star'
         : rating >= 2.5
-        ? 'star-half-outline'
-        : 'star-outline',
+          ? 'star-half-outline'
+          : 'star-outline',
       rating >= 4
         ? 'star'
         : rating >= 3.5
-        ? 'star-half-outline'
-        : 'star-outline',
+          ? 'star-half-outline'
+          : 'star-outline',
       rating >= 5
         ? 'star'
         : rating >= 4.5
-        ? 'star-half-outline'
-        : 'star-outline',
+          ? 'star-half-outline'
+          : 'star-outline',
     ];
   }
 
@@ -66,27 +71,27 @@ export class MasterProfileComponent implements OnInit {
     window.location.replace(url);
   }
 
-  public getMastersSchedule(){
+  public getMastersSchedule() {
     this.booking.getSchedule(this.vm.Master.id).subscribe(data => console.log(data));
   }
 
-  public addBooking() {
-    let req: BookingClient.AddBookingReq = new BookingClient.AddBookingReq();
-    req.masterId = this.vm.Master.id;
-    req.clientId = this.vm.ClientId;
-    req.serviceType = "23d407e7-6c56-4360-8b20-f4599247b787";
-    req.description = 'Description';
-    req.startTime = new Date("2021-01-25T01:00:00");
-    req.endTime = new Date("2021-01-25T02:00:00");
-    console.log(req);//
-    this.booking.addBooking(req).subscribe((data) => console.log(data));
+  public addBooking(item: BookingClient.ScheduleDayItemRes) {
+    if (item.itemType == 'Window') {
+      let req: BookingClient.AddBookingReq = new BookingClient.AddBookingReq();
+      req.masterId = this.vm.Master.id;
+      req.clientId = this.vm.ClientId;
+      req.serviceType = "C9F93769-75F9-4C85-8D5D-D6893D6887C5";
+      req.description = 'Description';
+      item.startTime.setHours(item.startTime.getHours() + 3);
+      req.startTime = item.startTime;
+      item.endTime.setHours(item.endTime.getHours() + 3);
+      req.endTime = item.endTime;
+      console.log(req);//
+      console.log(item);//
+      this.booking.addBooking(req).subscribe((data) => console.log(data));
+      //document.location.reload();
+    }
   }
-
-  public FillSchrdule(id: string): BookingClient.GetScheduleRes {
-    let schedule: BookingClient.GetScheduleRes;
-    this.booking.getSchedule(id).subscribe(data => schedule = data);
-    return schedule;
-   }
 }
 
 

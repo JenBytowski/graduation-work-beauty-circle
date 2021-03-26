@@ -17,3 +17,28 @@ ion-header {
 .link {
   margin-left: 1em;
 }
+
+.grid {
+  margin: 1em;
+}
+
+.grid_col {
+  text-align: center;
+  border: 2px solid white;
+  margin: 0.5em;
+}
+
+.grid_col_window {
+  cursor: pointer;
+  border: 2px solid green;
+}
+
+.grid_col_booking {
+  cursor: pointer;
+  border: 2px solid red;
+}
+
+.grid_col_pause {
+  cursor: pointer;
+  border: 2px solid blue;
+}
