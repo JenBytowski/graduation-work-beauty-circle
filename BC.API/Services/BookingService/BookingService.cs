@@ -265,35 +265,61 @@ namespace BC.API.Services.BookingService
 
     private void ConcatenateWindows(Guid dayId)
     {
-      var day = _context.ScheduleDays.Include(day => day.Items).First(day => day.Id == dayId);
-      var windows = day.Items.Where(imt => imt is Window);
-      var newWindows = windows.ToList();
+      this._context.ScheduleDays.Where(day => day.Id == dayId).Load();
+      var day = this._context.ScheduleDays.Local.SingleOrDefault(day => day.Id == dayId);
 
-      _context.ScheduleDayItems.RemoveRange(windows);
-      _context.SaveChanges();
-
-      for (var counter = 0; counter < newWindows.Count;)
+      if (day == null)
       {
-        var window = newWindows[counter];
-        var windowtoConcatenate = newWindows.FirstOrDefault(wnd => window.EndTime == wnd.StartTime || window.StartTime == wnd.EndTime);
-
-        if (windowtoConcatenate == null)
-        {
-          counter++;
-        }
-
-        newWindows[counter] = new Window
-        {
-          Id = window.Id,
-          ScheduleDayId = window.ScheduleDayId,
-          StartTime = window.StartTime,
-          EndTime = windowtoConcatenate.EndTime
-        };
-        newWindows.Remove(windowtoConcatenate);
+        throw new BookingException($"cant find day with id: {dayId}");
       }
 
-      _context.ScheduleDayItems.AddRange(newWindows);
-      _context.SaveChanges();
+      this._context.Entry(day).Collection(day => day.Items).Load();
+      var dayItems = this._context.ScheduleDayItems.Local.Where(itm => itm.ScheduleDayId == dayId);
+
+      if (dayItems.Count() == 0)
+      {
+        throw new BookingException($"day with id: {dayId} dont contains any day items");
+      }
+
+      var windows = dayItems.Where(itm => itm is Window);
+      var result = new List<ScheduleDayItem>();
+
+      foreach (var window in windows)
+      {
+        var windowsToConcatenate = windows.Where(wnd =>
+        (window.StartTime == wnd.EndTime || window.EndTime == wnd.StartTime))
+          .ToList();
+
+        if (result.Any(itm => window.StartTime >= itm.StartTime && window.EndTime <= itm.EndTime))
+        {
+          continue;
+        }
+
+        if (windowsToConcatenate.Count() == 0)
+        {
+          result.Add(window);
+
+          continue;
+        }
+
+        windowsToConcatenate.Add(window);
+        var newWindow = new Window
+        {
+          ScheduleDayId = window.ScheduleDayId,
+          StartTime = windowsToConcatenate.Min(wnd => wnd.StartTime),
+          EndTime = windowsToConcatenate.Max(wnd => wnd.EndTime)
+        };
+        result.Add(newWindow);
+      }
+
+      var windowsToAdd = result.Where(itm => !windows.Any(wnd => wnd.Id == itm.Id));
+      var windowsToRemove = windows.Where(wnd => result.Any(itm => itm.Id == wnd.Id) ||
+      result.Any(itm => wnd.StartTime >= itm.StartTime && wnd.EndTime <= itm.EndTime));
+
+      this._context.RemoveRange(windowsToRemove);
+      this._context.AddRange(windowsToAdd);
+      this._context.SaveChanges();
+
     }
 
     public async Task OnUserAssignedToRole(UserAssignedToRoleEvent userAssignedToRoleEvent)
