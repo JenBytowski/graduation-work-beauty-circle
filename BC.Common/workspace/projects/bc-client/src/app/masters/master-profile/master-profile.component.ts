@@ -8,12 +8,13 @@ import { MasterListClient, BookingClient, JWTDecodeService, TokenStoreService } 
   styleUrls: ['./master-profile.component.css'],
 })
 export class MasterProfileComponent implements OnInit {
+
   public vm: Vm = new Vm();
 
-  @ViewChild("start", { static: false })
-  start: ElementRef;
-  @ViewChild("end", { static: false })
-  end: ElementRef;
+  @ViewChild("itemDate", { static: false })
+  itemDate: ElementRef;
+  @ViewChild("itemTime", { static: false })
+  itemTime: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -99,9 +100,12 @@ export class MasterProfileComponent implements OnInit {
       //document.location.reload();
     }
   }
+
+  public ShowItems(): void {
+    (this.itemDate as any).el.style.display = "none";
+    (this.itemTime as any).el.style.display = "inline";
+  }
 }
-
-
 
 class Vm {
   public Master: any;
