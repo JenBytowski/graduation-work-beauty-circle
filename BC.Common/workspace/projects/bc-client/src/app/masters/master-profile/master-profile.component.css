@@ -38,7 +38,16 @@ ion-header {
   border: 2px solid red;
 }
 
+.grid_col_booking_client {
+  cursor: pointer;
+  border: 2px solid yellow;
+}
+
 .grid_col_pause {
   cursor: pointer;
   border: 2px solid blue;
+}
+
+.grid_col_items {
+  border: 2px solid rgb(42, 165, 165);
 }

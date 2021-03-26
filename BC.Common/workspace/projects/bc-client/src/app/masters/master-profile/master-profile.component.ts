@@ -75,7 +75,7 @@ export class MasterProfileComponent implements OnInit {
     this.booking.getSchedule(this.vm.Master.id).subscribe(data => console.log(data));
   }
 
-  public addBooking(item: BookingClient.ScheduleDayItemRes) {
+  public changeItemState(item: BookingClient.ScheduleDayItemRes) {
     if (item.itemType == 'Window') {
       let req: BookingClient.AddBookingReq = new BookingClient.AddBookingReq();
       req.masterId = this.vm.Master.id;
@@ -88,7 +88,14 @@ export class MasterProfileComponent implements OnInit {
       req.endTime = item.endTime;
       console.log(req);//
       console.log(item);//
-      this.booking.addBooking(req).subscribe((data) => console.log(data));
+      //this.booking.addBooking(req).subscribe((data) => console.log(data));
+      //document.location.reload();
+    }
+    else if (item.itemType == 'Booking' && this.vm.ClientId == item.clientId) {
+      let req: BookingClient.CancelBookingReq = new BookingClient.CancelBookingReq();
+      req.bookingId = item.id;
+      console.log(req);
+      //this.booking.cancelBooking(req).subscribe(data => console.log(data));
       //document.location.reload();
     }
   }
