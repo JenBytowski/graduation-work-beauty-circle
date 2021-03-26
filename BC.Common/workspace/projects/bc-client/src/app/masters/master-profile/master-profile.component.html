@@ -51,6 +51,11 @@
                         </ion-label>
                     </ion-item>
                 </div>
+                <ion-item #range disabled="true">
+                    <ion-range slot="start" color="medium" dualKnobs="true" [min]="rangeMin" [max]="rangeMax" step="1" snaps="true"></ion-range>
+                    <ion-button color="medium" (click)="changeItemState($event)" slot="end">Confirm</ion-button>
+                </ion-item>
+                <!-- (click)="changeItemState(item)"  -->
                 <ion-title class="calendar_title">Calendar</ion-title>
                 <div class="grid">
                     <ion-grid>
@@ -58,8 +63,8 @@
                             <ion-col size="2.5" title="{{day.date}}">
                                 {{day.date | date}}
                             </ion-col>
-                            <ion-col size="0.2" (click)="changeItemState(item)" class="grid_col" *ngFor="let item of day?.items" [class.grid_col_window]="item.itemType == 'Window'" [class.grid_col_booking_client]="item.itemType == 'Booking' && this.vm.ClientId == item.clientId"
-                                [class.grid_col_booking]="item.itemType == 'Booking' && this.vm.ClientId != item.clientId" [class.grid_col_pause]="item.itemType == 'Pause'" title="{{item.startTime | date}} {{item.startTime | date:'h:mm a'}} - {{item.endTime | date:'h:mm a'}} {{item.itemType}}">
+                            <ion-col size="0.2" (click)="enableRange(item)" class="grid_col" *ngFor="let item of day?.items" [class.grid_col_window]="item.itemType == 'Window'" [class.grid_col_booking_client]="item.itemType == 'Booking' && this.vm.ClientId == item.clientId" [class.grid_col_booking]="item.itemType == 'Booking' && this.vm.ClientId != item.clientId"
+                                [class.grid_col_pause]="item.itemType == 'Pause'" title="{{item.startTime | date}} {{item.startTime | date:'h:mm a'}} - {{item.endTime | date:'h:mm a'}} {{item.itemType}}">
                             </ion-col>
                         </ion-row>
                     </ion-grid>
