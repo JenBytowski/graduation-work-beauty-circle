@@ -33,7 +33,11 @@ namespace BC.API.Services.MastersListService
 
     public string Speciality { get; set; }
 
+    public Guid PriceListId { get; set; }
+
     public IEnumerable<PriceListItemRes> PriceList { get; set; }
+
+    public Guid ScheduleId { get; set; }
 
     public IEnumerable<ScheduleDayRes> Schedule { get; set; }
 
@@ -55,7 +59,9 @@ namespace BC.API.Services.MastersListService
         Viber = master.Viber,
         Skype = master.Skype,
         Speciality = master.Speciality?.Name,
+        PriceListId = master.PriceListId,
         PriceList = master.PriceList?.PriceListItems.Select(itm => PriceListItemRes.ParseFromPriseListItem(itm)),
+        ScheduleId = master.ScheduleId,
         Schedule = master.Schedule?.Days.Select(day => ScheduleDayRes.ParseFromScheduleDay(day)),
         AverageRating = master.ReviewsCount > 0 ? (master.Stars / (double?)master.ReviewsCount) : null
       };
