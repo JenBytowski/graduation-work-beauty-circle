@@ -14,9 +14,6 @@ export class MasterProfileComponent implements OnInit {
   public rangeMax: number;
   public rangeMin: number;
 
-  @ViewChild("range", { static: false })
-  range: IonRange;
-
   constructor(
     private route: ActivatedRoute,
     private masterList: MasterListClient.MasterListClient,
@@ -100,7 +97,6 @@ export class MasterProfileComponent implements OnInit {
 
   public enableRange(item: BookingClient.ScheduleDayItemRes) {
     if (item.itemType == "Window") {
-      (this.range as any).el.disabled = false;
       this.rangeMin = item.startTime.getHours();
       this.rangeMax = item.endTime.getHours();
       this.vm.CurrentItem = item;

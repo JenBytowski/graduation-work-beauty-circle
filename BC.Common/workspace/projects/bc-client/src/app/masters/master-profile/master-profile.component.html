@@ -52,11 +52,17 @@
             </ion-label>
           </ion-item>
         </div>
-        <ion-item #range disabled="true">
-          <ion-range slot="start" pin="true" color="medium" dualKnobs="true" [min]="rangeMin" [max]="rangeMax" step="1"
+        <ion-item #rangeItem disabled="true">
+          <ion-range #range disabled="true" slot="start" pin="true" color="medium" dualKnobs="true" [min]="rangeMin"
+                     [max]="rangeMax" step="1"
                      snaps="true"></ion-range>
-          <ion-button color="medium" (click)="range.disabled = true" slot="end">Cancel</ion-button>
-          <ion-button color="medium" (click)="changeItemState($event)" slot="end">Confirm</ion-button>
+          <ion-button #rangeCancel disabled="true" color="medium"
+                      (click)="rangeItem.disabled = true; range.disabled = true; rangeConfirm.disabled = true; rangeCancel.disabled = true;"
+                      slot="end">Cancel
+          </ion-button>
+          <ion-button #rangeConfirm disabled="true" color="medium" (click)="changeItemState($event)" slot="end">
+            Confirm
+          </ion-button>
         </ion-item>
         <ion-title class="calendar_title">Calendar</ion-title>
         <div class="grid">
@@ -65,7 +71,9 @@
               <ion-col size="2.5" title="{{day.date}}">
                 {{day.date | date}}
               </ion-col>
-              <ion-col size="0.2" (click)="enableRange(item)" class="grid_col" *ngFor="let item of day?.items"
+              <ion-col size="0.2"
+                       (click)="enableRange(item); rangeItem.disabled = false; range.disabled = false; rangeConfirm.disabled = false; rangeCancel.disabled = false;"
+                       class="grid_col" *ngFor="let item of day?.items"
                        [class.grid_col_window]="item.itemType == 'Window'"
                        [class.grid_col_booking_client]="item.itemType == 'Booking' && this.vm.ClientId == item.clientId"
                        [class.grid_col_booking]="item.itemType == 'Booking' && this.vm.ClientId != item.clientId"
