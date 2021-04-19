@@ -89,8 +89,8 @@ export class UpdateMasterComponent implements OnInit {
       vkProfile: (this.vkProfile as any).el.value ? (this.vkProfile as any).el.value.toString() : undefined,
       viber: (this.viber as any).el.value ? (this.viber as any).el.value.toString() : undefined,
       skype: (this.skype as any).el.value ? (this.skype as any).el.value.toString() : undefined,
-      specialityId: (this.vm.Master as any).specialityId,
-      priceListItems: (this.vm.Master as any).priceListItems,
+      specialityId: this.vm.Master?.specialityId,
+      priceListItems: this.vm.Master?.priceListItems,
     });
     console.log(masterReq);
     this.masterList
@@ -103,7 +103,8 @@ export class UpdateMasterComponent implements OnInit {
   public async addWeek() {
     this.booking.getSchedule(this.vm.Master.id).subscribe(sch => {
       this.vm.Schedule = sch;
-      if (this.getNextMonDate().valueOf() > sch.days[sch.days.length - 1].date.valueOf()) {
+      if (this.getNextMonDate().valueOf() > this.getLastDay(sch.days)) {
+        console.log('Days added!')
         this.booking.addWorkingWeek(BookingClient.AddWorkingWeekReq.fromJS({
           masterId: this.vm.Master.id,
           mondayDate: this.getNextMonDate(),
@@ -113,8 +114,6 @@ export class UpdateMasterComponent implements OnInit {
         })).subscribe(data => console.log(data));
       }
     });
-
-
   }
 
   public getNextMonDate(): Date {
@@ -122,9 +121,19 @@ export class UpdateMasterComponent implements OnInit {
     d.setDate(d.getDate() + (1 + 7 - d.getDay()) % 7);
     return d;
   }
+
+  public getLastDay(days: BookingClient.ScheduleDayRes[]): number {
+    let last: number | object = new Date().valueOf();
+    days.forEach(day => {
+      if(last < day.date.valueOf()){
+        last = day.date.valueOf();
+      }
+    });
+    return last;
+  }
 }
 
 class Vm {
-  public Master: MasterListClient.MasterRes;
+  public Master: any;
   public Schedule: BookingClient.GetScheduleRes;
 }

@@ -3,14 +3,14 @@
     <ion-toolbar>
       <ion-item>
         <ion-icon name="storefront-outline" [routerLink]="['/']"></ion-icon>
-        <ion-title> Week </ion-title>
-        </ion-item>
+        <ion-title> Week</ion-title>
+      </ion-item>
     </ion-toolbar>
   </ion-header>
 
   <ion-content>
     <ion-card *ngFor="let day of vm.schedule?.days">
-      <ion-item>Day: {{day.date | date}}</ion-item>
+      <ion-item>Day: {{day.date | date:'fullDate'}}</ion-item>
       <ion-item>
         Items: {{day.items.length}}
         <ion-button [routerLink]="['../day', day.id]" color="medium" fill="outline" slot="end">View</ion-button>
