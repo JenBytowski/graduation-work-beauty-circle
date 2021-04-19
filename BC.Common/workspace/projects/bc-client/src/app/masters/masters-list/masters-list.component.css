@@ -78,10 +78,6 @@ ion-app {
     margin-left: 0.4em;
 }
 
-.links_item {
-
-}
-
 .link {
     margin-left: 1em;
 }
@@ -96,9 +92,10 @@ ion-app {
 
 .visible-filter {
     width: 50%;
-    height: 50%;
+    height: 54.7%;
     position: fixed;
     z-index: 12;
+    border: 1px black solid;
 }
 
 .hidden-filter {

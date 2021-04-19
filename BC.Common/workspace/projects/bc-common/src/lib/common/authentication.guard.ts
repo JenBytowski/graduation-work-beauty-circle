@@ -3,7 +3,6 @@ import {
   CanActivate, Router,
   RouterStateSnapshot,
 } from '@angular/router';
-import { Observable } from 'rxjs';
 import { TokenStoreService } from './token-store.service';
 import { Injectable } from '@angular/core';
 
@@ -15,7 +14,7 @@ export class TokenGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean> | boolean {
+  ): any{
     if(this.tokenStore.get()){
       return true;
     } else {

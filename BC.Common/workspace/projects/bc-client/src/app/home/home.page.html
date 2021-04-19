@@ -1,25 +1,32 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-app>
+  <ion-header [translucent]="true">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-item>
+        <!-- <ion-icon name="storefront-outline" [routerLink]="['../']"></ion-icon> -->
+        <ion-title> Home Page </ion-title>
+        <ion-button color="medium" [routerLink]="['../masters']" >Masters</ion-button>
+        <ion-button color="medium" [routerLink]="['../authentication']">Authentication</ion-button>
+        <ion-button *ngIf="tokenStore.get()" color="medium" (click)="logOut()">Logout</ion-button>
+      </ion-item>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a href="https://ionicframework.com/docs/components" rel="noopener noreferrer" target="_blank">UI
-      Components</a></p>
-    <a [routerLink]="['../masters']" routerLinkActive="active">Masters</a>
-    <br/>
-    <a [routerLink]="['../authentication']" routerLinkActive="active">Authentication</a>
-    <br/>
-    <a (click)="logOut()">Log Out</a>
-  </div>
-</ion-content>
+  <ion-content [fullscreen]="true">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">Blank</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <div id="container">
+      <strong>Welcome to Beauty-circle!</strong>
+      <p>Hope you will like our App.</p>
+    </div>
+  </ion-content>
+
+  <ion-footer>
+    <ion-toolbar>
+      <ion-title> BC </ion-title>
+    </ion-toolbar>
+  </ion-footer>
+</ion-app>

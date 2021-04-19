@@ -46,17 +46,3 @@ services:
       dockerfile: "BC.Common/Dockerfile.Master.Local-01"
     ports:
       - "5270:80"
-  #  master:
-  #    build:
-  #      context: .
-  #      dockerfile: "BC.Master/Dockerfile"
-  #    ports:
-  #    - "5003:80"
-  #  saloon:
-  #    build:
-  #      context: .
-  #      dockerfile: "BC.Saloon/Dockerfile"
-  #    ports:
-  #    - "5004:80"
-
-

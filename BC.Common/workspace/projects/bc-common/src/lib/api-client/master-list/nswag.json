@@ -4,7 +4,7 @@
   "documentGenerator": {
     "fromDocument": {
       "json": "",
-      "url": "http://localhost:5221/swagger/masters-list/swagger.json",
+      "url": "http://localhost:5220/swagger/masters-list/swagger.json",
       "output": null
     }
   },

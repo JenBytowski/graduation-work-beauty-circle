@@ -1,64 +1,79 @@
 <ion-app>
+  <ion-header>
+    <ion-toolbar>
+      <ion-item>
+        <ion-title> {{ vm.Master?.name }} </ion-title>
+        <ion-button color="medium" (click)="updateMasterInfo()">Update</ion-button>
+        <ion-button color="medium" [routerLink]="['../week']">Calendar</ion-button>
+        <ion-button color="medium" (click)="addWeek()">Add week</ion-button>
+      </ion-item>
+    </ion-toolbar>
+  </ion-header>
+
   <ion-content>
-    <ion-img [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'"></ion-img>
-    <ion-item>
-      <ion-label>
-        Id: {{vm.Master?.id}}
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Name: <ion-input #name [value]="vm.Master?.name"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Spec: <ion-input #speciality [value]="vm.Master?.speciality"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        About: <ion-input #about [value]="vm.Master?.about"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Address: <ion-input #adderss [value]="vm.Master?.adderss"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Phone: <ion-input #phone [value]="vm.Master?.phone"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Instagram: <ion-input #instagramProfile [value]="vm.Master?.instagramProfile"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        VK: <ion-input #vkProfile [value]="vm.Master?.vkProfile"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Viber: <ion-input #viber [value]="vm.Master?.viber"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-label>
-        Skype: <ion-input #skype [value]="vm.Master?.skype"></ion-input>
-      </ion-label>
-    </ion-item>
-    <ion-item>
-      <ion-icon *ngFor="let star of vm.Master?.starRating" [icon]="star"></ion-icon>
-    </ion-item>
-
-    <ion-item>
-      <ion-button (click)="updateMasterInfo()">Submit</ion-button>
-    </ion-item>
-
-    <a [routerLink]="['/']">Main</a>
+    <div class="content_cover">
+      <div class="content">
+        <div style="width: 160px; height: 160px;">
+          <ion-img
+            [src]="vm.Master?.avatarUrl ? vm.Master.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'">
+          </ion-img>
+        </div>
+        <ion-item>
+          <ion-label>
+            Name:
+            <ion-input #name [value]="vm.Master?.name"></ion-input>
+          </ion-label>
+          <ion-icon *ngFor="let star of vm.Master?.starRating" [icon]="star" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Spec:
+            <ion-input #speciality [value]="vm.Master?.speciality"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            About:
+            <ion-input #about [value]="vm.Master?.about"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Address:
+            <ion-input #address [value]="vm.Master?.address"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Phone:
+            <ion-input #phone [value]="vm.Master?.phone"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Instagram:
+            <ion-input #instagramProfile [value]="vm.Master?.instagramProfile"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            VK:
+            <ion-input #vkProfile [value]="vm.Master?.vkProfile"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Viber:
+            <ion-input #viber [value]="vm.Master?.viber"></ion-input>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            Skype:
+            <ion-input #skype [value]="vm.Master?.skype"></ion-input>
+          </ion-label>
+        </ion-item>
+      </div>
+    </div>
   </ion-content>
 </ion-app>

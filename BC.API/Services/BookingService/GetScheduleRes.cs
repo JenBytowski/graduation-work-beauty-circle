@@ -64,7 +64,7 @@ namespace BC.API.Services.BookingService
         {
           Id = booking.Id,
           StartTime = booking.StartTime,
-          EndTime = booking.StartTime,
+          EndTime = booking.EndTime,
           ItemType = nameof(Booking),
           ClientId = booking.ClientId,
           Description = booking.Description,
@@ -128,7 +128,7 @@ namespace BC.API.Services.BookingService
         throw new ApplicationException("Can not parse booking res from not booking schedule day item");
       }
 
-      var booking = (Booking) scheduleDayItem;
+      var booking = (Booking)scheduleDayItem;
 
       return new BookingRes
       {
