@@ -14,7 +14,7 @@
   <ion-content>
     <div class="content_cover">
       <div class="content">
-        <div style="width: 160px; height: 160px;">
+        <div style="width: 400px; height: 400px;">
           <ion-img
             [src]="vm.Master?.avatarUrl ? vm.Master?.avatarUrl : 'https://skillmarket.ru/images/userpic/1/default_avatar_iasu-2u.png'">
           </ion-img>
@@ -22,57 +22,57 @@
         <ion-item>
           <ion-label>
             Name:
-            <ion-input #name [value]="vm.Master?.name"></ion-input>
           </ion-label>
+          <ion-input #name [value]="vm.Master?.name"></ion-input>
           <ion-icon *ngFor="let star of vm.Master?.starRating" [icon]="star" slot="end"></ion-icon>
         </ion-item>
         <ion-item>
           <ion-label>
             Spec:
-            <ion-input #speciality [value]="vm.Master?.speciality"></ion-input>
           </ion-label>
+          <ion-input #speciality [value]="vm.Master?.speciality"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             About:
-            <ion-input #about [value]="vm.Master?.about"></ion-input>
           </ion-label>
+          <ion-input #about [value]="vm.Master?.about"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             Address:
-            <ion-input #address [value]="vm.Master?.address"></ion-input>
           </ion-label>
+          <ion-input #address [value]="vm.Master?.address"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             Phone:
-            <ion-input #phone [value]="vm.Master?.phone"></ion-input>
           </ion-label>
+          <ion-input #phone [value]="vm.Master?.phone"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             Instagram:
-            <ion-input #instagramProfile [value]="vm.Master?.instagramProfile"></ion-input>
           </ion-label>
+          <ion-input #instagramProfile [value]="vm.Master?.instagramProfile"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             VK:
-            <ion-input #vkProfile [value]="vm.Master?.vkProfile"></ion-input>
           </ion-label>
+          <ion-input #vkProfile [value]="vm.Master?.vkProfile"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             Viber:
-            <ion-input #viber [value]="vm.Master?.viber"></ion-input>
           </ion-label>
+          <ion-input #viber [value]="vm.Master?.viber"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label>
             Skype:
-            <ion-input #skype [value]="vm.Master?.skype"></ion-input>
           </ion-label>
+          <ion-input #skype [value]="vm.Master?.skype"></ion-input>
         </ion-item>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {JWTDecodeService, MasterListClient, TokenStoreService, BookingClient} from 'bc-common';
+import {PopoverController} from '@ionic/angular';
 
 @Component({
   selector: 'app-update-master',
@@ -35,7 +36,8 @@ export class UpdateMasterComponent implements OnInit {
     private booking: BookingClient.BookingClient,
     public tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService,
-    private router: Router
+    private router: Router,
+    public popoverController: PopoverController
   ) {
   }
 
@@ -110,8 +112,8 @@ export class UpdateMasterComponent implements OnInit {
           masterId: this.vm.Master.id,
           mondayDate: this.getNextMonDate(),
           daysToWork: [1, 2, 3, 4, 5],
-          startTime: "8:00",
-          endTime: "23:00"
+          startTime: '8:00',
+          endTime: '23:00'
         })).subscribe(data => console.log(data));
       }
     });
@@ -124,19 +126,19 @@ export class UpdateMasterComponent implements OnInit {
   }
 
   public getLastDay(days: BookingClient.ScheduleDayRes[]): number {
-    if(days.length === 0){
+    if (days.length === 0) {
       return 0;
     }
     let last: number | object = new Date().valueOf();
     days.forEach(day => {
-      if(last < day.date.valueOf()){
+      if (last < day.date.valueOf()) {
         last = day.date.valueOf();
       }
     });
     return last;
   }
 
-  async logOut(){
+  async logOut() {
     this.tokenStore.get() ? this.tokenStore.clear() : {};
     await this.router.navigate(['/authentication']);
   }

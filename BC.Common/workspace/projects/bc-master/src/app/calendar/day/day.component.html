@@ -12,7 +12,8 @@
 
   <ion-content *ngIf="vm.day?.items.length > 0;else empty">
     <ion-item #range disabled="true">
-      <ion-range slot="start" color="medium" dualKnobs="true" [min]="rangeMin" [max]="rangeMax" step="1" snaps="true"></ion-range>
+      <ion-range slot="start" pin="true" color="medium" dualKnobs="true" [min]="rangeMin" [max]="rangeMax" step="1" snaps="true"></ion-range>
+      <ion-button color="medium" (click)="range.disabled = true" slot="end">Cancel</ion-button>
       <ion-button color="medium" (click)="addPause($event)" slot="end">Confirm</ion-button>
     </ion-item>
     <ion-card *ngFor="let item of vm.day?.items">
