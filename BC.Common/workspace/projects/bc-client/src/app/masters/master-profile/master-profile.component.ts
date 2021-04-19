@@ -118,7 +118,7 @@ export class MasterProfileComponent implements OnInit {
 
 class Vm {
   public Master: any;
-  public Schedule: BookingClient.GetScheduleRes;
+  public Schedule: any;
   public ClientId: string;
   public CurrentItem: BookingClient.ScheduleDayItemRes;
 }

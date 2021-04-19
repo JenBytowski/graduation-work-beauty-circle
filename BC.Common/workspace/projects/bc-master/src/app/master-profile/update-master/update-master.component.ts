@@ -124,6 +124,9 @@ export class UpdateMasterComponent implements OnInit {
   }
 
   public getLastDay(days: BookingClient.ScheduleDayRes[]): number {
+    if(days.length === 0){
+      return 0;
+    }
     let last: number | object = new Date().valueOf();
     days.forEach(day => {
       if(last < day.date.valueOf()){

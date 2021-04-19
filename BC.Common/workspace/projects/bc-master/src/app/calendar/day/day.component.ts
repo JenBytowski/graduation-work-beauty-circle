@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BookingClient, JWTDecodeService, TokenStoreService} from "bc-common";
+import {IonRange} from "@ionic/angular";
 
 @Component({
   selector: 'app-day',
@@ -8,7 +9,13 @@ import {BookingClient, JWTDecodeService, TokenStoreService} from "bc-common";
   styleUrls: ['./day.component.scss']
 })
 export class DayComponent implements OnInit {
+
   public vm: Vm = new Vm();
+  public rangeMax: number;
+  public rangeMin: number;
+
+  @ViewChild("range", {static: false})
+  range: IonRange;
 
   constructor(
     private route: ActivatedRoute,
@@ -16,7 +23,7 @@ export class DayComponent implements OnInit {
     public tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService,
     private router: Router
-    ) {
+  ) {
   }
 
   ngOnInit(): void {
@@ -28,14 +35,46 @@ export class DayComponent implements OnInit {
   }
 
   public cancelPause(id: string) {
-    console.log(id);
+    this.booking.cancelPause(BookingClient.CancelPauseReq.fromJS({
+      pauseId: id
+    })).subscribe(data => console.log(data));
+    document.location.reload();
   }
 
   public cancelBooking(id: string) {
-    console.log(id);
+    this.booking.cancelBooking(BookingClient.CancelBookingReq.fromJS({
+      bookingId: id
+    })).subscribe(data => console.log(data));
+    document.location.reload();
   }
 
-  async logOut(){
+  public addPause(event) {
+    let range = (event.target.parentElement.childNodes[0] as IonRange).value;
+    if ((range as any).lower < (range as any).upper) {
+      let req: BookingClient.AddPauseReq = new BookingClient.AddPauseReq();
+      req.masterId = this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      req.description = 'Description';
+      this.vm.CurrentItem.startTime.setHours((range as any).lower + 3);
+      req.startTime = this.vm.CurrentItem.startTime;
+      this.vm.CurrentItem.endTime.setHours((range as any).upper + 3);
+      req.endTime = this.vm.CurrentItem.endTime;
+      console.log(req);//
+      console.log(this.vm.CurrentItem);//
+      this.booking.addPause(req).subscribe(data => console.log(data));
+      document.location.reload();
+    }
+  }
+
+  public enableRange(item: BookingClient.ScheduleDayItemRes) {
+    if (item.itemType == "Window") {
+      (this.range as any).el.disabled = false;
+      this.rangeMin = item.startTime.getHours();
+      this.rangeMax = item.endTime.getHours();
+      this.vm.CurrentItem = item;
+    }
+  }
+
+  async logOut() {
     this.tokenStore.get() ? this.tokenStore.clear() : {};
     await this.router.navigate(['/authentication']);
   }
@@ -44,4 +83,5 @@ export class DayComponent implements OnInit {
 
 class Vm {
   public day: BookingClient.ScheduleDayRes;
+  public CurrentItem: BookingClient.ScheduleDayItemRes;
 }

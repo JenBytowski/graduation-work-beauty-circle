@@ -29,6 +29,7 @@ export class AuthInterceptorService implements HttpInterceptor {
           'Bearer ' + this.tokenStore.get()
         ),
       });
+      console.log(authReq);
       return next.handle(authReq).pipe(
         tap(
           (event) => {
