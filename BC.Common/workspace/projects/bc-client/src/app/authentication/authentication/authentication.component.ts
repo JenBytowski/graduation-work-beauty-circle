@@ -30,7 +30,7 @@ export class AuthenticationComponent implements OnInit {
     @Inject('BASE_URL') private baseUrl: string) {
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     console.log(this.redirectUrl);//
     this.querySubscription = this.route.queryParams.subscribe((queryParam: any) => {
       const code = queryParam['code'];
@@ -68,6 +68,9 @@ export class AuthenticationComponent implements OnInit {
         });
       }
     });
+    if (this.tokenStore.get()) {
+      await this.router.navigate([this.route.snapshot.queryParams.return || '/']);
+    }
   }
 
   public async authByVk(): Promise<void> {

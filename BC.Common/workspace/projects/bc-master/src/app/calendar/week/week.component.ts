@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BookingClient, JWTDecodeService, MasterListClient, TokenStoreService} from 'bc-common';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-week',
@@ -14,7 +15,9 @@ export class WeekComponent implements OnInit {
     private masterList: MasterListClient.MasterListClient,
     private booking: BookingClient.BookingClient,
     private jwtdecode: JWTDecodeService,
-    private tokenStore: TokenStoreService) {
+    public tokenStore: TokenStoreService,
+    private router: Router
+    ) {
   }
 
   ngOnInit() {
@@ -22,6 +25,11 @@ export class WeekComponent implements OnInit {
       this.vm.schedule = sch;
       console.log(sch);
     });
+  }
+
+  async logOut(){
+    this.tokenStore.get() ? this.tokenStore.clear() : {};
+    await this.router.navigate(['/authentication']);
   }
 }
 

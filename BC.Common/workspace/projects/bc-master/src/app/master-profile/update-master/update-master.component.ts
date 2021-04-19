@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {JWTDecodeService, MasterListClient, TokenStoreService, BookingClient} from 'bc-common';
 
 @Component({
@@ -33,8 +33,9 @@ export class UpdateMasterComponent implements OnInit {
     private route: ActivatedRoute,
     private masterList: MasterListClient.MasterListClient,
     private booking: BookingClient.BookingClient,
-    private tokenStore: TokenStoreService,
-    private jwtdecode: JWTDecodeService
+    public tokenStore: TokenStoreService,
+    private jwtdecode: JWTDecodeService,
+    private router: Router
   ) {
   }
 
@@ -130,6 +131,11 @@ export class UpdateMasterComponent implements OnInit {
       }
     });
     return last;
+  }
+
+  async logOut(){
+    this.tokenStore.get() ? this.tokenStore.clear() : {};
+    await this.router.navigate(['/authentication']);
   }
 }
 

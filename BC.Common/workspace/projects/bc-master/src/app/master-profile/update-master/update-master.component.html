@@ -6,6 +6,7 @@
         <ion-button color="medium" (click)="updateMasterInfo()">Update</ion-button>
         <ion-button color="medium" [routerLink]="['../week']">Calendar</ion-button>
         <ion-button color="medium" (click)="addWeek()">Add week</ion-button>
+        <ion-button *ngIf="tokenStore.get()" color="medium" (click)="logOut()">Logout</ion-button>
       </ion-item>
     </ion-toolbar>
   </ion-header>

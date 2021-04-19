@@ -4,16 +4,22 @@
       <ion-item>
         <ion-icon name="storefront-outline" [routerLink]="['/']"></ion-icon>
         <ion-title> Days </ion-title>
+        <ion-button color="medium" [routerLink]="['../../week']" >Week</ion-button>
+        <ion-button *ngIf="tokenStore.get()" color="medium" (click)="logOut()">Logout</ion-button>
       </ion-item>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content *ngIf="vm.scheduleDay?.items.length > 0;else empty">
-    <ion-card *ngFor="let item of vm.scheduleDay?.items">
-      <ion-item>Item type: {{item.itemType}}</ion-item>
-      <ion-item>Client: {{item.clientId}}</ion-item>
-      <ion-item>Start-time: {{item.startTime}}</ion-item>
-      <ion-item>End-time: {{item.endTime}}</ion-item>
+  <ion-content *ngIf="vm.day?.items.length > 0;else empty">
+    <ion-card *ngFor="let item of vm.day?.items">
+      <ion-item>Item type: {{item.itemType}}
+        <ion-button *ngIf="item.itemType === 'Booking'" color="medium" slot="end" (click)="cancelBooking(item.id)">Cancel booking</ion-button>
+        <ion-button *ngIf="item.itemType === 'Pause'" color="medium" slot="end" (click)="cancelPause(item.id)">Cancel pause</ion-button>
+        <ion-button *ngIf="item.itemType === 'Window'" color="medium" slot="end" (click)="{}">Create pause</ion-button>
+      </ion-item>
+      <ion-item *ngIf="item.itemType == 'Booking'">Client: {{item.clientId}}</ion-item>
+      <ion-item>Start-time: {{item.startTime | date : 'H:mm'}}</ion-item>
+      <ion-item>End-time: {{item.endTime | date : 'H:mm'}}</ion-item>
     </ion-card>
   </ion-content>
 

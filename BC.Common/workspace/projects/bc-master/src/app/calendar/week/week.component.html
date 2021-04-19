@@ -4,6 +4,8 @@
       <ion-item>
         <ion-icon name="storefront-outline" [routerLink]="['/']"></ion-icon>
         <ion-title> Week</ion-title>
+        <ion-button color="medium" [routerLink]="['/']" >Master</ion-button>
+        <ion-button *ngIf="tokenStore.get()" color="medium" (click)="logOut()">Logout</ion-button>
       </ion-item>
     </ion-toolbar>
   </ion-header>

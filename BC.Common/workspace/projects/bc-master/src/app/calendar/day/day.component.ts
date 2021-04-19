@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {BookingClient, JWTDecodeService, TokenStoreService} from "bc-common";
 
 @Component({
@@ -9,23 +9,39 @@ import {BookingClient, JWTDecodeService, TokenStoreService} from "bc-common";
 })
 export class DayComponent implements OnInit {
   public vm: Vm = new Vm();
+
   constructor(
     private route: ActivatedRoute,
     private booking: BookingClient.BookingClient,
-    private tokenStore: TokenStoreService,
-    private jwtdecode: JWTDecodeService) {
+    public tokenStore: TokenStoreService,
+    private jwtdecode: JWTDecodeService,
+    private router: Router
+    ) {
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    console.log(id);
     this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']).subscribe(sch => {
-      this.vm.scheduleDay = sch.days.find(item => item?.id === id.toString());
-      console.log(this.vm.scheduleDay);
+      this.vm.day = sch.days.find(item => item?.id === id.toString());
+      console.log(this.vm.day);
     });
   }
 
+  public cancelPause(id: string) {
+    console.log(id);
+  }
+
+  public cancelBooking(id: string) {
+    console.log(id);
+  }
+
+  async logOut(){
+    this.tokenStore.get() ? this.tokenStore.clear() : {};
+    await this.router.navigate(['/authentication']);
+  }
+
 }
+
 class Vm {
-  public scheduleDay: any;
+  public day: BookingClient.ScheduleDayRes;
 }
