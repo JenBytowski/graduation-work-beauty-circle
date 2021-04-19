@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {JWTDecodeService, MasterListClient, TokenStoreService} from 'bc-common';
+import {JWTDecodeService, MasterListClient, TokenStoreService, BookingClient} from 'bc-common';
 
 @Component({
   selector: 'app-update-master',
@@ -14,8 +14,8 @@ export class UpdateMasterComponent implements OnInit {
   speciality: ElementRef;
   @ViewChild('about', {static: false})
   about: ElementRef;
-  @ViewChild('adderss', {static: false})
-  adderss: ElementRef;
+  @ViewChild('address', {static: false})
+  address: ElementRef;
   @ViewChild('phone', {static: false})
   phone: ElementRef;
   @ViewChild('instagramProfile', {static: false})
@@ -32,6 +32,7 @@ export class UpdateMasterComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private masterList: MasterListClient.MasterListClient,
+    private booking: BookingClient.BookingClient,
     private tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService
   ) {
@@ -82,14 +83,14 @@ export class UpdateMasterComponent implements OnInit {
       name: (this.name as any).el.value ? (this.name as any).el.value.toString() : undefined,
       avatarUrl: this.vm.Master?.avatarUrl,
       about: (this.about as any).el.value ? (this.about as any).el.value.toString() : undefined,
-      address: (this.adderss as any).el.value ? (this.adderss as any).el.value.toString() : undefined,
+      address: (this.address as any).el.value ? (this.address as any).el.value.toString() : undefined,
       phone: (this.phone as any).el.value ? (this.phone as any).el.value.toString() : undefined,
       instagramProfile: (this.instagramProfile as any).el.value ? (this.instagramProfile as any).el.value.toString() : undefined,
       vkProfile: (this.vkProfile as any).el.value ? (this.vkProfile as any).el.value.toString() : undefined,
       viber: (this.viber as any).el.value ? (this.viber as any).el.value.toString() : undefined,
       skype: (this.skype as any).el.value ? (this.skype as any).el.value.toString() : undefined,
-      specialityId: this.vm.Master?.specialityId,
-      priceListItems: this.vm.Master?.priceListItems,
+      specialityId: (this.vm.Master as any).specialityId,
+      priceListItems: (this.vm.Master as any).priceListItems,
     });
     console.log(masterReq);
     this.masterList
@@ -98,8 +99,32 @@ export class UpdateMasterComponent implements OnInit {
           this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'], masterReq)
       .subscribe(() => window.location.reload());
   }
+
+  public async addWeek() {
+    this.booking.getSchedule(this.vm.Master.id).subscribe(sch => {
+      this.vm.Schedule = sch;
+      if (this.getNextMonDate().valueOf() > sch.days[sch.days.length - 1].date.valueOf()) {
+        this.booking.addWorkingWeek(BookingClient.AddWorkingWeekReq.fromJS({
+          masterId: this.vm.Master.id,
+          mondayDate: this.getNextMonDate(),
+          daysToWork: [1, 2, 3, 4, 5],
+          startTime: "8:00",
+          endTime: "23:00"
+        })).subscribe(data => console.log(data));
+      }
+    });
+
+
+  }
+
+  public getNextMonDate(): Date {
+    let d = new Date();
+    d.setDate(d.getDate() + (1 + 7 - d.getDay()) % 7);
+    return d;
+  }
 }
 
 class Vm {
-  public Master: any;
+  public Master: MasterListClient.MasterRes;
+  public Schedule: BookingClient.GetScheduleRes;
 }
