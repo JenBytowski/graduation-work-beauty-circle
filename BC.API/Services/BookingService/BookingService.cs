@@ -110,7 +110,7 @@ namespace BC.API.Services.BookingService
       var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
       var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
-        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime) as Window;
 
       if (windowtoRemove == null)
       {
@@ -127,28 +127,8 @@ namespace BC.API.Services.BookingService
         Description = req.Description
       };
 
-      var newWindows = new List<Window>
-      {
-        windowtoRemove.StartTime != newBooking.StartTime
-        ? new Window
-        {
-          ScheduleDayId = windowtoRemove.ScheduleDayId,
-          StartTime = windowtoRemove.StartTime,
-          EndTime = newBooking.StartTime
-        }
-        : null,
-        windowtoRemove.EndTime != newBooking.EndTime
-        ? new Window
-        {
-          ScheduleDayId = windowtoRemove.ScheduleDayId,
-          StartTime = newBooking.EndTime,
-          EndTime = windowtoRemove.EndTime
-        }
-        : null
-      }.Where(wnd => wnd != null);
-
       _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindows);
+      _context.ScheduleDayItems.AddRange(this.DivideWindow(windowtoRemove, newBooking));
       _context.ScheduleDayItems.Add(newBooking);
       _context.SaveChanges();
 
@@ -210,7 +190,7 @@ namespace BC.API.Services.BookingService
       var scheduleDay = schedule.Days.First(day => day.Date == req.StartTime.Date);
       var windows = scheduleDay.Items.Where(itm => itm is Window);
       var windowtoRemove =
-        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime);
+        windows.FirstOrDefault(wind => wind.StartTime <= req.StartTime && wind.EndTime >= req.EndTime) as Window;
 
       if (windowtoRemove == null)
       {
@@ -224,18 +204,9 @@ namespace BC.API.Services.BookingService
         EndTime = req.EndTime,
         Description = req.Description
       };
-      var newWindows = new List<Window>
-      {
-        scheduleDay.Items.FirstOrDefault(itm => itm.EndTime == newPause.StartTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = windowtoRemove.StartTime, EndTime = req.StartTime}
-          : null,
-        scheduleDay.Items.FirstOrDefault(itm => itm.StartTime == newPause.EndTime) == null
-          ? new Window {ScheduleDayId = scheduleDay.Id, StartTime = req.EndTime, EndTime = windowtoRemove.EndTime}
-          : null
-      }.Where(wind => wind != null);
 
       _context.ScheduleDayItems.Remove(windowtoRemove);
-      _context.ScheduleDayItems.AddRange(newWindows);
+      _context.ScheduleDayItems.AddRange(this.DivideWindow(windowtoRemove, newPause));
       _context.ScheduleDayItems.Add(newPause);
       _context.SaveChanges();
     }
@@ -261,6 +232,38 @@ namespace BC.API.Services.BookingService
       _context.SaveChanges();
 
       ConcatenateWindows(pause.ScheduleDayId);
+    }
+
+    private IEnumerable<Window> DivideWindow(Window window, ScheduleDayItem separator)
+    {
+      var result = new List<Window>();
+
+      if (window.ScheduleDayId != separator.ScheduleDayId)
+      {
+        throw new ArgumentException($"{nameof(DivideWindow)} schedule day id is mismatched");
+      }
+
+      if (window.StartTime != separator.StartTime)
+      {
+        result.Add(new Window
+        {
+          ScheduleDayId = window.ScheduleDayId,
+          StartTime = window.StartTime,
+          EndTime = separator.StartTime
+        });
+      }
+
+      if (window.EndTime != separator.EndTime)
+      {
+        result.Add(new Window
+        {
+          ScheduleDayId = window.ScheduleDayId,
+          StartTime = separator.EndTime,
+          EndTime = window.EndTime
+        });
+      }
+
+      return result;
     }
 
     private void ConcatenateWindows(Guid dayId)
@@ -319,7 +322,6 @@ namespace BC.API.Services.BookingService
       this._context.RemoveRange(windowsToRemove);
       this._context.AddRange(windowsToAdd);
       this._context.SaveChanges();
-
     }
 
     public async Task OnUserAssignedToRole(UserAssignedToRoleEvent userAssignedToRoleEvent)

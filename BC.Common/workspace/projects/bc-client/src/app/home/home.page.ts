@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {TokenStoreService} from "bc-common";
 
 @Component({
@@ -8,8 +8,11 @@ import {TokenStoreService} from "bc-common";
 })
 export class HomePage {
   public token: string;
-  constructor(public tokenStore: TokenStoreService) {}
-  logOut(){
+
+  constructor(public tokenStore: TokenStoreService) {
+  }
+
+  logOut() {
     this.tokenStore.get() ? this.tokenStore.clear() : {};
   }
 }

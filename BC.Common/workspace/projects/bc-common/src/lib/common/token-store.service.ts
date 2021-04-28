@@ -1,19 +1,26 @@
 import {Injectable} from '@angular/core';
+import * as jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenStoreService {
-  private KEY: string = 'token';
+
+  private readonly KEY = 'token';
 
   constructor() {
   }
 
-  get(): string {
+  get(): string | null {
     if (!localStorage) {
       return null;
     }
-    return localStorage.getItem(this.KEY);
+    const token = localStorage.getItem(this.KEY);
+    if (token === null || !this.isTokenExpired(token)) {
+      this.clear();
+      return null;
+    }
+    return token;
   }
 
   put(token: string): void {
@@ -22,5 +29,23 @@ export class TokenStoreService {
 
   clear(): void {
     localStorage.removeItem(this.KEY);
+  }
+
+  isTokenExpired(token: string): boolean {
+    const date = this.getTokenExpirationDate(token);
+    if (date === null) {
+      return false;
+    }
+    return date.valueOf() > new Date().valueOf();
+  }
+
+  getTokenExpirationDate(token: string): Date | null {
+    const decoded: any = jwt_decode.default(token);
+    if (decoded.exp === undefined) {
+      return null;
+    }
+    const date = new Date(0);
+    date.setUTCSeconds(decoded.exp);
+    return date;
   }
 }
