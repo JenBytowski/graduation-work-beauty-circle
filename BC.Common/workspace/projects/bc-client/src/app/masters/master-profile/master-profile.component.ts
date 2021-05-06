@@ -88,7 +88,8 @@ export class MasterProfileComponent implements OnInit {
 
   public changeItemState(event) {
     if (this.vm.CurrentItem.itemType == 'Window') {
-      let range = (event.target.parentElement.childNodes[0] as IonRange).value;
+      let range = (event.target.parentElement.parentElement.childNodes[2].childNodes[0] as IonRange).value;
+      console.log(event.target.parentElement.parentElement);
       if ((range as any).lower < (range as any).upper) {
         let req: BookingClient.AddBookingReq = new BookingClient.AddBookingReq();
         req.masterId = this.vm.Master.id;

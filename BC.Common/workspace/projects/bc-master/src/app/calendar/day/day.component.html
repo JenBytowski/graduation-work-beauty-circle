@@ -11,12 +11,12 @@
   </ion-header>
 
   <ion-content *ngIf="vm.day?.items.length > 0;else empty">
-    <ion-item #rangeItem disabled="true">
+    <ion-item>
       <ion-range disabled="true" #range slot="start" pin="true" color="medium" dualKnobs="true" [min]="rangeMin"
                  [max]="rangeMax" step="1"
                  snaps="true"></ion-range>
       <ion-button disabled="true" #rangeCancel color="medium"
-                  (click)="range.disabled = true; rangeCancel.disabled = true; rangeConfirm.disabled = true; rangeItem.disabled = true;"
+                  (click)="range.disabled = true; rangeCancel.disabled = true; rangeConfirm.disabled = true;"
                   slot="end">Cancel
       </ion-button>
       <ion-button disabled="true" #rangeConfirm color="medium" (click)="addPause($event)" slot="end">Confirm
@@ -31,7 +31,10 @@
           pause
         </ion-button>
         <ion-button *ngIf="item.itemType === 'Window'" color="medium" slot="end"
-                    (click)="enableRange(item); range.disabled = false; rangeCancel.disabled = false; rangeConfirm.disabled = false; rangeItem.disabled = false;">
+                    (click)="enableRange(item);
+                    range.disabled = false;
+                    rangeCancel.disabled = false;
+                    rangeConfirm.disabled = false;">
           Create
           pause
         </ion-button>
