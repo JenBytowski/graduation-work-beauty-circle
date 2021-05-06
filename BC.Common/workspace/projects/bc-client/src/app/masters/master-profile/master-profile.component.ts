@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { IonRange } from '@ionic/angular';
-import { MasterListClient, BookingClient, JWTDecodeService, TokenStoreService } from 'bc-common';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {IonRange} from '@ionic/angular';
+import {MasterListClient, BookingClient, JWTDecodeService, TokenStoreService} from 'bc-common';
 
 @Component({
   selector: 'app-master-profile',
@@ -20,18 +20,38 @@ export class MasterProfileComponent implements OnInit {
     private booking: BookingClient.BookingClient,
     private tokenStore: TokenStoreService,
     private jwtdecode: JWTDecodeService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    this.booking.getSchedule(id).subscribe(data => this.vm.Schedule = data);
+    this.booking.getSchedule(id).subscribe(data => {
+      this.vm.Schedule = data;
+      this.sortScheduleItems();
+    });
     this.masterList.getMasterById(id).subscribe((data) => {
       (data as any).starRating = this.countStarRating(data.averageRating);
       this.vm.Master = data;
       this.vm.ClientId = this.jwtdecode.decode(this.tokenStore.get())[
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-      ];
+        ];
       console.log(this.vm);
+    });
+  }
+
+  public redirect(url: string) {
+    window.location.replace(url);
+  }
+
+  public getMastersSchedule() {
+    this.booking.getSchedule(this.vm.Master.id).subscribe(data => console.log(data));
+  }
+
+  public sortScheduleItems() {
+    (this.vm.Schedule as BookingClient.GetScheduleRes).days.forEach(day => {
+      day.items.sort((item1, item2) => {
+        return item1.startTime.getTime() - item2.startTime.getTime();
+      })
     });
   }
 
@@ -41,37 +61,29 @@ export class MasterProfileComponent implements OnInit {
       rating >= 1
         ? 'star'
         : rating >= 0.5
-          ? 'star-half-outline'
-          : 'star-outline',
+        ? 'star-half-outline'
+        : 'star-outline',
       rating >= 2
         ? 'star'
         : rating >= 1.5
-          ? 'star-half-outline'
-          : 'star-outline',
+        ? 'star-half-outline'
+        : 'star-outline',
       rating >= 3
         ? 'star'
         : rating >= 2.5
-          ? 'star-half-outline'
-          : 'star-outline',
+        ? 'star-half-outline'
+        : 'star-outline',
       rating >= 4
         ? 'star'
         : rating >= 3.5
-          ? 'star-half-outline'
-          : 'star-outline',
+        ? 'star-half-outline'
+        : 'star-outline',
       rating >= 5
         ? 'star'
         : rating >= 4.5
-          ? 'star-half-outline'
-          : 'star-outline',
+        ? 'star-half-outline'
+        : 'star-outline',
     ];
-  }
-
-  public redirect(url: string) {
-    window.location.replace(url);
-  }
-
-  public getMastersSchedule() {
-    this.booking.getSchedule(this.vm.Master.id).subscribe(data => console.log(data));
   }
 
   public changeItemState(event) {

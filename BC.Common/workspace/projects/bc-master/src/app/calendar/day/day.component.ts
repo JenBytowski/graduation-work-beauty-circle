@@ -27,7 +27,14 @@ export class DayComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.booking.getSchedule(this.jwtdecode.decode(this.tokenStore.get())['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']).subscribe(sch => {
       this.vm.day = sch.days.find(item => item?.id === id.toString());
+      this.sortScheduleItems();
       console.log(this.vm.day);
+    });
+  }
+
+  public sortScheduleItems() {
+    this.vm.day.items.sort((item1, item2) => {
+      return item1.startTime.getTime() - item2.startTime.getTime();
     });
   }
 
