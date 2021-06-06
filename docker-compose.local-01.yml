@@ -1,11 +1,13 @@
 ﻿version: '3'
 services:
   gateway:
+    restart: always
     ports:
       - "5210:80"
     volumes:
       - "./volumes/gateway/config:/app/Config"
   bc-api:
+    restart: always
     ports:
       - "5220:80"
     environment:
@@ -28,11 +30,13 @@ services:
       - RabbitMQEventBus__Exchange=beauty-circle-exchange
       - ASPNETCORE_URLS=http://+:80
   sql-server:
+    restart: always
     ports:
       - "5230:1433"
     volumes:
       - "./volumes/sql-server/data:/var/opt/mssql/data"
   rabbitmq:
+    restart: always
     ports:
       - "5240:5672"
       - "5250:15672"
